@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+:root {
+  /*color*/
+  --primary: #E2B3B0;
+  --topPrimary: #F3D9DB;
+  --primaryLight: #E8B6B3;
+  --secondary2: #F3E4E3;
+  --secondary3: #F5E9E9;
+  --secondary4: #F7EBEB;
+  --secondary: rgba(244,240,240,0.65);
+  --border: #6B3734;
+  --borderDash: #E18883;
+  --borderDash2: #e8524a;
+  --danger: #b00000;
+  --dangerDark: #a50d12;
+  --gray: #6b6b6b;
+  --black: #171717;
+  --white: #ffffff;
+  --text: #6B3734;
+  --text2: #D74138;
+  --detailText: #956C69;
+  --checkbox: #F7F2F2;
+  --inputText: #6B3734;
+  --placeholder: #E18883;
+  --icon: #6B3734;
+  --btn2Gra1: linear-gradient(90deg, rgba(245,169,169,0.63) 0%, rgba(210,43,43,0.63) 100%);
+  --btn2Gra2: linear-gradient(90deg, rgba(245,169,169,0.63) 0%, rgba(228,103,103,0.63) 100%);
+  --btn2GraBack: rgba(255,231,231,0.63);
+  --btn1GraHover: linear-gradient(90deg, rgba(253,218,255,0.63) 0%, rgba(210,43,96,0.63) 100%);
+  --btn2GraHover: linear-gradient(90deg, rgba(237,200,176,0.63) 0%, rgba(227,76,114,0.63) 100%);
+  
+  /* Todo Menu */
+  --linkbtn1Gra: linear-gradient(90deg, rgba(246,200,188,100%) 0%, rgba(244,134,175,100%) 44%, rgba(246,200,188,100%) 100%);
+  --linkbtn1GraHover: linear-gradient(90deg, rgba(240,234,197,0.5) 0%, rgba(234,135,174,0.5) 44%, rgba(243,226,148,0.5) 100%);
+  --linkbtn2Gra: linear-gradient(90deg, rgba(246,200,188,50%) 0%, rgba(244,134,175,50%) 44%, rgba(219,102,157,50%) 100%);
+  --linkbtn2GraHover: linear-gradient(90deg, rgba(240,234,197,0.5) 0%, rgba(234,175,116,0.5) 44%, rgba(243,226,148,0.5) 100%);
+  --linkbtn3Gra: linear-gradient(90deg, rgba(246,200,188,100%) 0%, rgba(244,135,174,100%) 44%, rgba(219,102,157,100%) 100%);
+  --linkbtn3GraHover: linear-gradient(90deg, rgba(240,234,197,0.5) 0%, rgba(234,175,116,0.5) 44%, rgba(243,226,148,0.5) 100%);
+  --linkbtn4Gra: linear-gradient(90deg, rgba(246,234,197,100%) 0%, rgba(234,175,116,100%) 44%, rgba(243,226,148,100%) 100%);
+  --linkbtn4GraHover: linear-gradient(90deg, rgba(240,234,197,0.5) 0%, rgba(234,175,116,0.5) 44%, rgba(243,226,148,0.5) 100%);
+/*---------------------*/
+
+  --btnSimpleYellow: #F3BC7C;
+  --btnSimpleOrange: #EEBC99;
+  --btnSimplePink: #E18883;
+  --btnSimpleYellowHover: rgba(242,212,177,1);
+  --btnSimpleOrangeHover: rgba(242,185,185,1);
+  --btnSimplePinkHover: rgba(225,136,130,0.5);
+  --btnSimpleRed: #E18883;
+  --starDefault: #F7DAC8;
+  --starLight: #FFF085;
+  --starDark: #FFD230;
+  --logo: #ddeef0;
+  --logoShadow: #384445;
+  
+  /*font*/
+  --font-base: var(--m-plus-1p), var(--roboto), sans-serif;
+  --extraSmall: '13px';
+  --small: '14px';
+  --smallMedium: '15px';
+  --medium: '16px';
+  --mediumLarge: '20px';
+  --large: '24px';
+  --extraLarge: '32px';
+}
+/*
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+*/
+body {
+  background-color: var(--topPrimary);
+  font-family: var(--font-roboto), var(--font-m-plus-1p);
+  color: var(--text);
+}
+
+html,
+body,
+textarea {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  transition: .25s;
+  color: var(--black);
+}
+
+ol, ul {
+  list-style: none;
+}
+
+button, input, textarea {
+  font-family : inherit;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.todo-text {
+  overflow: hidden;
+  transition: height 0.5s;
+  height: 0;
+}
+
+.open .todo-text {
+  height: var(--text-height);
+}

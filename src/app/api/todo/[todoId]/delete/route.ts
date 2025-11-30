@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "src/libs/prisma";
 //import { notFound } from "next/navigation";
 import { getServerSession } from "src/libs/auth";
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest, { params }: {params: Promise<{ todo
       return NextResponse.json({ message: "Todo not found" }, { status: 404 });
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 
       // ⭐ 星数をチェックして加算
       const profile = await tx.profile.findUnique({ where: { userId } });

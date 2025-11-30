@@ -1,4 +1,5 @@
 // /api/reward/purchase/[rewardId]/route.ts
+import type { Prisma } from "@prisma/client";
 import { prisma } from "src/libs/prisma";
 import { getServerSession } from "src/libs/auth";
 import { NextResponse } from "next/server";
@@ -26,7 +27,7 @@ export async function POST(
       return NextResponse.json({ message: "Reward not found" }, { status: 404 });
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // ⭐ 星数をチェックして減算
       const profile = await tx.profile.findUnique({ where: { userId } });
       const currentStars = profile?.numberOfStars ?? 0;

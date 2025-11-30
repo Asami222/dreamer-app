@@ -15,8 +15,6 @@ export default function Home() {
             height={1012}
             src='/images/homeImg.webp'
             alt="Dreamer Image"
-            placeholder="blur"
-            blurDataURL={'/images/homeImg.webp'}
             className="w-full h-auto object-contain max-h-[60dvh]"
           />
         </div>

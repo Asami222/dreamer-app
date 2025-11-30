@@ -6,15 +6,15 @@ const meta = {
   component: GotRewardCard,
   tags: ["autodocs"],
   argTypes: {
-    gotreward: {
+    title: {
       control: "text",
       description: "報酬の内容",
     },
-    starNum: {
+    star: {
       control: "number",
       description: "星の数",
     },
-    time: {
+    createdAt: {
       control: "text",
       description: "取得時間",
     },
@@ -30,28 +30,28 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    id: 1,
-    gotreward: "旅行",
-    starNum: 3,
-    time: "2025年10月31日",
+    id: "1",
+    title: "旅行",
+    star: 3,
+    createdAt: "2025年10月31日",
   },
 };
 
 export const LongRewardName: Story = {
   args: {
-    id: 2,
-    gotreward: "非常に長いご褒美名がここに入る例です。UIの崩れ確認用。",
-    starNum: 5,
-    time: "2025年9月30日",
+    id: "2",
+    title: "非常に長いご褒美名がここに入る例です。UIの崩れ確認用。",
+    star: 5,
+    createdAt: "2025年9月30日",
   },
 };
 
 export const WithRemoveAction: Story = {
   args: {
-    id: 3,
-    gotreward: "テスト報酬",
-    starNum: 2,
-    time: "2025年9月30日",
-    onRemoveButtonClick: (id: number) => alert(`削除ボタンが押されました: ${id}`),
+    id: "3",
+    title: "テスト報酬",
+    star: 2,
+    createdAt: "2025年9月30日",
+    onRemoveButtonClick: (id: string) => alert(`削除ボタンが押されました: ${id}`),
   },
 };

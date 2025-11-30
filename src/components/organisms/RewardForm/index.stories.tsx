@@ -17,11 +17,8 @@ type Story = StoryObj<typeof RewardForm>
 
 // --- ① 通常状態 ---
 export const Default: Story = {
-  args: {
-    onRewardSave: fn(),
-    isLoading: false,
-  },
-  render: (args) => (
+  
+  render: () => (
     <div
       style={{
         width: '800px',
@@ -30,7 +27,7 @@ export const Default: Story = {
         padding: '40px',
       }}
     >
-      <RewardForm {...args} />
+      <RewardForm />
     </div>
   ),
 }
@@ -41,7 +38,7 @@ export const Loading: Story = {
     onRewardSave: fn(),
     isLoading: true,
   },
-  render: (args) => (
+  render: () => (
     <div
       style={{
         width: '800px',
@@ -50,19 +47,15 @@ export const Loading: Story = {
         padding: '40px',
       }}
     >
-      <RewardForm {...args} />
+      <RewardForm />
     </div>
   ),
 }
 
 // --- ③ エラー表示中（UI見た目のみ再現）---
 export const WithErrors: Story = {
-  args: {
-    onRewardSave: fn(),
-    isLoading: false,
-    submitError: '星の数またはご褒美名を正しく入力してください',
-  },
-  render: (args) => (
+ 
+  render: () => (
     <div
       style={{
         width: '800px',
@@ -71,7 +64,7 @@ export const WithErrors: Story = {
         padding: '40px',
       }}
     >
-      <RewardForm {...args} />
+      <RewardForm />
     </div>
   ),
 }

@@ -56,16 +56,7 @@ const periodNameDict: Record<string, string> = {
   週: "週間",
   日: "日",
 }
-/*
-interface TodoFormProps {
-  title: string
- //value: number
-  //setValue: React.Dispatch<React.SetStateAction<number>>
-  onTodoSave?: (data: TodoInput) => void
-  isLoading?: boolean
-  submitError?: string
-}
-*/
+
 const TodoForm = ({ category }: { category: Category2 }) => {
   const [state, formAction, isPending] = useActionState(createTodo, initialFormState());
 

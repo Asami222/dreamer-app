@@ -11,7 +11,7 @@ type Story = StoryObj<typeof HeaderUI>
 
 export const Default: Story = {
   args: {
-    authUser: { profileImageUrl: '/sample2.png' },
+    authUser: { id: '1', name: 'asami', profileImageUrl: '/sample2.png' },
   },
   render: (args) => (
     <div style={{ width: "1000px", margin: "0 auto", border: "1px solid #eee" }}>
@@ -22,7 +22,7 @@ export const Default: Story = {
 
 export const noProfileImage: Story = {
   args: {
-    authUser: { },
+    authUser: { id: '1', name: 'asami' },
   },
   render: (args) => (
     <div style={{ width: "1000px", margin: "0 auto", border: "1px solid #eee" }}>

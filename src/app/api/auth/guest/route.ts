@@ -1,9 +1,8 @@
-
+// api/auth/guest/route.ts
 import { prisma } from "src/libs/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST() {
-
   const name = "guest";
   const password = "guestpass"; // 固定（DBにはハッシュで保存）
   const displayName = "ゲスト";
@@ -11,24 +10,45 @@ export async function POST() {
   const numberOfStars = 5;
 
   try {
-  // ゲストユーザーをDBで確認 or 作成
-  const existing = await prisma.user.findUnique({ where: { name } });
-
-  if (!existing) {
-    const bcrypt = await import("bcryptjs");
-    const hashed = await bcrypt.hash(password, 10);
-
-    await prisma.user.create({
-      data: {
-        name,
-        password: hashed,
-        displayName,
-        dream,
-        numberOfStars,
-      },
+    const existingUser = await prisma.user.findUnique({
+      where: { name },
+      include: { profile: true },
     });
-  }
-  return NextResponse.json({ message: "ゲストユーザーを用意しました" });
+
+    if (!existingUser) {
+      const bcrypt = await import("bcryptjs");
+      const hashed = await bcrypt.hash(password, 10);
+
+      // User作成 & Profile作成
+      await prisma.user.create({
+        data: {
+          name,
+          password: hashed,
+          provider: "credentials",
+          profile: {
+            create: {
+              displayName,
+              dream,
+              numberOfStars,
+            },
+          },
+        },
+      });
+
+    } else if (!existingUser.profile) {
+      // 既にUserが存在してProfileが無い場合 → Profileだけ作成
+      await prisma.profile.create({
+        data: {
+          displayName,
+          dream,
+          numberOfStars,
+          userId: existingUser.id,
+        },
+      });
+    }
+
+    return NextResponse.json({ message: "ゲストユーザーを用意しました" });
+
   } catch (err) {
     console.error("Guest creation error:", err);
     return NextResponse.json(

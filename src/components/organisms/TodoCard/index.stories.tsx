@@ -5,11 +5,11 @@ const meta: Meta<typeof Todo> = {
   title: "Organisms/Todo",
   component: Todo,
   args: {
-    id: 1,
-    imageUrl: "/sample.png",
-    todo: "日記を書く",
+    id: "1",
+    image: "/sample.png",
+    title: "日記を書く",
     limit: [9, 18],
-    rate: 4,
+    star: 4,
     description:
       "毎日少しずつでも構わないので、感じたことを自由に書いてみよう。完璧さよりも継続が大切です。",
   },
@@ -24,8 +24,8 @@ type Story = StoryObj<typeof Todo>;
 export const Default: Story = {
   args: {
     onCopyTextClick: (id) => console.log(`コピー: id=${id}`),
-    onRemoveTextClick: (id, rate, isChecked) =>
-      console.log(`完了: id=${id}, rate=${rate}, isChecked=${isChecked}`),
+    onRemoveTextClick: (id) =>
+      console.log(`完了: id=${id}`),
   },
 };
 
@@ -57,8 +57,8 @@ export const SingleLimit: Story = {
   args: {
     ...Default.args,
     limit: [21],
-    limitPeriod: "日",
-    limitDetail: "寝る前に",
+    detail: "日",
+    description: "寝る前に",
   },
 };
 
@@ -68,6 +68,6 @@ export const SingleLimit: Story = {
 export const NoImage: Story = {
   args: {
     ...Default.args,
-    imageUrl: undefined,
+    image: undefined,
   },
 };

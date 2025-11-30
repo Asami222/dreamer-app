@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
 import TodoForm from "./index";
-import type { TodoFormData } from "src/types/data";
+import { useState } from "react";
+import type { Category2 } from "src/types/data";
 
-// --- Storybook メタ情報 ---
 const meta: Meta<typeof TodoForm> = {
   title: "Forms/TodoForm",
   component: TodoForm,
@@ -16,49 +15,47 @@ export default meta;
 
 type Story = StoryObj<typeof TodoForm>;
 
-// --- 🧩 モック版 Template ---
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Template = (args: any) => {
-  const [value, setValue] = useState(3); // 星の初期値
+// Template
+const Template = (args: { category: Category2 }) => {
   return (
     <div className="w-[420px] p-6 bg-[rgba(255,255,255,0.9)] rounded-2xl shadow-md">
-      <TodoForm
-        {...args}
-        title={args.title}
-        value={value}
-        setValue={setValue}
-        onTodoSave={(data: TodoFormData) => {
-          console.log("🎯 Submitted Data:", data);
-        }}
-      />
+      <TodoForm {...args} />
     </div>
   );
 };
 
-// --- 🧪 各 Story ---
-export const Default: Story = {
+// 各ストーリー
+export const Day: Story = {
   render: (args) => <Template {...args} />,
   args: {
-    title: "日",
-    isLoading: false,
-    submitError: "",
+    category: "day",
   },
 };
 
-export const Loading: Story = {
+export const Week: Story = {
   render: (args) => <Template {...args} />,
   args: {
-    title: "月",
-    isLoading: true,
-    submitError: "",
+    category: "week",
   },
 };
 
-export const WithError: Story = {
+export const Month: Story = {
   render: (args) => <Template {...args} />,
   args: {
-    title: "年",
-    isLoading: false,
-    submitError: "サーバーエラーが発生しました。",
+    category: "month",
+  },
+};
+
+export const Year: Story = {
+  render: (args) => <Template {...args} />,
+  args: {
+    category: "year",
+  },
+};
+
+export const Hour: Story = {
+  render: (args) => <Template {...args} />,
+  args: {
+    category: "time",
   },
 };

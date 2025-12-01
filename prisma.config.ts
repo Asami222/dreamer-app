@@ -6,7 +6,7 @@ export default defineConfig({
     // ここで環境変数を読み込む
     url: env("DATABASE_URL"), 
   },
-  schema: "prisma/schema.prisma",
+  schema: "prisma",
   migrations: {
     path: "prisma/migrations",
   },

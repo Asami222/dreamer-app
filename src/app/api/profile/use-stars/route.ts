@@ -10,13 +10,13 @@ export async function PATCH(req: Request) {
   if (!userId) return new Response("Unauthorized", { status: 401 });
 
   const profile = await prisma.profile.findUnique({ where: { userId } });
-  const userHasStar = profile?.numberOfStars ?? 0;
+  const userHasStar = profile?.stars ?? 0;
   const willBe = userHasStar - starNum;
   const newNumber = Math.max(0, willBe);  // マイナスにならない
 
   const updatedProfile = await prisma.profile.update({
     where: { userId },
-    data: { numberOfStars: newNumber},
+    data: { stars: newNumber},
   });
 
   return NextResponse.json({ updatedProfile });

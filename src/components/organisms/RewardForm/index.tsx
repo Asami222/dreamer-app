@@ -36,8 +36,8 @@ const initialFormState = (
   initialState?: Partial<FormState<RewardInput>>,
 ): FormState<RewardInput> => ({
   updatedAt: Date.now().toString(),
-  reward: "",
-  starPieces: 0,
+  title: "",
+  star: 0,
   image: [],
   error: null,
   status: "idle",
@@ -148,8 +148,8 @@ const RewardForm = () => {
             </div>
             <div className='flex flex-col gap-2'>
                 <Input
-                  {...register('reward')}
-                  name='reward'
+                  {...register('title')}
+                  name='title'
                   height='28px'
                   type='text'
                   placeholder="テディベア"
@@ -159,8 +159,8 @@ const RewardForm = () => {
               <div className='flex items-center gap-2'>
                 <StarIcon size={32} color="var(--starLight)" ariaLabel='星'/>
                 <Input
-                  {...register('starPieces', { valueAsNumber: true })}
-                  name='starPieces'
+                  {...register('star', { valueAsNumber: true })}
+                  name='star'
                   height='32px'
                   type='number'
                   placeholder='100'

@@ -20,7 +20,7 @@ export async function POST(
   try {
     const reward = await prisma.reward.findUnique({
       where: { id: rewardId },
-      select: { reward: true, starPieces: true }
+      select: { title: true, star: true }
     });
 
     if (!reward) {
@@ -30,8 +30,8 @@ export async function POST(
     await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // ⭐ 星数をチェックして減算
       const profile = await tx.profile.findUnique({ where: { userId } });
-      const currentStars = profile?.numberOfStars ?? 0;
-      const cost = reward.starPieces ?? 0;
+      const currentStars = profile?.stars ?? 0;
+      const cost = reward.star ?? 0;
 
       if (currentStars < cost) {
         throw new Error("Not enough stars");
@@ -42,15 +42,15 @@ export async function POST(
           userId 
         },
         data: {
-          numberOfStars: currentStars - cost,
+          stars: currentStars - cost,
         },
       });
 
       // 🎁 gotRewardへ登録
       await tx.gotReward.create({
         data: {
-          reward: reward.reward,
-          starPieces: reward.starPieces,
+          title: reward.title,
+          star: reward.star,
           userId
         },
       });
@@ -67,7 +67,7 @@ export async function POST(
     revalidateTag("profile","auto");
     revalidateTag("gotRewards","auto");
 
-    return NextResponse.json({ message: "Success!",reward: reward.reward });
+    return NextResponse.json({ message: "Success!",reward: reward.title });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

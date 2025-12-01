@@ -13,7 +13,7 @@ export async function GET() {
   const profile = await prisma.profile.upsert({
     where: { userId },
     update: {},
-    create: { userId: userId, numberOfStars: 0,}
+    create: { userId: userId, stars: 0,}
   });
 
   if (!profile) {

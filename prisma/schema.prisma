@@ -22,8 +22,8 @@ model User {
   profileImageUrl String?  @default("/images/noImg.webp")
   createdAt       DateTime @default(now())
   profile         Profile?
-  reward          Reward[]
-  GotReward       GotReward[]
+  rewards         Reward[]
+  GotRewards      GotReward[]
   todos           Todo[]
   accounts        Account[]
   sessions        Session[]
@@ -34,15 +34,15 @@ model Profile {
   dream         String?
   limit         String?
   displayName   String?
-  numberOfStars Int?    @default(0)
+  stars         Int?    @default(0)
   userId        String  @unique
   user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Reward {
   id         String   @id @default(cuid())
-  reward     String
-  starPieces Int?
+  title      String
+  star       Int?
   image      String?  // 画像は1つだけ保存
   createdAt  DateTime @default(now())
   userId     String   
@@ -51,8 +51,8 @@ model Reward {
 
 model GotReward {
   id         String   @id @default(cuid())
-  reward     String
-  starPieces Int?
+  title      String
+  star       Int?
   createdAt  DateTime @default(now())
   userId     String   
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -64,14 +64,14 @@ model Todo {
   userId      String
 
   category    TodoCategory
-  todo        String
+  title       String
 
   limit       Int[]    @default([])
 
   detail      String?
   description String?
   image       String?    // Fileはアップロード後URLで扱う想定
-  starNum     Int?     @default(0)
+  star        Int?     @default(0)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

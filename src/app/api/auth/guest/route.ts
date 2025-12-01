@@ -7,7 +7,7 @@ export async function POST() {
   const password = "guestpass"; // 固定（DBにはハッシュで保存）
   const displayName = "ゲスト";
   const dream = "世界を旅する鳥";
-  const numberOfStars = 5;
+  const stars = 5;
 
   try {
     const existingUser = await prisma.user.findUnique({
@@ -29,7 +29,7 @@ export async function POST() {
             create: {
               displayName,
               dream,
-              numberOfStars,
+              stars,
             },
           },
         },
@@ -41,7 +41,7 @@ export async function POST() {
         data: {
           displayName,
           dream,
-          numberOfStars,
+          stars,
           userId: existingUser.id,
         },
       });

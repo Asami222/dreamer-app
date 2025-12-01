@@ -5,7 +5,7 @@ export const todoSchema = z.object({
     .enum(["year", "month", "week", "day", "time"])
     .refine((val) => !!val, { message: "カテゴリーを選択してください" }),
 
-  todo: z.string().min(1, "todoを入力してください"),
+  title: z.string().min(1, "todoを入力してください"),
 
   limit1: z.coerce.number().int().min(1, "1以上の整数を入力してください").optional(),
   limit2: z.coerce.number().int().min(1, "1以上の整数を入力してください").optional(),
@@ -25,7 +25,7 @@ export const todoSchema = z.object({
     )
     .optional(),
 
-  starNum: z.coerce
+  star: z.coerce
     .number()
     .int("整数を入力してください")
     .min(0, "0以上を入力してください")

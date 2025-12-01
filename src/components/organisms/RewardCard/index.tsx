@@ -38,7 +38,7 @@ export default function RewardCard({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const userHasStar = profile.numberOfStars ? profile.numberOfStars : 0
+  const userHasStar = profile.stars ? profile.stars : 0
 
   //ご褒美GET!
   const handleChangeButtonClick = async (id: string) => {

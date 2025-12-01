@@ -19,7 +19,7 @@ export async function POST(req: NextRequest, { params }: {params: Promise<{ todo
     const body = await req.json();
     const todo = await prisma.todo.findUnique({
       where: { id: todoId },
-      select: { todo: true, starNum: true }
+      select: { title: true, star: true }
     });
 
     if (!todo) {
@@ -30,13 +30,13 @@ export async function POST(req: NextRequest, { params }: {params: Promise<{ todo
 
       // ⭐ 星数をチェックして加算
       const profile = await tx.profile.findUnique({ where: { userId } });
-      const currentStars = profile?.numberOfStars ?? 0;
-      const cost = body.check === true ? (todo.starNum ?? 0) : 0;
+      const currentStars = profile?.stars ?? 0;
+      const cost = body.check === true ? (todo.star ?? 0) : 0;
 
       await tx.profile.update({
         where: { userId },
         data: {
-          numberOfStars: currentStars + cost,
+          stars: currentStars + cost,
         },
       });
 
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest, { params }: {params: Promise<{ todo
     revalidateTag("todos","auto");
     revalidateTag("profile","auto");
 
-    return NextResponse.json({ message: "Success!",todo: todo.todo });
+    return NextResponse.json({ message: "Success!",todo: todo.title });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

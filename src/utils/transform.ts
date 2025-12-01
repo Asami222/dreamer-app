@@ -7,9 +7,9 @@ import { TodoUIModel, RewardUIModel, GotRewardUIModel } from "src/types/data";
 export function toTodoUI(todo: Todo): TodoUIModel {
   return {
     id: todo.id,
-    title: todo.todo,
+    title: todo.title,
     category: todo.category,
-    star: todo.starNum ?? 0, // ⭐ nullを0に統一
+    star: todo.star ?? 0, // ⭐ nullを0に統一
     limit: todo.limit.length > 0 ? todo.limit : undefined,
     detail: todo.detail ?? undefined,
     description: todo.description ?? undefined,
@@ -26,8 +26,8 @@ export function toTodosUI(todos: Todo[]): TodoUIModel[] {
 export function toRewardUI(reward: Reward): RewardUIModel {
   return {
     id: reward.id,
-    title: reward.reward,
-    star: reward.starPieces ?? 0, // ⭐ nullを0に統一
+    title: reward.title,
+    star: reward.star ?? 0, // ⭐ nullを0に統一
     image: reward.image ?? undefined,
     createdAt: reward.createdAt.toISOString(), // DateのままだとJSON化で崩れやすい
   };
@@ -41,8 +41,8 @@ export function toRewardsUI(rewards: Reward[]): RewardUIModel[] {
 export function toGotRewardUI(gotReward: GotReward): GotRewardUIModel {
   return {
     id: gotReward.id,
-    title: gotReward.reward,
-    star: gotReward.starPieces ?? 0, // ⭐ nullを0に統一
+    title: gotReward.title,
+    star: gotReward.star ?? 0, // ⭐ nullを0に統一
     createdAt: gotReward.createdAt.toISOString(), // DateのままだとJSON化で崩れやすい
   };
 }

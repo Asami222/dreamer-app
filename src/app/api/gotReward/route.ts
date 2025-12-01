@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const gotReward = await prisma.gotReward.create({
       data: {
-        reward: body.reward,
-        starPieces: body.starPieces,
+        title: body.title,
+        star: body.starPieces,
         userId
       },
     });

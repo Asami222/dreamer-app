@@ -21,7 +21,7 @@ export async function createReward(
 
   try {
     const payload = validateFormData(formData, rewardSchema);
-    const { reward, starPieces, image } = payload;
+    const { title, star, image } = payload;
     const imageUrl = image?.[0]?.src ?? "/images/bear01.webp";
 
      await prisma.reward.create({
@@ -29,8 +29,8 @@ export async function createReward(
           connect: { id: userId } // ← Userの紐付けが必要！
         },
         image: imageUrl, 
-        reward, 
-        starPieces },
+        title, 
+        star },
       });
 
     revalidateTag("rewards", "max");

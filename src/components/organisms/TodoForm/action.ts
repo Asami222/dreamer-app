@@ -22,7 +22,7 @@ export async function createTodo(
   
   try {
     const payload = validateFormData(formData, todoSchema);
-    const { todo, image, limit1, limit2, detail, description, starNum, category } = payload;
+    const { title, image, limit1, limit2, detail, description, star, category } = payload;
     const limit1Arr = limit1  ? [limit1] : [];
     const limit2Arr = limit2 ? [limit2] : [];
     const imageUrl = image?.[0]?.src ?? "";
@@ -39,12 +39,12 @@ export async function createTodo(
           connect: { id: userId } // ← Userの紐付けが必要！
         },
         image: imageUrl,
-        todo,
+        title,
         category,
         limit,
         detail,
         description,
-        starNum,
+        star,
       }
     });
 /*

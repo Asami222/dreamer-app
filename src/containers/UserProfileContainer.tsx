@@ -17,7 +17,7 @@ const UserProfileContainer = ({
     <UserProfile
       username={profile?.displayName ? profile?.displayName : userName}
       profileImageUrl={userImage}
-      numberOfStars={profile?.numberOfStars ? profile.numberOfStars : 0}
+      numberOfStars={profile?.stars ? profile.stars : 0}
       dream={profile?.dream ? profile.dream : ''}
       limit={profile?.limit ? profile.limit : ''}
     />

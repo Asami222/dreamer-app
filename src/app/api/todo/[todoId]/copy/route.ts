@@ -22,12 +22,12 @@ export async function POST(
     data: {
       userId,
       category: originalTodo.category,
-      todo: originalTodo.todo,
+      title: originalTodo.title,
       limit: originalTodo.limit,
       detail: originalTodo.detail,
       description: originalTodo.description,
       image: originalTodo.image,
-      starNum: originalTodo.starNum, // ★は通常リセットするケース多い
+      star: originalTodo.star, // ★は通常リセットするケース多い
     },
   });
   revalidateTag("todos","auto");

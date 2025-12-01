@@ -92,14 +92,14 @@ export const authOptions: NextAuthOptions = {
           where: { userId: user.id },
           select: { 
             displayName: true,
-            numberOfStars: true,
+            stars: true,
             dream: true,
             limit: true,
           },
         });
         token.profile = {
           displayName: profile?.displayName ?? null,
-          numberOfStars: profile?.numberOfStars ?? null,
+          numberOfStars: profile?.stars ?? null,
           dream: profile?.dream ?? null,
           limit: profile?.limit ?? null,
         };

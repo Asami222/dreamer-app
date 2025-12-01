@@ -43,7 +43,7 @@ export default async function Page() {
     prisma.profile.upsert({
       where: { userId },
       update: {},
-      create: { userId, numberOfStars: 0 },
+      create: { userId, stars: 0 },
     }),
   ]);
 

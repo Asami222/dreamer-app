@@ -30,9 +30,9 @@ const UserRewardListContainer = ({
             <RewardCard
               rewardId={p.id}
               rewardImageUrl={p.image ? p.image : '/images/bear01.webp'}
-              reward={p.reward}
+              reward={p.title}
               profile={user}
-              starNum={p.starPieces ? p.starPieces : 0}
+              starNum={p.star ? p.star : 0}
             />
           </Fragment>
       ))}

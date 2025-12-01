@@ -23,13 +23,13 @@ const initialFormState = (
 ): FormState<TodoInput> => ({
   updatedAt: Date.now().toString(),
   image: [],
-  todo: "",
+  title: "",
   limit1: 0,
   limit2: 0,
   category: "day",
   detail: "",
   description: "",
-  starNum: 0,
+  star: 0,
   error: null,
   ...initialState,
 });
@@ -113,7 +113,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
   return (
     <form onSubmit={handleSubmit} action={formAction}>
       <input type="hidden" name="category" value={category} />
-      <input type="hidden" name="starNum" value={selectedStars} />
+      <input type="hidden" name="star" value={selectedStars} />
       <div className="flex flex-col items-center gap-8">
         <p className="text-[16px] text-(--text) font-medium">{title}単位</p>
         <div className="flex flex-col gap-6 w-full">
@@ -121,7 +121,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
           <div className="flex flex-col gap-2">
             <label className="text-[16px] text-(--text) font-normal tracking-wider">todo</label>
             <Input
-              {...register("todo")}
+              {...register("title")}
               type="text"
               height="48px"
               placeholder="todoを入力してください"
@@ -219,7 +219,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
             <label className="text-[16px] text-(--text) font-normal">星の数</label>
             <div className="mx-auto">
               <StarRating1 value={selectedStars} setValue={setSelectedStars} />
-              <input type="hidden" name="starNum" value={selectedStars} />
+              <input type="hidden" name="star" value={selectedStars} />
               <p className="text-[13px] text-center font-normal text-(--text)">
                 *項目ごとに星マークをつけることができます。<br />
                 todoを完了すると貰えます。<br />

@@ -1,6 +1,6 @@
 // server/utils/transform.ts
 
-import type { Todo, Reward, GotReward } from "@prisma/client";
+import type { Todo, Reward, GotReward } from "../generated/prisma/client";
 import { TodoUIModel, RewardUIModel, GotRewardUIModel } from "src/types/data";
 
 // Todo

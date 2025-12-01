@@ -1,10 +1,7 @@
 // server/utils/transform.ts
-import type { Prisma } from "@prisma/client";
-import { TodoUIModel, RewardUIModel, GotRewardUIModel } from "src/types/data";
 
-type Todo = Prisma.TodoGetPayload<object>
-type Reward = Prisma.RewardGetPayload<object>
-type GotReward = Prisma.GotRewardGetPayload<object>
+import type { Todo, Reward, GotReward } from "@prisma/client";
+import { TodoUIModel, RewardUIModel, GotRewardUIModel } from "src/types/data";
 
 // Todo
 export function toTodoUI(todo: Todo): TodoUIModel {

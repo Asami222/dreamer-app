@@ -1,7 +1,7 @@
-import { handleFailed, handleSucceed } from "../";
+import { handleFailed, handleSucceed,path } from "../";
 
 export function deleteTodo(todoId: string, check?: boolean) {
-  return fetch(`/api/todo/${todoId}/delete`, {
+  return fetch(path(`/api/todo/${todoId}/delete`), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ check }),

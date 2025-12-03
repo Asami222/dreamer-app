@@ -1,6 +1,6 @@
-//export const host = process.env.API_HOST;
+export const host = process.env.API_HOST;
 
-//export const path = (path?: string) => `${host}${path}`;
+export const path = (path?: string) => `${host}${path}`;
 
 export class FetchError extends Error {
   status: number;

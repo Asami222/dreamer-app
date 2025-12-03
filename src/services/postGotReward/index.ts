@@ -1,11 +1,11 @@
-import { handleFailed, handleSucceed } from "../";
+import { handleFailed, handleSucceed, path } from "../";
 import { GotRewardUIModel } from "src/types/data";
 
 export function postGotReward(payload: {
   reward: string;
   starPieces: number | null;
 }): Promise<{ gotReward: GotRewardUIModel }> {
-  return fetch(`/api/gotReward`, {
+  return fetch(path(`/api/gotReward`), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

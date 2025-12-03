@@ -1,4 +1,4 @@
-import { handleFailed, handleSucceed } from "..";
+import { handleFailed, handleSucceed,path } from "..";
 import type { Profile } from "src/types/data";
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 export async function getProfile({
   revalidate,
 }: Props): Promise<{ profile: Profile }> {
-  return fetch(`/api/profile`, {
+  return fetch(path(`/api/profile`), {
     next: {
       tags: [`profile`],
       ...(revalidate !== undefined && { revalidate }),

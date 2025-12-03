@@ -1,7 +1,7 @@
-import { handleFailed, handleSucceed} from "../";
+import { handleFailed, handleSucceed,path} from "../";
 
 export function deleteReward(rewardId: string) {
-  return fetch(`/api/reward/${rewardId}`, {
+  return fetch(path(`/api/reward/${rewardId}`), {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     next: { revalidate: 0 },

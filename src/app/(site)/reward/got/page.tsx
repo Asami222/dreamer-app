@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation";
 import { getServerSession } from "src/libs/auth";
-//import { ownReward } from "src/services/gotReward";
-import { prisma } from "src/libs/prisma";
-import { toGotRewardsUI } from "src/utils/transform";
+import { ownReward } from "src/services/gotReward";
+//import { prisma } from "src/libs/prisma";
+//import { toGotRewardsUI } from "src/utils/transform";
 import UserGotRewardListContainer from 'src/containers/UserGotRewardListContainer'
 //import type { Metadata } from "next";
 
 
 const GotReward = async() => {
+  /*
   const session = await getServerSession();
   const userId = session?.user?.id;
 
@@ -19,15 +20,16 @@ const GotReward = async() => {
   });
 
   const gotRewards = toGotRewardsUI(gotReward)
-/*
-  const [session, { gotReward }] = await Promise.all([
+  */
+
+  const [session, { gotRewards }] = await Promise.all([
     getServerSession(),
     ownReward({revalidate: 10}),
   ]);
-  if (!gotReward || !session?.user) {
+  if (!gotRewards || !session?.user) {
     notFound();
   }
-*/
+
   return (
     <>
       <div className="text-center mt-10">

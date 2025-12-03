@@ -1,34 +1,30 @@
-
 declare module "next-auth" {
-  /** PrismaのUserモデルに基づくが、passwordなどは除外 */
   interface User {
     id: string;
     name: string;
     email?: string | null;
-    provider?: string | null; // "credentials" | "google" など
+    provider?: string | null;
     profileImageUrl?: string | null;
-    createdAt?: Date | string;
-    password?: string | null; // optional にしておく
+    createdAt?: string | null;
+    password?: string | null;
   }
 
-  /** セッションに含まれるユーザー情報（パスワードなどは含めない） */
   interface Session {
     user: {
       id: string;
       name: string;
       profileImageUrl?: string | null;
       profile?: {
-        displayName?: string;
-        numberOfStars?: number;
-        dream?: string;
-        limit?: string;
+        displayName?: string | null;
+        stars?: number | null;
+        dream?: string | null;
+        limit?: string | null;
       };
-    }
+    };
   }
 }
 
 declare module "next-auth/jwt" {
-  /** JWT に格納されるユーザー情報 */
   interface JWT {
     id: string;
     name: string;
@@ -36,12 +32,11 @@ declare module "next-auth/jwt" {
     provider?: string | null;
     profile?: {
       displayName?: string | null;
-      numberOfStars?: number | null;
+      stars?: number | null;
       dream?: string | null;
       limit?: string | null;
     };
   }
 }
 
-// 👇 これはモジュールとして扱われないようにするために必要
 export {};

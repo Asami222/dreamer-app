@@ -99,7 +99,7 @@ export const authOptions: NextAuthOptions = {
         });
         token.profile = {
           displayName: profile?.displayName ?? null,
-          numberOfStars: profile?.stars ?? null,
+          stars: profile?.stars ?? null,
           dream: profile?.dream ?? null,
           limit: profile?.limit ?? null,
         };
@@ -119,7 +119,7 @@ export const authOptions: NextAuthOptions = {
       // profile をネストして反映
       session.user.profile = {
         displayName: token.profile?.displayName ?? undefined,
-        numberOfStars: token.profile?.numberOfStars ?? undefined,
+        stars: token.profile?.stars ?? undefined,
         dream: token.profile?.dream ?? undefined,
         limit: token.profile?.limit ?? undefined,
       };

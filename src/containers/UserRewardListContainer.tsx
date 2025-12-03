@@ -1,12 +1,12 @@
 import { Fragment } from "react";
 import RewardCard from 'src/components/organisms/RewardCard';
 import clsx from "clsx"
-import { Profile, Reward } from 'src/types/data';
+import { Profile, RewardUIModel } from 'src/types/data';
 
 
 interface UserRewardListContainerProps {
   user: Profile
-  rewards: Reward[]
+  rewards: RewardUIModel[]
 }
 
 const UserRewardListContainer = ({

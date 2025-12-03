@@ -14,11 +14,11 @@ datasource db {
 }
 
 model User {
-  id              String   @id @default(cuid())
+  id              String   @id @default(uuid()) @db.Uuid
   name            String   @unique
   email           String?  @unique
   password        String?
-  provider        String?  // "credentials" | "google" など
+  provider        String?
   profileImageUrl String?  @default("/images/noImg.webp")
   createdAt       DateTime @default(now())
   profile         Profile?
@@ -30,47 +30,46 @@ model User {
 }
 
 model Profile {
-  id            String  @id @default(cuid())
+  id            String  @id @default(uuid()) @db.Uuid
   dream         String?
   limit         String?
   displayName   String?
   stars         Int?    @default(0)
-  userId        String  @unique
+  userId        String  @unique @db.Uuid
   user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Reward {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid()) @db.Uuid
   title      String
   star       Int?
-  image      String?  // 画像は1つだけ保存
+  image      String?
   createdAt  DateTime @default(now())
-  userId     String   
+  userId     String   @db.Uuid
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model GotReward {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid()) @db.Uuid
   title      String
   star       Int?
   createdAt  DateTime @default(now())
-  userId     String   
+  userId     String   @db.Uuid
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Todo {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
 
   category    TodoCategory
   title       String
-
   limit       Int[]    @default([])
 
   detail      String?
   description String?
-  image       String?    // Fileはアップロード後URLで扱う想定
+  image       String?
   star        Int?     @default(0)
 
   createdAt   DateTime @default(now())
@@ -86,8 +85,8 @@ enum TodoCategory {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
+  id                String  @id @default(uuid()) @db.Uuid
+  userId            String  @db.Uuid
   type              String
   provider          String
   providerAccountId String
@@ -105,9 +104,9 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid()) @db.Uuid
   sessionToken String   @unique
-  userId       String
+  userId       String   @db.Uuid
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

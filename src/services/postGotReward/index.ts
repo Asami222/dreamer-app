@@ -1,10 +1,10 @@
 import { handleFailed, handleSucceed } from "../";
-import type { GotReward } from "src/types/data"
+import { GotRewardUIModel } from "src/types/data";
 
 export function postGotReward(payload: {
   reward: string;
   starPieces: number | null;
-}): Promise<{ gotReward: GotReward }> {
+}): Promise<{ gotReward: GotRewardUIModel }> {
   return fetch(`/api/gotReward`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

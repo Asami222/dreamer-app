@@ -1,5 +1,6 @@
 import { handleFailed, handleSucceed } from "..";
-import type { Todo } from "src/types/data";
+//import type { Todo } from "src/types/data";
+import { TodoUIModel } from "src/types/data";
 
 type Props = {
   revalidate?: number;
@@ -7,7 +8,7 @@ type Props = {
 
 export async function getTodo({
   revalidate,
-}: Props): Promise<{ todos: Todo[] }> {
+}: Props): Promise<{ todos: TodoUIModel[] }> {
   return fetch(`/api/todo`, {
     next: {
       tags: [`todos`],

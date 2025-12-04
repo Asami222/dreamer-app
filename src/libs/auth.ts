@@ -18,15 +18,14 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
       profile(profile) {
         // email の前半 + ランダム文字列を使って username を生成
-        const baseUsername = profile.email?.split("@")[0] ?? "user";
-        const randomSuffix = Math.random().toString(36).slice(-4);
-        const name = `${baseUsername}_${randomSuffix}`;
+        //const baseUsername = profile.email?.split("@")[0] ?? "user";
+        //const randomSuffix = Math.random().toString(36).slice(-4);
+        //const name = `${baseUsername}_${randomSuffix}`;
 
         return {
           id: profile.sub,
-          name,
+          name: profile.name,
           provider: "google",
-          displayName: profile.name,
           profileImageUrl: profile.picture ?? "/images/noImg.webp",
         } as unknown as User;
       },

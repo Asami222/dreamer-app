@@ -1,13 +1,14 @@
-//import { prisma } from "src/libs/prisma";
+import { prisma } from "src/libs/prisma";
 import { notFound } from "next/navigation";
 import { getServerSession } from "src/libs/auth";
 import { SITE_NAME } from "src/constants";
 import type { Metadata } from "next";
 import UserRewardListContainer from 'src/containers/UserRewardListContainer'
 import UserProfileContainer from 'src/containers/UserProfileContainer'
-import { getReward } from "src/services/getReward";
-import { getProfile } from "src/services/getProfile";
+//import { getReward } from "src/services/getReward";
+//import { getProfile } from "src/services/getProfile";
 import Separator from "src/components/atoms/Separator";
+import { toRewardsUI } from "src/utils/transform";
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  
+/*
   const [session, { rewards }, {profile}] = await Promise.all([
     getServerSession(),
     getReward({revalidate: 10}),
@@ -28,8 +29,8 @@ export default async function Page() {
   if (!getReward || !getProfile || !session?.user) {
     notFound();
   }
+*/
 
-/*
   const session = await getServerSession();
   const userId = session?.user?.id;
 
@@ -47,7 +48,9 @@ export default async function Page() {
       create: { userId, stars: 0 },
     }),
   ]);
-*/
+
+  const rewards = toRewardsUI(reward)
+
   return (
       <div className="flex flex-col gap-[40px] mt-[24px] mb-[64px] mx-auto">
         <div>

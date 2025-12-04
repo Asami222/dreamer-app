@@ -1,4 +1,4 @@
-//import { prisma } from "src/libs/prisma";
+import { prisma } from "src/libs/prisma";
 import { TabGroup, TabPanel, TabPanels } from '@headlessui/react'
 //import type { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType, NextPage } from 'next'
 //import getAllTodos from 'services/todos/get-all-todos'
@@ -9,11 +9,11 @@ import UserTodoListContainer from 'src/containers/UserTodoListContainer'
 import { Fragment } from 'react';
 import Separator from 'src/components/atoms/Separator'
 //import { useMyTodosContext } from "contexts/TodoContext"
-import { getTodo } from 'src/services/getTodo'
+//import { getTodo } from 'src/services/getTodo'
 import { notFound } from "next/navigation";
 import { getServerSession } from "src/libs/auth";
 //import { TodoCategory } from '@prisma/client';
-//import { toTodosUI } from "src/utils/transform";
+import { toTodosUI } from "src/utils/transform";
 import { TodoUIModel } from "src/types/data";
 import { CategoryTabs } from "./TodoClient";
 //import { useRouter } from 'next/router'
@@ -52,7 +52,7 @@ const categories: Categories[] = [
 ]
 
 const Todo = async() => {
-/*
+
   const session = await getServerSession();
   const userId = session?.user?.id;
 
@@ -65,7 +65,8 @@ const Todo = async() => {
 
   const todos = toTodosUI(todo)
 
-*/
+
+/*
   const [session, { todos }] = await Promise.all([
     getServerSession(),
     getTodo({revalidate: 10}),
@@ -73,7 +74,7 @@ const Todo = async() => {
   if (!getTodo || !session?.user) {
     notFound();
   }
-
+*/
   /*
   const { myTodos,setTodo } = useMyTodosContext()
   useEffect(() => {

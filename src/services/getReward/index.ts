@@ -1,4 +1,4 @@
-import { handleFailed, handleSucceed,path } from "..";
+import { handleFailed, handleSucceed} from "..";
 //import type { Reward } from "src/types/data";
 import { RewardUIModel } from "src/types/data";
 
@@ -9,7 +9,7 @@ type Props = {
 export async function getReward({
   revalidate,
 }: Props): Promise<{ rewards: RewardUIModel[] }> {
-  return fetch(path(`/api/reward`), {
+  return fetch(`/api/reward`, {
     next: {
       tags: [`rewards`],
       ...(revalidate !== undefined && { revalidate }),

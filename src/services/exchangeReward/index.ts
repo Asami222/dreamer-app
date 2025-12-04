@@ -1,7 +1,7 @@
-import { handleFailed, handleSucceed,path } from "..";
+import { handleFailed, handleSucceed } from "..";
 
 export function exchangeReward(rewardId: string) {
-  return fetch(path(`/api/reward/exchange/${rewardId}`), {
+  return fetch(`/api/reward/exchange/${rewardId}`, {
     method: "POST",
     next: { revalidate: 0 },
   })

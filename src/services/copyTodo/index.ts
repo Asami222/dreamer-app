@@ -1,8 +1,8 @@
-import { handleFailed, handleSucceed,path } from "../";
+import { handleFailed, handleSucceed } from "../";
 import { TodoUIModel } from "src/types/data";
 
 export function copyTodo(todoId: string): Promise<{ todo: TodoUIModel }> {
-  return fetch(path(`/api/todo/${todoId}/copy`), {
+  return fetch(`/api/todo/${todoId}/copy`, {
     method: "POST",
     next: { revalidate: 0 },
   })

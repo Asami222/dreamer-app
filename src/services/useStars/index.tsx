@@ -1,8 +1,8 @@
 // services/updateStars.ts
-import { handleFailed, handleSucceed,path } from "../";
+import { handleFailed, handleSucceed } from "../";
 
 export function buyReward(starNum: number) {
-  return fetch(path(`/api/profile/use-stars`), {
+  return fetch(`/api/profile/use-stars`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ starNum }),

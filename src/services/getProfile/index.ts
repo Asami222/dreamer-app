@@ -8,7 +8,7 @@ type Props = {
 export async function getProfile({
   revalidate,
 }: Props): Promise<{ profile: Profile }> {
-  return fetch(path(`/api/profile`), {
+  return fetch(`/api/profile`, {
     next: {
       tags: [`profile`],
       ...(revalidate !== undefined && { revalidate }),

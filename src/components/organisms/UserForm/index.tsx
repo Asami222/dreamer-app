@@ -13,7 +13,7 @@ import ButtonGrad from 'src/components/atoms/ButtonGrad'
 import InputImages from 'src/components/molecules/InputImages'
 import type { FieldErrors } from "src/utils/state";
 import { userFormSchema } from "./schema";
-import { transformFieldErrors, validateFormData } from "src/utils/validate";
+import { transformFieldErrors } from "src/utils/validate";
 import { ZodError } from "zod";
 import { useState, type FormEvent } from "react";
 import type { FormState } from "src/utils/state";
@@ -31,6 +31,16 @@ const initialFormState = (
   ...initialState,
 });
 
+// ⭐ File → Base64 に変換
+async function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 const UserForm = () => {
   const [state, formAction, isPending] = useActionState(updateUser, initialFormState());
 
@@ -41,20 +51,45 @@ const UserForm = () => {
   const errors = clientErrors || state.error?.fieldErrors;
 
   // 送信前に Client バリデーションを実施
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+     // ★: Form のサブミット（action 実行）を中止
+     event.preventDefault();
+     // watch から値取得
+     const values = watch();
+
+     const image = values.image;
+     let base64Image: string | null = null;
+
+     // ⭐ image が File の場合 → Base64 化
+    if (image && image[0]?.file instanceof File) {
+      base64Image = await fileToBase64(image[0].file);
+    } else if (image && image[0]?.src) {
+      base64Image = image[0].src; // 既存の画像の場合
+    }
+
+    const payload = {
+      displayName: values.displayName,
+      dream: values.dream,
+      limit: values.limit,
+      base64Image,
+    };
+
+
     try {
-      const formData = new FormData(event.currentTarget);
-      // バリデーションエラーが発生した場合 catch 句へ
-      validateFormData(formData, userFormSchema);
+      userFormSchema.parse({
+        ...values,
+        image: image,
+      });
       // Client バリデーションエラーをクリア
       setClientErrors(undefined);
     } catch (err) {
-      // ★: Form のサブミット（action 実行）を中止
-      event.preventDefault();
       if (!(err instanceof ZodError)) throw err;
       // Zod のバリデーションエラーをマッピング
       setClientErrors(transformFieldErrors(err));
     }
+    // ⭐ Action に JSON で送る
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    formAction(payload as any);
   }
 
   const {
@@ -64,7 +99,6 @@ const UserForm = () => {
     reset
   } = useForm<UserFormInput>({
     defaultValues: state,
-    mode: 'onBlur',
   })
 
   useEffect(() => {
@@ -88,7 +122,7 @@ const UserForm = () => {
     if (onSave) onSave(data)
   }
 */
-  // 入力監視（全項目の状態）
+  /* 入力監視（全項目の状態）
   // eslint-disable-next-line react-hooks/incompatible-library
   const { image, displayName, dream, limit } = watch()
 
@@ -98,12 +132,12 @@ const UserForm = () => {
     (!displayName || displayName.trim() === '') &&
     (!dream || dream.trim() === '') &&
     (!limit || limit.trim() === '')
-
+*/
   // ボタンdisabled制御
-  const isDisabled = !!state.error || isAllEmpty || isPending
+  const isDisabled = !!state.error || isPending
 
   return (
-    <form onSubmit={handleSubmit} action={formAction}>
+    <form onSubmit={handleSubmit}>
       <div className="flex flex-col gap-6">
 
         {/* プロフィール画像 */}

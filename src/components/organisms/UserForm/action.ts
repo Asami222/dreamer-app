@@ -9,10 +9,16 @@ import { validateFormData, transformFieldErrors } from "src/utils/validate";
 import { handleError, errors, type FormState, handleSuccess } from "src/utils/state";
 import { userFormSchema } from "./schema";
 import type { UserFormInput } from "./schema";
+import { uploadAvatarBase64 } from "src/libs/supabase/uploadAvatarBase64"
 
 export async function updateUser(
   prevState: FormState<UserFormInput>,
-  formData: FormData,
+  formJson: {
+    displayName: string;
+    dream: string;
+    limit: string;
+    base64Image: string | null;
+  },
 ): Promise<FormState<UserFormInput>> {
   const session = await getServerSession();
   if (!session) return handleError(prevState, errors[401]);
@@ -20,9 +26,13 @@ export async function updateUser(
   const userId = session.user.id;
 
   try {
-    const payload = validateFormData(formData, userFormSchema);
-    const { image, displayName, dream, limit } = payload;
-    const imageUrl = image?.[0]?.src ?? "/images/noImg.webp";
+    
+    
+    let imageUrl = "/images/noImg.webp";
+
+    if (formJson.base64Image) {
+      imageUrl = await uploadAvatarBase64(formJson.base64Image, userId);
+    }
 
     await prisma.$transaction([
       prisma.user.update({
@@ -31,7 +41,11 @@ export async function updateUser(
       }),
       prisma.profile.update({
         where: { userId },
-        data: { displayName, dream, limit },
+        data: {
+          displayName: formJson.displayName,
+          dream: formJson.dream,
+          limit: formJson.limit,
+        },
       }),
     ]);
 

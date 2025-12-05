@@ -59,24 +59,21 @@ const InputImages = (props: InputImagesProps) => {
       }
     }
 
-  const onDrop = 
-    (files: File[]) => {
-      const newImages = []
-
+    const onDrop = (files: File[]) => {
+      const newImages: FileData[] = [];
+    
       for (const file of files) {
-        const img = images.find((img: FileData) => img.file === file)
-
-        if (
-          !img &&
-          (!maximumNumber || images.length + newImages.length < maximumNumber)
-        ) {
-          newImages.push({ file, src: URL.createObjectURL(file) })
+        const exists = images.find((img: FileData) => img.file === file);
+    
+        if (!exists && (!maximumNumber || images.length + newImages.length < maximumNumber)) {
+          newImages.push({ file, src: URL.createObjectURL(file) });
         }
       }
-
+    
+      // ⭐ ここが超重要：必ず existing + new を返す
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      onChange && onChange(newImages)
-    }
+      onChange && onChange([...images, ...newImages]);
+    };
 
   return (
     <div className='flex flex-col [&>*:not(:first-child)]:mt-2'>

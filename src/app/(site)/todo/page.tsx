@@ -129,39 +129,5 @@ const Todo = async() => {
       </div>
   )
 }
-/*
-export const getStaticPaths: GetStaticPaths = async() => {
-  const context: ApiContext = {
-    apiRootUrl: process.env.API_BASE_URL || 'http://localhost:5000',
-  }
-  const users = await getAllUsers(context)
-  const paths = users.map((u) => `/users/${u.id}/todo`)
-  return { paths, fallback: false }
-}
 
-export const getStaticProps = async({params}: GetStaticPropsContext) => {
-  const context: ApiContext = {
-    apiRootUrl: process.env.API_BASE_URL || 'http://localhost:5000',
-  }
-
-  if(!params) {
-    throw new Error('params is undefined')
-  }
-
-  const userId = Number(params.id)
-  const [ user, todos] = await Promise.all([
-    getUser(context,{ id: userId}),
-    getAllTodos(context, { userId }),
-  ])
-
-  return {
-    props: {
-      id: userId,
-      user,
-      todos,
-    },
-    revalidate: 10,
-  }
-}
-*/
 export default Todo

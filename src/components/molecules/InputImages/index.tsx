@@ -1,7 +1,7 @@
+// InputImages.tsx
 import Dropzone from "src/components/molecules/Dropzone";
 import ImagePreview from "src/components/molecules/ImagePreview";
-import type { UseFormRegister } from "react-hook-form";
-import type { UserFormInput } from "src/components/organisms/UserForm/schema";
+import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
 
 export type FileData = {
   id?: string;
@@ -9,8 +9,8 @@ export type FileData = {
   file?: File;
 };
 
-interface InputImagesProps {
-  name: keyof UserFormInput; // ★ name をスキーマと揃える
+interface InputImagesProps<T extends FieldValues> {
+  name: Path<T>;                        // ← フォームごとの name を安全に扱える
   images: FileData[];
   maximumNumber?: number;
   hasError?: boolean;
@@ -18,10 +18,10 @@ interface InputImagesProps {
   height?: string;
   radius?: boolean;
   onChange: (images: FileData[]) => void;
-  register: UseFormRegister<UserFormInput>;
+  register: UseFormRegister<T>;         // ← フォームごとの register
 }
 
-const InputImages = ({
+export default function InputImages<T extends FieldValues>({
   name,
   images,
   maximumNumber,
@@ -31,7 +31,7 @@ const InputImages = ({
   radius = false,
   onChange,
   register,
-}: InputImagesProps) => {
+}: InputImagesProps<T>) {
   const files = images.filter((img) => img.file).map((img) => img.file!);
 
   const handleDrop = (newFiles: File[]) => {
@@ -67,6 +67,4 @@ const InputImages = ({
       )}
     </div>
   );
-};
-
-export default InputImages;
+}

@@ -88,10 +88,9 @@ const RewardForm = () => {
       register,
       control,
       reset
-    } = useForm({
-      resolver: zodResolver(rewardSchema),
-      mode: "onChange", //入力時にバリデーション
+    } = useForm<RewardInput>({
       defaultValues: state,
+      mode: 'onChange',
     })
 
     useEffect(() => {
@@ -138,11 +137,11 @@ const RewardForm = () => {
               name='image'
               rules={{ required: false }}
               render={({ field }) => (
-              <InputImages
+              <InputImages<RewardInput>
                 images={field.value ?? []}
                 onChange={field.onChange}
                 maximumNumber={1}
-                name={field.name}
+                name="image"
                 register={register}
               />
             )}

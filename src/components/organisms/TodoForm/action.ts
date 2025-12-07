@@ -5,10 +5,11 @@ import { prisma } from "src/libs/prisma";
 import { ZodError } from "zod";
 //import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
-import { validateFormData, transformFieldErrors } from "src/utils/validate";
+import {  transformFieldErrors } from "src/utils/validate";
 import { handleError, errors, type FormState, handleSuccess } from "src/utils/state";
 import { todoSchema } from "./schema";
 import type { TodoInput } from "./schema";
+import { uploadTodoImage } from "src/libs/supabase/uploadTodoImage";
 
 export async function createTodo(
   prevState: FormState<TodoInput>,
@@ -20,18 +21,53 @@ export async function createTodo(
   const userId = session.user.id;
   
   try {
-    const payload = validateFormData(formData, todoSchema);
+    //const payload = validateFormData(formData, todoSchema);
+    const files = formData.getAll("image") as File[];
+
+    const imagePayload =
+      files.length > 0
+        ? files.map((file) => ({
+            src: "https://placeholder/image-upload", // Zod url() を通すダミー
+            file,
+          }))
+        : undefined;
+
+    const payload = todoSchema.parse({
+      image: imagePayload,
+
+      title: formData.get("title")?.toString(),
+      detail: formData.get("detail")?.toString(),
+      description: formData.get("description")?.toString(),
+
+      category: formData.get("category")?.toString(),
+
+      limit1: formData.get("limit1")?.toString(),
+      limit2: formData.get("limit2")?.toString(),
+
+      star: formData.get("star")?.toString(),
+    });
     const { title, image, limit1, limit2, detail, description, star, category } = payload;
-    const limit1Arr = limit1  ? [limit1] : [];
-    const limit2Arr = limit2 ? [limit2] : [];
-    const imageUrl = image?.[0]?.src ?? "";
-    console.log("limit1",limit1)
-    console.log("limit2",limit2)
-    let limit: number[] = [];
-    if (limit1Arr.length || limit2Arr.length) {
-      limit = [...limit1Arr, ...limit2Arr];
-    }
     
+    // limit1 / limit2 → 配列にまとめる
+    const limit: number[] = [];
+    if (limit1 !== undefined) limit.push(limit1);
+    if (limit2 !== undefined) limit.push(limit2);
+
+    // ------------------------------------
+    // ⭐ Supabase Storage にアップロード
+    // ------------------------------------
+    let imageUrl = "";
+
+    if (image && image[0]?.file) {
+      imageUrl = await uploadTodoImage(image[0].file, userId);
+    } else if (image && image[0]?.src) {
+      // 既存画像 URL
+      imageUrl = image[0].src;
+    }
+
+    // ------------------------------------
+    // DB 保存
+    // ------------------------------------
     await prisma.todo.create({
       data: {
         user: {
@@ -58,6 +94,8 @@ export async function createTodo(
       },
     });
 */
+
+    // キャッシュ系
     revalidateTag("todos", "max");
     return handleSuccess(prevState);
 

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import clsx from "clsx";
 import { FileUploadIcon } from "src/components/atoms/IconButton";
-import type { UseFormRegister } from "react-hook-form";
+import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isDragEvt = (value: any): value is React.DragEvent => {
@@ -30,9 +30,9 @@ type FileType =
   | "video/quicktime"
   | "application/pdf";
 
-interface DropzoneProps {
+interface DropzoneProps<T extends FieldValues> {
   value?: File[];
-  name: string;
+  name: Path<T>;                              // ⬅ フォームに依存した安全な name
   acceptedFileTypes?: FileType[];
   width?: number | string;
   height?: number | string;
@@ -40,37 +40,33 @@ interface DropzoneProps {
   radius?: boolean;
   onDrop?: (files: File[]) => void;
   onChange?: (files: File[]) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  register: UseFormRegister<any>;
+  register: UseFormRegister<T>;               // ⬅ ジェネリック register
   multiple: boolean;
 }
 
-const Dropzone = ({
-  onDrop,
-  onChange,
+export default function Dropzone<T extends FieldValues>({
   value = [],
   name,
   acceptedFileTypes = ["image/png", "image/jpeg", "image/jpg", "image/gif"],
-  hasError,
   width = "100px",
   height = "100px",
+  hasError,
   radius,
+  onDrop,
+  onChange,
   register,
   multiple,
-}: DropzoneProps) => {
+}: DropzoneProps<T>) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsFocused(false);
-
     const dropped = getFilesFromEvent(e).filter((f) =>
       acceptedFileTypes.includes(f.type as FileType)
     );
-
     if (dropped.length === 0) return;
 
-    // ★ 複数選んでも内部は配列、FormData には最後の1つだけ送る
     const newFiles = multiple
       ? [...value, ...dropped]
       : [dropped[dropped.length - 1]];
@@ -133,7 +129,7 @@ const Dropzone = ({
       style={{ width, height }}
     >
       <input
-        {...register(name)}
+        {...register(name)}                   // 🟩 ジェネリック化で安全
         ref={inputRef}
         type="file"
         accept={acceptedFileTypes.join(",")}
@@ -146,10 +142,12 @@ const Dropzone = ({
         className="flex flex-col items-center justify-center"
         style={{ width, height }}
       >
-        <FileUploadIcon size={32} color="var(--borderDash)" ariaLabel="ファイルアップロードボタン" />
+        <FileUploadIcon
+          size={32}
+          color="var(--borderDash)"
+          ariaLabel="ファイルアップロードボタン"
+        />
       </div>
     </div>
   );
-};
-
-export default Dropzone;
+}

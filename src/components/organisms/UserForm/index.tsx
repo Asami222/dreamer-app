@@ -118,12 +118,12 @@ const UserForm = () => {
               control={control}
               name="image"
               render={({ field }) => (
-                <InputImages
+                <InputImages<UserFormInput>
                   images={field.value ?? []}
                   onChange={field.onChange}
                   maximumNumber={1}
                   radius
-                  name={field.name}
+                  name="image"
                   register={register}
                 />
               )}

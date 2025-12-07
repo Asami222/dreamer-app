@@ -204,11 +204,13 @@ const TodoForm = ({ category }: { category: Category2 }) => {
             <Controller
               control={control}
               name="image"
-              render={({ field: { onChange, value } }) => (
+              render={({ field }) => (
                 <InputImages
-                  images={value ?? []}
-                  onChange={onChange}
+                  images={field.value ?? []}
+                  onChange={field.onChange}
                   maximumNumber={1}
+                  name={field.name}
+                  register={register}
                 />
               )}
             />

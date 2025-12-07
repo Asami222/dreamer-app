@@ -7,7 +7,7 @@ import { FormEvent, Fragment, useState } from 'react'
 //import { useTimeoutFn } from 'react-use'
 import { useForm, Controller } from 'react-hook-form'
 import Input from 'src/components/atoms/Input'
-import InputImages, { FileData } from 'src/components/molecules/InputImages'
+import InputImages from 'src/components/molecules/InputImages'
 import { StarIcon } from 'src/components/atoms/IconButton'
 import clsx from "clsx"
 import Spinner from 'src/components/atoms/Spinner'
@@ -137,11 +137,13 @@ const RewardForm = () => {
               control={control}
               name='image'
               rules={{ required: false }}
-              render={({ field: { onChange, value}}) => (
+              render={({ field }) => (
               <InputImages
-                images={(value as FileData[]) ?? []}
-                onChange={onChange}
+                images={field.value ?? []}
+                onChange={field.onChange}
                 maximumNumber={1}
+                name={field.name}
+                register={register}
               />
             )}
             />

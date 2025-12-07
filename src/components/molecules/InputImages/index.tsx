@@ -1,112 +1,86 @@
-import Dropzone from 'src/components/molecules/Dropzone'
-import ImagePreview from 'src/components/molecules/ImagePreview'
-
+import Dropzone from "src/components/molecules/Dropzone";
+import ImagePreview from "src/components/molecules/ImagePreview";
+import type { UseFormRegister } from "react-hook-form";
 
 export type FileData = {
-  id?: string
-  src: string
-  file?: File
-  selected?: boolean
-  chosen?: boolean
-}
+  id?: string;
+  src: string;
+  file?: File;
+};
 
 interface InputImagesProps {
-  name?: string
-  images: FileData[]
-  maximumNumber?: number
-  hasError?: boolean
-  width?: string
-  height?: string
-  radius?: boolean
-  onChange: (images: FileData[]) => void
+  name: string;
+  images: FileData[];
+  maximumNumber?: number;
+  hasError?: boolean;
+  width?: string;
+  height?: string;
+  radius?: boolean;
+  onChange: (images: FileData[]) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  register: UseFormRegister<any>; // ★追加（RHF register）
 }
 
-/**
- * インプットイメージ
- */
-const InputImages = (props: InputImagesProps) => {
-  const {
-    images,
-    maximumNumber,
-    name,
-    hasError,
-    width = '100px',
-    height = '100px',
-    onChange,
-    radius
-  } = props
-  const files = () =>
-      images
-        .filter((img: FileData) => img.file)
-        .map((img: FileData) => img.file as File)
+const InputImages = ({
+  name,
+  images,
+  maximumNumber,
+  hasError,
+  width = "100px",
+  height = "100px",
+  radius = false,
+  onChange,
+  register,
+}: InputImagesProps) => {
+  const files = images
+    .filter((img) => img.file)
+    .map((img) => img.file as File);
 
   const isDropzoneDisplay =
-    !maximumNumber || images.length < maximumNumber ? 'block' : 'none'
+    !maximumNumber || images.length < maximumNumber ? "block" : "none";
 
   const onRemove = (src: string) => {
-      const image = images.find((img: FileData) => img.src === src)
-      const newImages = images.filter((img: FileData) => img.src !== src)
+    const newImages = images.filter((img) => img.src !== src);
+    onChange(newImages);
+  };
 
-      if (image) {
-        if (image.file && image.src) {
-          URL.revokeObjectURL(image.src)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          delete (image as any).src
-        }
+  const handleDrop = (newFiles: File[]) => {
+    const newImages: FileData[] = newFiles.map((file) => ({
+      file,
+      src: URL.createObjectURL(file),
+    }));
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        onChange && onChange(newImages)
-      }
-    }
-
-    const onDrop = (files: File[]) => {
-      const newImages: FileData[] = [];
-    
-      for (const file of files) {
-        const exists = images.find((img: FileData) => img.file === file);
-    
-        if (!exists && (!maximumNumber || images.length + newImages.length < maximumNumber)) {
-          newImages.push({ file, src: URL.createObjectURL(file) });
-        }
-      }
-    
-      // ⭐ ここが超重要：必ず existing + new を返す
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      onChange && onChange([...images, ...newImages]);
-    };
+    onChange([...images, ...newImages]);
+  };
 
   return (
-    <div className='flex flex-col [&>*:not(:first-child)]:mt-2'>
-      {images &&
-        images.map((img, index) => {
-          return (
-            <ImagePreview
-              alt="イメージ"
-              key={index}
-              src={img.src}
-              onRemove={onRemove}
-            />
-          )
-        })}
+    <div className="flex flex-col [&>*:not(:first-child)]:mt-2">
+      {images.map((img) => (
+        <ImagePreview
+          key={img.src}
+          alt="イメージ"
+          src={img.src}
+          onRemove={onRemove}
+        />
+      ))}
+
       <div style={{ display: isDropzoneDisplay }}>
         <Dropzone
-          acceptedFileTypes={[
-            'image/gif',
-            'image/jpeg',
-            'image/jpg',
-            'image/png',
-          ]}
           name={name}
-          height={height}
-          width={width}
-          value={files()}
+          value={files}
+          onDrop={handleDrop}
           hasError={hasError}
-          onDrop={onDrop}
+          width={width}
+          height={height}
           radius={radius}
+          acceptedFileTypes={["image/png", "image/jpeg", "image/jpg", "image/gif"]}
+          /** ★register をそのまま渡す（Dropzone内部で hidden input に適用） */
+          register={register}
+          multiple={maximumNumber !== 1}
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default InputImages
+export default InputImages;

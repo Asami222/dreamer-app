@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import clsx from "clsx";
 import { FileUploadIcon } from "src/components/atoms/IconButton";
+import type { UseFormRegister } from "react-hook-form";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isDragEvt = (value: any): value is React.DragEvent => {
@@ -31,7 +32,7 @@ type FileType =
 
 interface DropzoneProps {
   value?: File[];
-  name?: string;
+  name: string;
   acceptedFileTypes?: FileType[];
   width?: number | string;
   height?: number | string;
@@ -39,6 +40,9 @@ interface DropzoneProps {
   radius?: boolean;
   onDrop?: (files: File[]) => void;
   onChange?: (files: File[]) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  register: UseFormRegister<any>; // ★追加（register）
+  multiple: boolean;
 }
 
 const Dropzone = ({
@@ -51,6 +55,8 @@ const Dropzone = ({
   width = "100px",
   height = "100px",
   radius,
+  register,
+  multiple,
 }: DropzoneProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -142,12 +148,13 @@ const Dropzone = ({
       style={{ width, height }}
     >
       <input
+        {...register(name)}
         ref={inputRef}
         type="file"
         name={name}
         accept={acceptedFileTypes.join(",")}
+        multiple={multiple}
         onChange={handleChange}
-        multiple
         className="hidden"
       />
       <div

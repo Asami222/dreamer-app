@@ -9,29 +9,32 @@ import { validateFormData, transformFieldErrors } from "src/utils/validate";
 import { handleError, errors, type FormState, handleSuccess } from "src/utils/state";
 import { userFormSchema } from "./schema";
 import type { UserFormInput } from "./schema";
-import { uploadAvatarBase64 } from "src/libs/supabase/uploadAvatarBase64"
+import { uploadAvatar } from "src/libs/supabase/uploadAvatar";
 
 export async function updateUser(
   prevState: FormState<UserFormInput>,
-  formJson: {
-    displayName: string;
-    dream: string;
-    limit: string;
-    base64Image: string | null;
-  },
+  formData: FormData,
 ): Promise<FormState<UserFormInput>> {
   const session = await getServerSession();
   if (!session) return handleError(prevState, errors[401]);
 
   const userId = session.user.id;
 
+  for (const [key, value] of formData.entries()) {
+    console.log("FD:", key, value);
+  }
+
   try {
-    
-    
+    const payload = validateFormData(formData, userFormSchema);
+    const { image, displayName, dream, limit } = payload;
     let imageUrl = "/images/noImg.webp";
 
-    if (formJson.base64Image) {
-      imageUrl = await uploadAvatarBase64(formJson.base64Image, userId);
+     // ⭐ file が存在する場合 Supabase Storage にアップロード
+     if (image && image[0]?.file) {
+      imageUrl = await uploadAvatar(image[0].file, userId);
+    } else if (image && image[0]?.src) {
+      // 既存の URL をそのまま使う
+      imageUrl = image[0].src;
     }
 
     await prisma.$transaction([
@@ -41,11 +44,7 @@ export async function updateUser(
       }),
       prisma.profile.update({
         where: { userId },
-        data: {
-          displayName: formJson.displayName,
-          dream: formJson.dream,
-          limit: formJson.limit,
-        },
+        data: { displayName, dream, limit },
       }),
     ]);
 

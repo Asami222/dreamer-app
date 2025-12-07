@@ -7,6 +7,11 @@ const nextConfig = {
        '/api/**/*': ['./node_modules/.prisma/client/**/*'],
        '/*': ['./node_modules/.prisma/client/**/*'],
   },
+  images: {
+    domains: [
+      "lh3.googleusercontent.com",
+    ],
+  }
 };
 /*
 const nextConfig: NextConfig = {

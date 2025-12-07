@@ -1,8 +1,8 @@
-import { getSupabaseServerClient } from "../supabase/server"; // 既存の実装でOK
+import { createClient } from "../supabase/server"; // 既存の実装でOK
 import { randomUUID } from "crypto";
 
 export async function uploadAvatar(file: File, userId: string) {
-  const supabase = getSupabaseServerClient();
+  const supabase = await createClient();
   const fileExt = file.name.split(".").pop();
   const fileName = `${userId}/${randomUUID()}.${fileExt}`;
 

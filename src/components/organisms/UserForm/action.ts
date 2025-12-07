@@ -5,7 +5,7 @@ import { prisma } from "src/libs/prisma";
 import { ZodError } from "zod";
 //import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
-import { validateFormData, transformFieldErrors } from "src/utils/validate";
+import { transformFieldErrors } from "src/utils/validate";
 import { handleError, errors, type FormState, handleSuccess } from "src/utils/state";
 import { userFormSchema } from "./schema";
 import type { UserFormInput } from "./schema";
@@ -25,7 +25,26 @@ export async function updateUser(
   }
 
   try {
-    const payload = validateFormData(formData, userFormSchema);
+    //const payload = validateFormData(formData, userFormSchema);
+    // ------------------------------------
+    // ⭐ ここで FormData を Zod 用の payload へ変換
+    // ------------------------------------
+    const files = formData.getAll("image") as File[];
+    const imagePayload =
+      files.length > 0
+        ? files.map((file) => ({
+            src: URL.createObjectURL(file), // 適当な値でもOK、Zod は形式だけ見ている
+            file,
+          }))
+        : undefined;
+
+    const payload = userFormSchema.parse({
+      image: imagePayload,
+      displayName: formData.get("displayName")?.toString(),
+      dream: formData.get("dream")?.toString(),
+      limit: formData.get("limit")?.toString(),
+    });
+
     const { image, displayName, dream, limit } = payload;
     let imageUrl = "/images/noImg.webp";
 

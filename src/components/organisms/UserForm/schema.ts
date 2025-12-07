@@ -7,8 +7,6 @@ export const userFormSchema = z.object({
         id: z.string().optional(),
         src: z.string(), // blob: も http も両方OK
         file: z.instanceof(File).optional(),
-        selected: z.boolean().optional(),
-        chosen: z.boolean().optional(),
       })
     )
     .optional(),

@@ -9,14 +9,12 @@ export const rewardSchema = z.object({
       (val) => (val === '' || val === null || val === undefined ? undefined : Number(val)),
       z.number().int("整数を入力してください").min(1, "1以上の数を入力してください")
     ),
-  image: z
+    image: z
     .array(
       z.object({
         id: z.string().optional(),
-        src: z.string().url("有効なURLを入力してください"),
+        src: z.string(), // blob: も http も両方OK
         file: z.instanceof(File).optional(),
-        selected: z.boolean().optional(),
-        chosen: z.boolean().optional(),
       })
     )
     .optional(),

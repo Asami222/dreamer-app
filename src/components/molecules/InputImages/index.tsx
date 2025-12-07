@@ -1,6 +1,7 @@
 import Dropzone from "src/components/molecules/Dropzone";
 import ImagePreview from "src/components/molecules/ImagePreview";
 import type { UseFormRegister } from "react-hook-form";
+import type { UserFormInput } from "src/components/organisms/UserForm/schema";
 
 export type FileData = {
   id?: string;
@@ -9,7 +10,7 @@ export type FileData = {
 };
 
 interface InputImagesProps {
-  name: string;
+  name: keyof UserFormInput; // ★ name をスキーマと揃える
   images: FileData[];
   maximumNumber?: number;
   hasError?: boolean;
@@ -17,8 +18,7 @@ interface InputImagesProps {
   height?: string;
   radius?: boolean;
   onChange: (images: FileData[]) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  register: UseFormRegister<any>; // ★追加（RHF register）
+  register: UseFormRegister<UserFormInput>;
 }
 
 const InputImages = ({
@@ -32,39 +32,27 @@ const InputImages = ({
   onChange,
   register,
 }: InputImagesProps) => {
-  const files = images
-    .filter((img) => img.file)
-    .map((img) => img.file as File);
-
-  const isDropzoneDisplay =
-    !maximumNumber || images.length < maximumNumber ? "block" : "none";
-
-  const onRemove = (src: string) => {
-    const newImages = images.filter((img) => img.src !== src);
-    onChange(newImages);
-  };
+  const files = images.filter((img) => img.file).map((img) => img.file!);
 
   const handleDrop = (newFiles: File[]) => {
-    const newImages: FileData[] = newFiles.map((file) => ({
+    const newImages = newFiles.map((file) => ({
       file,
       src: URL.createObjectURL(file),
     }));
-
     onChange([...images, ...newImages]);
+  };
+
+  const onRemove = (src: string) => {
+    onChange(images.filter((img) => img.src !== src));
   };
 
   return (
     <div className="flex flex-col [&>*:not(:first-child)]:mt-2">
       {images.map((img) => (
-        <ImagePreview
-          key={img.src}
-          alt="イメージ"
-          src={img.src}
-          onRemove={onRemove}
-        />
+        <ImagePreview key={img.src} alt="イメージ" src={img.src} onRemove={onRemove} />
       ))}
 
-      <div style={{ display: isDropzoneDisplay }}>
+      {(!maximumNumber || images.length < maximumNumber) && (
         <Dropzone
           name={name}
           value={files}
@@ -73,12 +61,10 @@ const InputImages = ({
           width={width}
           height={height}
           radius={radius}
-          acceptedFileTypes={["image/png", "image/jpeg", "image/jpg", "image/gif"]}
-          /** ★register をそのまま渡す（Dropzone内部で hidden input に適用） */
           register={register}
           multiple={maximumNumber !== 1}
         />
-      </div>
+      )}
     </div>
   );
 };

@@ -10,7 +10,6 @@ import { handleError, errors, type FormState, handleSuccess } from "src/utils/st
 import { todoSchema } from "./schema";
 import type { TodoInput } from "./schema";
 
-
 export async function createTodo(
   prevState: FormState<TodoInput>,
   formData: FormData,

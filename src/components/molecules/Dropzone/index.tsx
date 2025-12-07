@@ -41,7 +41,7 @@ interface DropzoneProps {
   onDrop?: (files: File[]) => void;
   onChange?: (files: File[]) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  register: UseFormRegister<any>; // ★追加（register）
+  register: UseFormRegister<any>;
   multiple: boolean;
 }
 
@@ -63,13 +63,20 @@ const Dropzone = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsFocused(false);
-    const files = value.concat(
-      getFilesFromEvent(e).filter((f) =>
-        acceptedFileTypes.includes(f.type as FileType)
-      )
+
+    const dropped = getFilesFromEvent(e).filter((f) =>
+      acceptedFileTypes.includes(f.type as FileType)
     );
-    onDrop?.(files);
-    onChange?.(files);
+
+    if (dropped.length === 0) return;
+
+    // ★ 複数選んでも内部は配列、FormData には最後の1つだけ送る
+    const newFiles = multiple
+      ? [...value, ...dropped]
+      : [dropped[dropped.length - 1]];
+
+    onDrop?.(newFiles);
+    onChange?.(newFiles);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -77,52 +84,30 @@ const Dropzone = ({
     e.stopPropagation();
     setIsFocused(false);
 
-    const files = value.concat(
-      getFilesFromEvent(e).filter((f) =>
-        acceptedFileTypes.includes(f.type as FileType)
-      )
+    const dropped = getFilesFromEvent(e).filter((f) =>
+      acceptedFileTypes.includes(f.type as FileType)
     );
 
-    if (files.length === 0) {
+    if (dropped.length === 0) {
       return window.alert(
-        `次のファイルフォーマットは指定できません: ${acceptedFileTypes.join(
-          ", "
-        )}`
+        `次のファイルフォーマットは指定できません: ${acceptedFileTypes.join(", ")}`
       );
     }
 
-    onDrop?.(files);
-    onChange?.(files);
-  };
+    const newFiles = multiple
+      ? [...value, ...dropped]
+      : [dropped[dropped.length - 1]];
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsFocused(false);
-  };
-
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsFocused(true);
-  };
-
-  const handleClick = () => {
-    inputRef.current?.click();
+    onDrop?.(newFiles);
+    onChange?.(newFiles);
   };
 
   useEffect(() => {
-    if (inputRef.current && value && value.length === 0) {
+    if (inputRef.current && value.length === 0) {
       inputRef.current.value = "";
     }
   }, [value]);
 
-  // 動的なクラス生成
   const borderColor = hasError
     ? "border-[#ed1c24]"
     : isFocused
@@ -134,10 +119,10 @@ const Dropzone = ({
   return (
     <div
       onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDragEnter={handleDragEnter}
-      onClick={handleClick}
+      onDragOver={(e) => e.preventDefault()}
+      onDragLeave={() => setIsFocused(false)}
+      onDragEnter={() => setIsFocused(true)}
+      onClick={() => inputRef.current?.click()}
       data-testid="dropzone"
       className={clsx(
         "relative cursor-pointer border border-dashed transition-all duration-150",
@@ -151,25 +136,20 @@ const Dropzone = ({
         {...register(name)}
         ref={inputRef}
         type="file"
-        name={name}
         accept={acceptedFileTypes.join(",")}
         multiple={multiple}
         onChange={handleChange}
         className="hidden"
       />
+
       <div
         className="flex flex-col items-center justify-center"
         style={{ width, height }}
       >
-        <FileUploadIcon size={32} color="var(--borderDash)" ariaLabel="ファイルアップロードボタン"/>
+        <FileUploadIcon size={32} color="var(--borderDash)" ariaLabel="ファイルアップロードボタン" />
       </div>
     </div>
   );
-};
-
-Dropzone.defaultProps = {
-  acceptedFileTypes: ["image/png", "image/jpeg", "image/jpg", "image/gif"],
-  hasError: false,
 };
 
 export default Dropzone;

@@ -15,6 +15,9 @@ export async function createTodo(
   prevState: FormState<TodoInput>,
   formData: FormData,
 ): Promise<FormState<TodoInput>> {
+
+  console.log("FILES:", formData.getAll("image"));
+  
   const session = await getServerSession();
   if (!session) return handleError(prevState, errors[401]);
 

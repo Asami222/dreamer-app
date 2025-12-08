@@ -129,8 +129,11 @@ export default function Dropzone<T extends FieldValues>({
       style={{ width, height }}
     >
       <input
-        {...register(name)}                   // 🟩 ジェネリック化で安全
-        ref={inputRef}
+        {...register(name)}
+        ref={(el) => {
+          register(name).ref(el);    // RHF の ref
+          inputRef.current = el;     // 自前の ref
+        }}
         type="file"
         accept={acceptedFileTypes.join(",")}
         multiple={multiple}

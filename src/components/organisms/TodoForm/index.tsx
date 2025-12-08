@@ -113,7 +113,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
 
   const title = categoryNameDict[category as Category2]
 
-  const isDisabled = !!state.error || isPending
+  const isDisabled = isPending || !!clientErrors
 
   return (
     <form onSubmit={handleSubmit} action={formAction}>

@@ -124,7 +124,7 @@ const RewardForm = () => {
     }
 */
     // ボタンdisabled制御
-  const isDisabled = !!state.error || isPending
+  const isDisabled = isPending || !!clientErrors
 
     return (
       <>

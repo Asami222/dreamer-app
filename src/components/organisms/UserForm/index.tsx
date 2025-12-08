@@ -104,7 +104,7 @@ const UserForm = () => {
     (!limit || limit.trim() === '')
 */
   // ボタンdisabled制御
-  const isDisabled = isPending || !!clientErrors;
+  const isDisabled = isPending;
 
   return (
     <form onSubmit={handleSubmit} action={formAction}>

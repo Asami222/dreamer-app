@@ -212,7 +212,6 @@ const TodoForm = ({ category }: { category: Category2 }) => {
               render={({ field }) => (
                 <InputImages<TodoInput>
                   images={field.value ?? []}
-                  onChange={field.onChange}
                   maximumNumber={1}
                   name="image"
                   register={register}

@@ -117,10 +117,9 @@ const UserForm = () => {
             <Controller
               control={control}
               name="image"
-              render={({ field: { onChange, value } }) => (
+              render={({ field }) => (
                 <InputImages
-                  images={value ?? []}
-                  onChange={onChange}
+                  images={field.value ?? []}
                   maximumNumber={1}
                   radius={true}
                   name="image"

@@ -139,7 +139,6 @@ const RewardForm = () => {
               render={({ field }) => (
               <InputImages<RewardInput>
                 images={field.value ?? []}
-                onChange={field.onChange}
                 maximumNumber={1}
                 name="image"
                 register={register}

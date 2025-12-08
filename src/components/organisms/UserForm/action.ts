@@ -3,9 +3,8 @@
 import { getServerSession } from "src/libs/auth";
 import { prisma } from "src/libs/prisma";
 import { ZodError } from "zod";
-//import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
-import { transformFieldErrors } from "src/utils/validate";
+import { validateFormData, transformFieldErrors } from "src/utils/validate";
 import { handleError, errors, type FormState, handleSuccess } from "src/utils/state";
 import { userFormSchema } from "./schema";
 import type { UserFormInput } from "./schema";
@@ -20,58 +19,71 @@ export async function updateUser(
 
   const userId = session.user.id;
 
-  for (const [key, value] of formData.entries()) {
-    console.log("FD:", key, value);
-  }
-
   try {
-    //const payload = validateFormData(formData, userFormSchema);
-    // ------------------------------------
-    // ⭐ ここで FormData を Zod 用の payload へ変換
-    // ------------------------------------
-    const files = formData.getAll("image") as File[];
-    const imagePayload =
-      files.length > 0
-        ? files.map((file) => ({
-            src: URL.createObjectURL(file), // 適当な値でもOK、Zod は形式だけ見ている
-            file,
-          }))
-        : undefined;
-
-    const payload = userFormSchema.parse({
-      image: imagePayload,
-      displayName: formData.get("displayName")?.toString(),
-      dream: formData.get("dream")?.toString(),
-      limit: formData.get("limit")?.toString(),
-    });
-
+    // ★ Zod バリデーション
+    const payload = validateFormData(formData, userFormSchema);
     const { image, displayName, dream, limit } = payload;
-    let imageUrl = "/images/noImg.webp";
 
-     // ⭐ file が存在する場合 Supabase Storage にアップロード
-     if (image && image[0]?.file) {
-      imageUrl = await uploadAvatar(image[0].file, userId);
-    } else if (image && image[0]?.src) {
-      // 既存の URL をそのまま使う
-      imageUrl = image[0].src;
+    let imageUrl: string | undefined = undefined; // 未入力時は更新しない
+
+    // ----------------------------------------------------
+    // ① image の先頭情報を取得（InputImages が array を送信する形式）
+    // ----------------------------------------------------
+    const first = image?.[0];
+
+    // ----------------------------------------------------
+    // ② file 情報を FormData から直接取得
+    // ※ FieldName は "image[0].file" などになるので find で取る
+    // ----------------------------------------------------
+    let formFile: File | Blob | null = null;
+
+    for (const [key, value] of formData.entries()) {
+      if (key.includes("image") && value instanceof File) {
+        formFile = value;
+      }
     }
 
-    await prisma.$transaction([
-      prisma.user.update({
-        where: { id: userId },
-        data: { profileImageUrl: imageUrl },
-      }),
+    // ----------------------------------------------------
+    // ③ ファイルアップロードの判定
+    // ----------------------------------------------------
+    if (formFile && (formFile as File).size > 0) {
+      // Supabase Storage にアップロード
+      imageUrl = await uploadAvatar(formFile as File, userId);
+    } else if (first?.src && first.src.startsWith("http")) {
+      // 既存画像をそのまま使う
+      imageUrl = first.src;
+    }
+    // blob:xxx の場合は無視 → 画像更新しない
+
+    // ----------------------------------------------------
+    // ④ DB 更新
+    // ----------------------------------------------------
+    const operations = [];
+
+    // profileImageUrl を更新する場合のみ
+    if (imageUrl !== undefined) {
+      operations.push(
+        prisma.user.update({
+          where: { id: userId },
+          data: { profileImageUrl: imageUrl },
+        })
+      );
+    }
+
+    operations.push(
       prisma.profile.update({
         where: { userId },
         data: { displayName, dream, limit },
-      }),
-    ]);
+      })
+    );
+
+    await prisma.$transaction(operations);
 
     revalidateTag("profile", "max");
     revalidateTag("user", "max");
+
     return handleSuccess(prevState);
 
-    //return handleSuccess(prevState);
   } catch (err) {
     if (err instanceof ZodError) {
       return handleError(prevState, {
@@ -79,6 +91,7 @@ export async function updateUser(
         fieldErrors: transformFieldErrors(err),
       });
     }
+    console.error(err);
     return handleError(prevState, errors[500]);
   }
 }

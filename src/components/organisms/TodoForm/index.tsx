@@ -70,6 +70,11 @@ const TodoForm = ({ category }: { category: Category2 }) => {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     try {
       const formData = new FormData(event.currentTarget);
+
+      console.log("DEBUG_Client image:", formData.get("image"));
+      console.log("DEBUG_Client all:", formData.getAll("image"));
+      console.log("DEBUG_Client title:", formData.get("title"));
+      console.log("DEBUG_Client all:", formData.getAll("title"));
       // バリデーションエラーが発生した場合 catch 句へ
       validateFormData(formData, todoSchema);
       // Client バリデーションエラーをクリア

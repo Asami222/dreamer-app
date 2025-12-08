@@ -1,6 +1,6 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
+//import { zodResolver } from '@hookform/resolvers/zod';
 import { rewardSchema, type RewardInput } from './schema'
 //import { Transition } from '@headlessui/react'
 import { FormEvent, Fragment, useState } from 'react'

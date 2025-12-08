@@ -3,9 +3,8 @@
 import { getServerSession } from "src/libs/auth";
 import { prisma } from "src/libs/prisma";
 import { ZodError } from "zod";
-//import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
-import {  transformFieldErrors } from "src/utils/validate";
+import { validateFormData, transformFieldErrors } from "src/utils/validate";
 import { handleError, errors, type FormState, handleSuccess } from "src/utils/state";
 import { todoSchema } from "./schema";
 import type { TodoInput } from "./schema";
@@ -16,93 +15,57 @@ export async function createTodo(
   formData: FormData,
 ): Promise<FormState<TodoInput>> {
 
-  console.log("FILES:", formData.getAll("image"));
-  
   const session = await getServerSession();
   if (!session) return handleError(prevState, errors[401]);
 
   const userId = session.user.id;
-  
+
   try {
-    //const payload = validateFormData(formData, todoSchema);
-    const files = formData.getAll("image") as File[];
-
-    const imagePayload =
-      files.length > 0
-        ? files.map((file) => ({
-            src: "https://placeholder/image-upload", // Zod url() を通すダミー
-            file,
-          }))
-        : undefined;
-
-    const payload = todoSchema.parse({
-      image: imagePayload,
-
-      title: formData.get("title")?.toString(),
-      detail: formData.get("detail")?.toString(),
-      description: formData.get("description")?.toString(),
-
-      category: formData.get("category")?.toString(),
-
-      limit1: formData.get("limit1")?.toString(),
-      limit2: formData.get("limit2")?.toString(),
-
-      star: formData.get("star")?.toString(),
-    });
+    // Zod バリデーション
+    const payload = validateFormData(formData, todoSchema);
     const { title, image, limit1, limit2, detail, description, star, category } = payload;
-    
-    // limit1 / limit2 → 配列にまとめる
-    const limit: number[] = [];
-    if (limit1 !== undefined) limit.push(limit1);
-    if (limit2 !== undefined) limit.push(limit2);
 
-    // ------------------------------------
-    // ⭐ Supabase Storage にアップロード
-    // ------------------------------------
-    let imageUrl = "";
+    // limit をひとつの配列にまとめる
+    const limitArr: number[] = [];
+    if (limit1) limitArr.push(limit1);
+    if (limit2) limitArr.push(limit2);
 
-    if (image && image[0]?.file) {
-      imageUrl = await uploadTodoImage(image[0].file, userId);
-    } else if (image && image[0]?.src) {
-      // 既存画像 URL
+    // 画像アップロード処理
+    let imageUrl: string | null = null;
+
+    // FormData から File を取り出す
+    let formFile: File | null = null;
+    for (const [key, value] of formData.entries()) {
+      if (key.includes("image") && value instanceof File && value.size > 0) {
+        formFile = value;
+      }
+    }
+
+    // File があれば Supabase Storage にアップロード
+    if (formFile) {
+      imageUrl = await uploadTodoImage(formFile, userId);
+    } else if (image?.[0]?.src?.startsWith("http")) {
+      // 既存のURL（編集時）
       imageUrl = image[0].src;
     }
 
-    // ------------------------------------
-    // DB 保存
-    // ------------------------------------
+    // Prisma で Todo 新規作成
     await prisma.todo.create({
       data: {
-        user: {
-          connect: { id: userId } // ← Userの紐付けが必要！
-        },
-        image: imageUrl,
+        user: { connect: { id: userId } },
+        image: imageUrl ?? "", // 画像なしの場合は空文字
         title,
         category,
-        limit,
+        limit: limitArr,
         detail,
         description,
         star,
-      }
-    });
-/*
-    await prisma.todo.create({
-      data: { 
-      user: {
-        connect: { id: userId } // ← Userの紐付けが必要！
-      },
-        todo: "test",
-        limit: [1, 2, 3],
-        category
       },
     });
-*/
 
-    // キャッシュ系
     revalidateTag("todos", "max");
     return handleSuccess(prevState);
 
-    //return handleSuccess(prevState);
   } catch (err) {
     if (err instanceof ZodError) {
       return handleError(prevState, {
@@ -110,6 +73,8 @@ export async function createTodo(
         fieldErrors: transformFieldErrors(err),
       });
     }
+
+    console.error(err);
     return handleError(prevState, errors[500]);
   }
 }

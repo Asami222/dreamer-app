@@ -59,20 +59,15 @@ export default function Dropzone<T extends FieldValues>({
 }: DropzoneProps<T>) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
+  const hasImage = value.length > 0;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsFocused(false);
-    const dropped = getFilesFromEvent(e).filter((f) =>
-      acceptedFileTypes.includes(f.type as FileType)
-    );
-    if (dropped.length === 0) return;
-
-    const newFiles = multiple
-      ? [...value, ...dropped]
-      : [dropped[dropped.length - 1]];
-
-    onDrop?.(newFiles);
-    onChange?.(newFiles);
+    const dropped = getFilesFromEvent(e);
+    if (dropped.length > 0) {
+      const newFile = dropped[dropped.length - 1];
+      return onDrop?.([newFile]);
+    }
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -118,25 +113,23 @@ export default function Dropzone<T extends FieldValues>({
       onDragOver={(e) => e.preventDefault()}
       onDragLeave={() => setIsFocused(false)}
       onDragEnter={() => setIsFocused(true)}
-      onClick={() => inputRef.current?.click()}
+      onClick={() => !hasImage && inputRef.current?.click()}
       data-testid="dropzone"
       className={clsx(
-        "relative cursor-pointer border border-dashed transition-all duration-150",
+        "relative cursor-pointer border border-dashed transition-all duration-150 flex items-center justify-center",
         borderColor,
         radiusClass,
-        "flex items-center justify-center bg-[url('/sample2.png')] bg-[rgba(246,238,237,0.65)] bg-no-repeat bg-center bg-contain bg-blend-lighten"
+        !hasImage
+        ?"bg-[url('/sample2.png')] bg-[rgba(246,238,237,0.65)] bg-no-repeat bg-center bg-contain bg-blend-lighten"
+        : ""
       )}
       style={{ width, height }}
     >
       <input
-        {...register(name)}
-        ref={(el) => {
-          register(name).ref(el);    // RHF の ref
-          inputRef.current = el;     // 自前の ref
-        }}
         type="file"
-        accept={acceptedFileTypes.join(",")}
-        multiple={multiple}
+        accept="image/*"
+        {...register(name)}       // RHF の register はこれだけで十分
+        ref={inputRef}            // あなたの ref を上書きする
         onChange={handleChange}
         className="hidden"
       />
@@ -145,11 +138,13 @@ export default function Dropzone<T extends FieldValues>({
         className="flex flex-col items-center justify-center"
         style={{ width, height }}
       >
+        {!hasImage && (
         <FileUploadIcon
           size={32}
           color="var(--borderDash)"
           ariaLabel="ファイルアップロードボタン"
         />
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 import Dropzone from "src/components/molecules/Dropzone";
 import ImagePreview from "src/components/molecules/ImagePreview";
 import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
+import { useState } from "react";
 
 export type FileData = {
   id?: string;
@@ -17,53 +18,67 @@ interface InputImagesProps<T extends FieldValues> {
   width?: string;
   height?: string;
   radius?: boolean;
-  onChange: (images: FileData[]) => void;
   register: UseFormRegister<T>;         // ← フォームごとの register
 }
 
 export default function InputImages<T extends FieldValues>({
   name,
-  images,
-  maximumNumber,
   hasError,
   width = "100px",
   height = "100px",
   radius = false,
-  onChange,
   register,
 }: InputImagesProps<T>) {
-  const files = images.filter((img) => img.file).map((img) => img.file!);
+  //const files = images.filter((img) => img.file).map((img) => img.file!);
 
-  const handleDrop = (newFiles: File[]) => {
-    const newImages = newFiles.map((file) => ({
-      file,
-      src: URL.createObjectURL(file),
-    }));
-    onChange([...images, ...newImages]);
-  };
+  const [image, setImage] = useState<File | null>(null);
 
-  const onRemove = (src: string) => {
-    onChange(images.filter((img) => img.src !== src));
-  };
+  // Dropzone から受け取る
+  const handleDrop = (files: File[]) => {
+    if (files.length > 0) {
+      // 一枚だけ許可
+      setImage(files[0]);
+    }
+  }
+
+  const handleRemove = () => {
+    setImage(null);
+  }
+
+  const previewUrl = image ? URL.createObjectURL(image) : null;
+
 
   return (
-    <div className="flex flex-col [&>*:not(:first-child)]:mt-2">
-      {images.map((img) => (
-        <ImagePreview key={img.src} alt="イメージ" src={img.src} onRemove={onRemove} />
-      ))}
-
-      {(!maximumNumber || images.length < maximumNumber) && (
+    <div className="relative" style={{ width, height }}>
+      {/* Dropzone（背景） */}
         <Dropzone
           name={name}
-          value={files}
+          value={image ? [image] : []}
           onDrop={handleDrop}
           hasError={hasError}
           width={width}
           height={height}
           radius={radius}
           register={register}
-          multiple={maximumNumber !== 1}
+          multiple={false}
         />
+        {/* 画像を Dropzone の背景として薄く表示（置き換え UI） */}
+        {previewUrl && (
+          <div
+            className="absolute inset-0 bg-center bg-no-repeat bg-contain opacity-80 pointer-events-none"
+            style={{ backgroundImage: `url(${previewUrl})` }}
+          />
+        )}
+        {/* メインの ImagePreview（中央） */}
+        {previewUrl && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <ImagePreview
+              src={previewUrl}
+              width={`${width}px`}
+              height={`${height}px`}
+              onRemove={handleRemove}
+            />
+        </div>
       )}
     </div>
   );

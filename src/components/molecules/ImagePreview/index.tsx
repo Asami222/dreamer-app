@@ -10,7 +10,7 @@ interface CloseBoxProps {
 
 function CloseBox({children, ...rest}: CloseBoxProps) {
   return (
-    <div {...rest} className='flex items-center justify-center absolute top-0 right-0 w-[30px] h-[30px] rounded-full bg-[rgba(243, 228, 227, 0.66)] cursor-pointer'>
+    <div {...rest} className='flex items-center justify-center absolute top-0 right-[-20px] w-[30px] h-[30px] rounded-full bg-[rgba(243, 228, 227, 0.66)] cursor-pointer'>
       {children}
     </div>
   )
@@ -44,8 +44,8 @@ const ImagePreview = ({
   }
 
   return (
-    <div className='relative' style={{height, width}}>
-      <div style={{height, width}}>
+    <>
+      <div className='relative' style={{height, width}}>
         <Image
           quality="85"
           src={src}
@@ -60,7 +60,7 @@ const ImagePreview = ({
       >
         <CloseIcon size={24} color="var(--white)" ariaLabel='閉じる'/>
       </CloseBox>
-    </div>
+    </>
   )
 }
 

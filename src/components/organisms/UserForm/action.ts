@@ -16,7 +16,7 @@ import {
 } from "src/utils/state";
 import { userFormSchema } from "./schema";
 import type { UserFormInput } from "./schema";
-import { uploadAvatar } from "src/libs/supabase/uploadAvatar";
+import { uploadImage } from "src/libs/supabase/uploadImage";
 
 export async function updateUser(
   prevState: FormState<UserFormInput>,
@@ -57,7 +57,7 @@ export async function updateUser(
 
     if (formFile) {
       // 新しい画像をアップロード
-      imageUrl = await uploadAvatar(formFile, userId);
+      imageUrl = await uploadImage(formFile, userId, "avatar");
 
     } else if (img?.src && img.src.startsWith("http")) {
       // 編集時：既存画像

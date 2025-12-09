@@ -13,7 +13,7 @@ import {
 } from "src/utils/state";
 import { todoSchema } from "./schema";
 import type { TodoInput } from "./schema";
-import { uploadTodoImage } from "src/libs/supabase/uploadTodoImage";
+import { uploadImage } from "src/libs/supabase/uploadImage";
 
 export async function createTodo(
   prevState: FormState<TodoInput>,
@@ -67,7 +67,7 @@ export async function createTodo(
 
     if (formFile) {
       // 新しく画像をアップロード
-      imageUrl = await uploadTodoImage(formFile, userId);
+      imageUrl = await uploadImage(formFile, userId, "todo");
 
     } else if (image?.src && image.src.startsWith("http")) {
       // 編集時：既存画像をそのまま保存

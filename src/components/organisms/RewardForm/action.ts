@@ -16,7 +16,7 @@ import {
 } from "src/utils/state";
 import { rewardSchema } from "./schema";
 import type { RewardInput } from "./schema";
-import { uploadRewardImage } from "src/libs/supabase/uploadRewardImage";
+import { uploadImage } from "src/libs/supabase/uploadImage";
 
 export async function createReward(
   prevState: FormState<RewardInput>,
@@ -55,7 +55,7 @@ export async function createReward(
 
     if (formFile) {
       // 新しくアップロード
-      imageUrl = await uploadRewardImage(formFile, userId);
+      imageUrl = await uploadImage(formFile, userId, "reward");
 
     } else if (image?.src && image.src.startsWith("http")) {
       // 編集時：既存画像の保持

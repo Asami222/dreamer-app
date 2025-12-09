@@ -1,4 +1,4 @@
-import { createClient } from "../supabase/server"; // 既存の実装でOK
+import { createClient } from "../supabase/server";
 import { randomUUID } from "crypto";
 
 export async function uploadAvatar(file: File, userId: string) {
@@ -7,18 +7,17 @@ export async function uploadAvatar(file: File, userId: string) {
   const fileName = `${userId}/${randomUUID()}.${fileExt}`;
 
   const { data, error } = await supabase.storage
-    .from("avatars")
+    .from("images")
     .upload(fileName, file, {
       upsert: true,
     });
 
-    console.log("Storage upload result:", data, error);
-
   if (error) throw error;
 
-  const { data: urlData } = supabase.storage
-    .from("avatars")
-    .getPublicUrl(fileName);
+  // 👇 ここを getPublicUrl から createSignedUrl に変更！
+  const { data: signed } = await supabase.storage
+    .from("images")
+    .createSignedUrl(fileName, 60 * 60 * 24); // 24時間有効
 
-  return urlData.publicUrl;
+  return signed?.signedUrl ?? "";
 }

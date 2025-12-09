@@ -141,6 +141,7 @@ const RewardForm = () => {
                 image={field.value}
                 name="image"
                 register={register}
+                onChange={field.onChange}
               />
             )}
             />

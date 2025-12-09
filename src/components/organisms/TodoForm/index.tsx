@@ -214,6 +214,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
                   image={field.value}
                   name="image"
                   register={register}
+                  onChange={field.onChange}
                 />
               )}
             />

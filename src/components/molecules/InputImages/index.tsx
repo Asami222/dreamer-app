@@ -64,7 +64,7 @@ export default function InputImage<T extends FieldValues>({
     <div className="relative" style={{ width, height }}>
       {/* Dropzone */}
       <Dropzone
-        name={name}
+        name={`${name}.file`}
         value={localImage?.file ? [localImage.file] : []}
         onDrop={handleDrop}
         hasError={hasError}

@@ -124,6 +124,7 @@ const UserForm = () => {
                   radius={true}
                   name="image"
                   register={register}
+                  onChange={field.onChange}
                 />
               )}
             />

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import clsx from "clsx";
 import { FileUploadIcon } from "src/components/atoms/IconButton";
-import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
+import type { UseFormRegister, FieldValues } from "react-hook-form";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isDragEvt = (value: any): value is React.DragEvent => {
@@ -32,7 +32,7 @@ type FileType =
 
 interface DropzoneProps<T extends FieldValues> {
   value?: File[];
-  name: Path<T>;                              // ⬅ フォームに依存した安全な name
+  name: string;                              // ⬅ フォームに依存した安全な name
   acceptedFileTypes?: FileType[];
   width?: number | string;
   height?: number | string;
@@ -128,7 +128,8 @@ export default function Dropzone<T extends FieldValues>({
       <input
         type="file"
         accept="image/*"
-        {...register(name)}       // RHF の register はこれだけで十分
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        {...register(name as any)}       // RHF の register はこれだけで十分
         ref={inputRef}            // あなたの ref を上書きする
         onChange={handleChange}
         className="hidden"

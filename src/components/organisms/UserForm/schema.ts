@@ -2,14 +2,12 @@ import { z } from "zod"
 
 export const userFormSchema = z.object({
   image: z
-    .array(
-      z.object({
-        id: z.string().optional(),
-        src: z.string(), // blob: も http も両方OK
-        file: z.instanceof(File).optional(),
-      })
-    )
-    .optional(),
+  .object({
+    id: z.string().optional(),
+    src: z.string().optional(),
+    file: z.instanceof(File).optional(),
+  })
+  .optional(),
   displayName: z.string().optional(),
   dream: z.string().optional(),
   limit: z.string().optional(),

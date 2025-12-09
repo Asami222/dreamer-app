@@ -9,14 +9,12 @@ export const rewardSchema = z.object({
     .int("整数を入力してください")
     .min(1, "1以上の数を入力してください"),
 
-  image: z
-    .array(
-      z.object({
-        id: z.string().optional(),
-        src: z.string(),
-        file: z.instanceof(File).optional(),
-      })
-    )
+    image: z
+    .object({
+      id: z.string().optional(),
+      src: z.string().optional(),
+      file: z.instanceof(File).optional(),
+    })
     .optional(),
 });
 

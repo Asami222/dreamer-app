@@ -14,14 +14,12 @@ export const todoSchema = z.object({
   description: z.string().optional().or(z.literal("")),
 
   image: z
-    .array(
-      z.object({
-        id: z.string().optional(),
-        src: z.string(), // blob: も http も両方OK
-        file: z.instanceof(File).optional(),
-      })
-    )
-    .optional(),
+  .object({
+    id: z.string().optional(),
+    src: z.string().optional(),
+    file: z.instanceof(File).optional(),
+  })
+  .optional(),
 
   star: z.coerce
     .number()

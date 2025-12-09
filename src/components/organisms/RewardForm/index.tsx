@@ -38,7 +38,7 @@ const initialFormState = (
   updatedAt: Date.now().toString(),
   title: "",
   star: 0,
-  image: [],
+  image: {},
   error: null,
   status: "idle",
   ...initialState,
@@ -138,8 +138,7 @@ const RewardForm = () => {
               rules={{ required: false }}
               render={({ field }) => (
               <InputImages<RewardInput>
-                images={field.value ?? []}
-                maximumNumber={1}
+                image={field.value}
                 name="image"
                 register={register}
               />

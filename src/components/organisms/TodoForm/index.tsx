@@ -22,7 +22,7 @@ const initialFormState = (
   initialState?: Partial<FormState<TodoInput>>,
 ): FormState<TodoInput> => ({
   updatedAt: Date.now().toString(),
-  image: [],
+  image: {},
   title: "",
   limit1: 0,
   limit2: 0,
@@ -211,8 +211,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
               name="image"
               render={({ field }) => (
                 <InputImages<TodoInput>
-                  images={field.value ?? []}
-                  maximumNumber={1}
+                  image={field.value}
                   name="image"
                   register={register}
                 />

@@ -23,7 +23,7 @@ const initialFormState = (
   initialState?: Partial<FormState<UserFormInput>>,
 ): FormState<UserFormInput> => ({
   updatedAt: Date.now().toString(),
-  image: [],
+  image: {},
   displayName: "",
   dream: "",
   limit: "",
@@ -120,8 +120,7 @@ const UserForm = () => {
               name="image"
               render={({ field }) => (
                 <InputImages
-                  images={field.value ?? []}
-                  maximumNumber={1}
+                  image={field.value}
                   radius={true}
                   name="image"
                   register={register}

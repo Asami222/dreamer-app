@@ -1,13 +1,11 @@
 import { z } from "zod"
 
 export const userFormSchema = z.object({
-  image: z
-  .object({
+  image: z.object({
     id: z.string().optional(),
     src: z.string().optional(),
     file: z.instanceof(File).optional(),
-  })
-  .optional(),
+  }).optional(),
   displayName: z.string().optional(),
   dream: z.string().optional(),
   limit: z.string().optional(),

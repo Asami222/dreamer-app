@@ -57,6 +57,7 @@ const UserForm = () => {
       // ★: Form のサブミット（action 実行）を中止
       event.preventDefault();
       if (!(err instanceof ZodError)) throw err;
+      console.error(err); // ★ これを追加
       // Zod のバリデーションエラーをマッピング
       setClientErrors(transformFieldErrors(err));
     }

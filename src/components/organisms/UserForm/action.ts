@@ -4,8 +4,16 @@ import { getServerSession } from "src/libs/auth";
 import { prisma } from "src/libs/prisma";
 import { ZodError } from "zod";
 import { revalidateTag } from "next/cache";
-import { validateFormData, transformFieldErrors } from "src/utils/validate";
-import { handleError, errors, type FormState, handleSuccess } from "src/utils/state";
+import {
+  validateFormData,
+  transformFieldErrors,
+} from "src/utils/validate";
+import {
+  handleError,
+  errors,
+  type FormState,
+  handleSuccess,
+} from "src/utils/state";
 import { userFormSchema } from "./schema";
 import type { UserFormInput } from "./schema";
 import { uploadAvatar } from "src/libs/supabase/uploadAvatar";
@@ -20,47 +28,52 @@ export async function updateUser(
   const userId = session.user.id;
 
   try {
-    // ★ Zod バリデーション
+    // -----------------------------
+    // ① Zod バリデーション
+    // -----------------------------
     const payload = validateFormData(formData, userFormSchema);
     const { image, displayName, dream, limit } = payload;
 
-    let imageUrl: string | undefined = undefined; // 未入力時は更新しない
+    // image は 1 枚専用 object （配列ではない）
+    const img = image; // { id?, src?, file? } | undefined
 
-    // ----------------------------------------------------
-    // ① image の先頭情報を取得（InputImages が array を送信する形式）
-    // ----------------------------------------------------
-    const first = image?.[0];
-
-    // ----------------------------------------------------
-    // ② file 情報を FormData から直接取得
-    // ※ FieldName は "image[0].file" などになるので find で取る
-    // ----------------------------------------------------
-    let formFile: File | Blob | null = null;
+    // -----------------------------
+    // ② FormData から file を取得
+    // -----------------------------
+    let formFile: File | null = null;
 
     for (const [key, value] of formData.entries()) {
-      if (key.includes("image") && value instanceof File) {
+      // name="image.file" を前提
+      if (key === "image.file" && value instanceof File && value.size > 0) {
         formFile = value;
+        break;
       }
     }
 
-    // ----------------------------------------------------
-    // ③ ファイルアップロードの判定
-    // ----------------------------------------------------
-    if (formFile && (formFile as File).size > 0) {
-      // Supabase Storage にアップロード
-      imageUrl = await uploadAvatar(formFile as File, userId);
-    } else if (first?.src && first.src.startsWith("http")) {
-      // 既存画像をそのまま使う
-      imageUrl = first.src;
-    }
-    // blob:xxx の場合は無視 → 画像更新しない
+    // -----------------------------
+    // ③ 画像URLの決定
+    // -----------------------------
+    let imageUrl: string | undefined = undefined;
 
-    // ----------------------------------------------------
-    // ④ DB 更新
-    // ----------------------------------------------------
+    if (formFile) {
+      // 新しい画像をアップロード
+      imageUrl = await uploadAvatar(formFile, userId);
+
+    } else if (img?.src && img.src.startsWith("http")) {
+      // 編集時：既存画像
+      imageUrl = img.src;
+
+    } else {
+      // blob:xxx or fileが無い → 画像更新しない
+      imageUrl = undefined;
+    }
+
+    // -----------------------------
+    // ④ DB更新（必要なものだけ更新）
+    // -----------------------------
     const operations = [];
 
-    // profileImageUrl を更新する場合のみ
+    // profileImageUrl の更新
     if (imageUrl !== undefined) {
       operations.push(
         prisma.user.update({
@@ -70,6 +83,7 @@ export async function updateUser(
       );
     }
 
+    // プロフィール情報の更新
     operations.push(
       prisma.profile.update({
         where: { userId },
@@ -79,6 +93,9 @@ export async function updateUser(
 
     await prisma.$transaction(operations);
 
+    // -----------------------------
+    // ⑤ Revalidate
+    // -----------------------------
     revalidateTag("profile", "max");
     revalidateTag("user", "max");
 

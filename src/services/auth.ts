@@ -105,21 +105,15 @@ export async function googleLogin() {
 // ゲストログイン
 // -------------------------------
 export async function loginAsGuest() {
-  
+  /*
     const { data, error } = await supabase.auth.signInWithPassword({
       email: "guest@gmail.com",
       password: "guestpass",
     });
-  
-    if (error) {
-      if (error.code === "invalid_credentials") {
-        throw new Error("ゲストログイン用アカウントが無効です");
-      }
-      throw error;
-    }
-    
-    if (!data.user) {
-      throw new Error("ゲストユーザーが見つかりません");
+  */
+    const res = await fetch("/api/auth/guest", { method: "POST" });
+    if (!res.ok) {
+      throw new Error("ゲストログインが現在利用できません");
     }
   
     return { message: "ゲストログインに成功しました" };

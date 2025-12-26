@@ -23,17 +23,20 @@ export async function POST() {
     return NextResponse.json({ error: "ゲスト作成失敗" }, { status: 500 });
   }
 
-  // 2. 即ログイン
-  await supabase.auth.signInWithPassword({ email, password });
+  // 2. signIn
+  const { data: signInData, error: signInError } =
+    await supabase.auth.signInWithPassword({ email, password });
 
-  const user = signUpData.user;
+  if (signInError || !signInData.session) {
+    return NextResponse.json({ error: "guest login failed" }, { status: 500 });
+  }
 
   // 3. profiles を必ず作る
   await prisma.profile.upsert({
-    where: { userId: user.id },
+    where: { userId: signUpData.user.id },
     update: {},
     create: {
-      userId: user.id,
+      userId: signUpData.user.id,
       displayName: "ゲストユーザー",
       profileImageUrl: null,
     },

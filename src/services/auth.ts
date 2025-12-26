@@ -104,19 +104,19 @@ export async function googleLogin() {
 // -------------------------------
 // ゲストログイン
 // -------------------------------
+
 export async function loginAsGuest() {
-  /*
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: "guest@gmail.com",
-      password: "guestpass",
-    });
-  */
-    const res = await fetch("/api/auth/guest", { method: "POST" });
-    if (!res.ok) {
-      throw new Error("ゲストログインが現在利用できません");
-    }
-  
-    return { message: "ゲストログインに成功しました" };
+  const res = await fetch("/api/auth/guest", { method: "POST" });
+
+  if (!res.ok) {
+    throw new Error("ゲストログインが現在利用できません");
+  }
+
+  // ★ ここが必須：cookie → client auth state 同期
+  await supabase.auth.getSession();
+
+  return { message: "ゲストログインに成功しました" };
+
   
   /*
   const email = "guest@gmail.com";

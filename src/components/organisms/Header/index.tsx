@@ -22,14 +22,19 @@ const Header = () => {
 
   useEffect(() => {
     let isMounted = true;
-
+  
     const fetchProfile = async () => {
       const isE2E = process.env.NEXT_PUBLIC_E2E_TEST === "true";
-
-      const { data: { user } } = isE2E
-        ? { data: { user: { id: "test-user" } } }
-        : await supabase.auth.getUser();
-
+  
+      let user: { id: string } | null = null;
+  
+      if (isE2E) {
+        user = { id: "test-user" };
+      } else {
+        const { data } = await supabase.auth.getSession();
+        user = data.session?.user ?? null;
+      }
+  
       if (!user) {
         if (isMounted) {
           setProfile(null);
@@ -38,13 +43,13 @@ const Header = () => {
         }
         return;
       }
-
+  
       const res = await fetch("/api/profile", { cache: "no-store" });
       if (!res.ok) {
         if (isMounted) setLoading(false);
         return;
       }
-
+  
       const data = await res.json();
       if (isMounted) {
         setProfile(data.profile);
@@ -52,13 +57,13 @@ const Header = () => {
         setLoading(false);
       }
     };
-
+  
     fetchProfile();
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, _session) => {
+  
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
       fetchProfile();
     });
-
+  
     return () => {
       isMounted = false;
       listener.subscription.unsubscribe();

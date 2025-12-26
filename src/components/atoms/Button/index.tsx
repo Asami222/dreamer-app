@@ -44,14 +44,21 @@ export default function Button({
         className
       )}
     >
-      {loading ? (
-        <div className="absolute inset-0 flex items-center justify-center gap-2">
-          <Spinner size={16} strokeWidth={2} color={selectcolor === "Pink" ? "var(--white)" : "var(--text)"}/>
-          {loadingMessage && <span>{loadingMessage}</span>}
-        </div>
-      ) : (
-        children
-      )}
+    {/* 通常表示 */}
+    <span className={loading ? "invisible" : "flex items-center justify-center"}>
+      {children}
+    </span>
+    {/* ローディング表示 */}
+    {loading && (
+      <span className="absolute inset-0 flex items-center justify-center gap-2">
+        <Spinner
+          size={16}
+          strokeWidth={2}
+          color={selectcolor === "Pink" ? "var(--white)" : "var(--text)"}
+        />
+        {loadingMessage && <span>{loadingMessage}</span>}
+      </span>
+    )}
     </button>
   )
 }

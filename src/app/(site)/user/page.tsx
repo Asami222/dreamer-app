@@ -1,8 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/libs/supabase/server";
 import { getUserProfile, getProfileImageUrl } from "@/libs/profile";
-import { SITE_NAME } from "src/constants";
-import type { Metadata } from "next";
 import UserRewardListContainer from 'src/containers/UserRewardListContainer'
 import UserProfileContainer from 'src/containers/UserProfileContainer'
 import Separator from "src/components/atoms/Separator";

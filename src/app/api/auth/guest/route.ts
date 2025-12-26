@@ -35,7 +35,7 @@ export async function POST() {
     create: {
       userId: user.id,
       displayName: "ゲストユーザー",
-      profileImageUrl: "/images/noImg.webp",
+      profileImageUrl: null,
     },
   });
 

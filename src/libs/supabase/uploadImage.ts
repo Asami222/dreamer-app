@@ -1,33 +1,33 @@
-// src/libs/supabase/uploadImage.ts
-
-import { createClient } from "../supabase/server";
+import { supabaseAdmin } from "./admin";
 import { randomUUID } from "crypto";
 
-/**
- * 共通アップロード関数
- * category: "avatar" | "todo" | "reward" など用途名
- */
 export async function uploadImage(
   file: File,
   userId: string,
-  category: string // avatar / todo / reward / その他用途
+  category: "avatar" | "reward" | "todo",
 ) {
-  const supabase = await createClient();
-  const fileExt = file.name.split(".").pop();
-  const fileName = `${userId}/${category}-${randomUUID()}.${fileExt}`;
+  const fileExt = "webp";
 
-  const { data, error } = await supabase.storage
-    .from("images") // バケットは1つだけ
-    .upload(fileName, file, {
-      upsert: true,
+  let filePath: string;
+
+  if (category === "avatar") {
+    // 常に1枚だけ
+    filePath = `${userId}/avatar.${fileExt}`;
+  } else {
+    // reward, todo は毎回新規
+    const id = randomUUID();
+    filePath = `${userId}/${category}/${id}.${fileExt}`;
+  }
+
+  const { error } = await supabaseAdmin.storage
+    .from("images")
+    .upload(filePath, file, {
+      upsert: category === "avatar",
+      contentType: "image/webp",
     });
 
   if (error) throw error;
 
-  // private → 常に signed URL を返す
-  const { data: signed } = await supabase.storage
-    .from("images")
-    .createSignedUrl(fileName, 60 * 60 * 24); // 24時間
-
-  return signed?.signedUrl ?? "";
+  // DB には path のみ
+  return filePath;
 }

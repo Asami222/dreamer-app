@@ -1,6 +1,7 @@
+// RewardForm/action.ts
 "use server";
 
-import { getServerSession } from "src/libs/auth";
+import { createClient } from "@/libs/supabase/server";
 import { prisma } from "src/libs/prisma";
 import { ZodError } from "zod";
 import { revalidateTag } from "next/cache";
@@ -23,10 +24,38 @@ export async function createReward(
   formData: FormData,
 ): Promise<FormState<RewardInput>> {
 
-  const session = await getServerSession();
-  if (!session) return handleError(prevState, errors[401]);
+   //e2e playwrightテスト用
+   const isE2E = process.env.NEXT_PUBLIC_E2E_TEST === "true";
+   const forceError = formData.get("__forceServerError") === "1";
 
-  const userId = session.user.id;
+   if (isE2E && forceError) {
+     return handleError(prevState, {
+       ...errors[500],
+       message: "サーバーエラーが発生しました",
+     });
+   }
+
+   if (isE2E) {
+     // フォームの値だけ軽くバリデーションして即成功
+     try {
+       validateFormData(formData, rewardSchema);
+       return handleSuccess(prevState);
+     } catch (err) {
+       if (err instanceof ZodError) {
+         return handleError(prevState, {
+           ...errors[400],
+           fieldErrors: transformFieldErrors(err),
+         });
+       }
+       return handleError(prevState, errors[500]);
+     }
+   }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return handleError(prevState, errors[401]);
+
+  const userId = user.id; // auth.users.id === Profile.userId
 
   try {
     // -----------------------
@@ -34,10 +63,9 @@ export async function createReward(
     // -----------------------
     const payload = validateFormData(formData, rewardSchema);
     const { title, star, image } = payload;
-    // image は必ず「object | undefined」
 
     // -----------------------
-    // ② FormData から File を抽出
+    // ② FormData から File 抽出
     // -----------------------
     let formFile: File | null = null;
 
@@ -48,33 +76,49 @@ export async function createReward(
       }
     }
 
-    // -----------------------
-    // ③ 画像アップロード or 既存URL
-    // -----------------------
-    let imageUrl = "/images/bear01.webp"; // デフォルト
+    const MAX_SIZE = 5 * 1024 * 1024;
+    const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-    if (formFile) {
-      // 新しくアップロード
-      imageUrl = await uploadImage(formFile, userId, "reward");
+    if (formFile && formFile.size > 0) {
+      if (formFile.size > MAX_SIZE) {
+        return handleError(prevState, {
+          ...errors[400],
+          message: "画像サイズは5MB以内にしてください",
+        });
+      }
 
-    } else if (image?.src && image.src.startsWith("http")) {
-      // 編集時：既存画像の保持
-      imageUrl = image.src;
+      if (!ALLOWED_TYPES.includes(formFile.type)) {
+        return handleError(prevState, {
+          ...errors[400],
+          message: "jpg / png / webp のみアップロードできます",
+        });
+      }
     }
 
     // -----------------------
-    // ④ DB 保存
+    // ③ 画像アップロード / 既存利用
+    // -----------------------
+    let imagePath: string | null = null;
+
+    if (formFile) {
+      imagePath = await uploadImage(formFile, userId, "reward");
+    } else if (image?.src) {
+      imagePath = image.src;
+    }
+
+    // -----------------------
+    // ④ DB 保存（Profile に紐づける）
     // -----------------------
     await prisma.reward.create({
       data: {
-        user: { connect: { id: userId } },
-        image: imageUrl,
         title,
         star,
+        image: imagePath,
+        userId, // ← 必須
       },
     });
 
-    revalidateTag("rewards", "max");
+    revalidateTag("rewards","max");
     return handleSuccess(prevState);
 
   } catch (err) {

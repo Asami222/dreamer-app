@@ -1,5 +1,6 @@
-import Layout from "src/components/templates/Layout"
+import ServerLayout from "@/components/templates/Layout/ServerLayout";
+
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
-  return <Layout>{children}</Layout>
+  return <ServerLayout>{children}</ServerLayout>
 }

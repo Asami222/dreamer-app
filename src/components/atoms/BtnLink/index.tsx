@@ -1,7 +1,6 @@
 import Link from "next/link";
 import clsx from "clsx"
 import Spinner from "../Spinner"
-import { color } from "storybook/internal/theming";
 
 type BtnLinkProps = {
   href: string

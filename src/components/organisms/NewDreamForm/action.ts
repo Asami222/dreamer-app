@@ -3,7 +3,7 @@
 import { prisma } from "src/libs/prisma";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { getServerSession } from "src/libs/auth";
+import { createClient } from "@/libs/supabase/server";
 import type { FormState } from "./state";
 
 function validateFormData(formData: FormData) {
@@ -23,21 +23,24 @@ export async function createDream(
   formData: FormData,
 ): Promise<FormState> {
   // 誰から送られたリクエストかを特定する
-  const session = await getServerSession();
-  if (!session) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
     return { message: "未認証です。再度ログインしてください" };
   }
   try {
     const { dream, limit } = validateFormData(formData);
-    const userId = session.user.id;
+    const userId = user.id;
     // ユーザー情報とプロフィール情報をまとめて更新
     await prisma.profile.upsert({
       where: { userId },
       update: { dream, limit },
       create: {
-        user: { connect: { id: userId }},
+        userId,
         dream,
         limit,
+        stars: 0,
       },
     });
     // ユーザーIDに紐づいたキャッシュを Reavalidate

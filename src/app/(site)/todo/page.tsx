@@ -1,23 +1,36 @@
-import { prisma } from "src/libs/prisma";
 import { TabGroup, TabPanel, TabPanels } from '@headlessui/react'
-//import type { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType, NextPage } from 'next'
-//import getAllTodos from 'services/todos/get-all-todos'
 import type { Category, Todo} from 'src/types/data'
 import UserTodoListContainer from 'src/containers/UserTodoListContainer'
-//import getUser from 'services/users/get-user'
-//import getAllUsers from 'services/users/get-all-users'
 import { Fragment } from 'react';
 import Separator from 'src/components/atoms/Separator'
-//import { useMyTodosContext } from "contexts/TodoContext"
-//import { getTodo } from 'src/services/getTodo'
 import { notFound } from "next/navigation";
-import { getServerSession } from "src/libs/auth";
-//import { TodoCategory } from '@prisma/client';
-import { toTodosUI } from "src/utils/transform";
+import { createClient } from "@/libs/supabase/server";
 import { TodoUIModel } from "src/types/data";
 import { CategoryTabs } from "./TodoClient";
-//import { useRouter } from 'next/router'
+import { toTodosUI } from "src/utils/transform";
+import { getUserTodosWithImageUrl } from "@/libs/todo";
+import type { ResolvingMetadata } from "next";
+import { buildPageMetadata } from "@/libs/metadata";
 
+export async function generateMetadata(
+  _: unknown,
+  parent: ResolvingMetadata
+) {
+  return buildPageMetadata("Todo", "Todoページです。", parent);
+}
+
+const E2E_TODOS: TodoUIModel[] = [
+  {
+    id: "todo-1",
+    title: "テストTodo",
+    description: "詳細テキスト",
+    category: "day",
+    star: 3,
+    image: '',
+    limit: [10],
+    detail: '',
+  },
+];
 
 export type Categories = {
  label: string
@@ -53,34 +66,23 @@ const categories: Categories[] = [
 
 const Todo = async() => {
 
-  const session = await getServerSession();
-  const userId = session?.user?.id;
+  const isE2E = process.env.NEXT_PUBLIC_E2E_TEST === "true"
+  let todos: TodoUIModel[]
 
-  if (!userId) notFound();
+  if (isE2E) {
+    // E2E時：認証・DBを完全スキップ
+    todos = E2E_TODOS
+  } else {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const todo = await prisma.todo.findMany({
-    where: { userId },
-    orderBy: { createdAt: 'desc' },
-  });
+  if (!user) notFound(); 
+  const userId = user.id;
 
-  const todos = toTodosUI(todo)
-
-
-/*
-  const [session, { todos }] = await Promise.all([
-    getServerSession(),
-    getTodo({revalidate: 10}),
-  ]);
-  if (!getTodo || !session?.user) {
-    notFound();
+  const todosWithImageUrl = await getUserTodosWithImageUrl(userId)
+  todos = toTodosUI(todosWithImageUrl)
   }
-*/
-  /*
-  const { myTodos,setTodo } = useMyTodosContext()
-  useEffect(() => {
-    setTodo(todos)
-  }, [setTodo, todos]);
-  */
+
   const yearCategory = todos.filter((todo) => todo.category === 'year')
   const monthCategory = todos.filter((todo) => todo.category === 'month')
   const weekCategory = todos.filter((todo) => todo.category === 'week')

@@ -6,13 +6,13 @@ import { useState, useEffect } from "react";
 
 export type FileData = {
   id?: string;
-  src?: string;   // 既存画像のURLもOK
-  file?: File;    // 新規アップロード
+  src?: string;   // 既存画像URL
+  file?: File;    // 新規アップロードファイル
 };
 
 interface InputImageProps<T extends FieldValues> {
-  name: Path<T>;              // "image"
-  image?: FileData;           // ← 1枚専用
+  name: Path<T>;              // 例: "image"
+  image?: FileData;           // 1枚専用
   hasError?: boolean;
   width?: string;
   height?: string;
@@ -32,15 +32,14 @@ export default function InputImage<T extends FieldValues>({
   onChange,
 }: InputImageProps<T>) {
 
-  // 内部状態（File または URL）
   const [localImage, setLocalImage] = useState<FileData | undefined>(image);
 
-  // 外部 image が変更された時の同期
+  // 外から渡される image が更新されたら反映
   useEffect(() => {
     setLocalImage(image);
   }, [image]);
 
-  // Dropzone から受け取る
+  // Dropzone のファイル受取
   const handleDrop = (files: File[]) => {
     if (files.length === 0) return;
 
@@ -48,7 +47,7 @@ export default function InputImage<T extends FieldValues>({
 
     const img: FileData = {
       file,
-      src: URL.createObjectURL(file)
+      src: URL.createObjectURL(file),
     };
 
     setLocalImage(img);
@@ -62,9 +61,9 @@ export default function InputImage<T extends FieldValues>({
 
   return (
     <div className="relative" style={{ width, height }}>
-      {/* Dropzone */}
+      {/* Dropzone（画像がある時はクリック不能にしている仕様） */}
       <Dropzone
-        name={`${name}.file`}
+        name={`${name}.file`}                    // ← image.file として送られる
         value={localImage?.file ? [localImage.file] : []}
         onDrop={handleDrop}
         hasError={hasError}
@@ -72,7 +71,6 @@ export default function InputImage<T extends FieldValues>({
         height={height}
         radius={radius}
         register={register}
-        multiple={false}
       />
 
       {/* プレビュー */}
@@ -80,8 +78,8 @@ export default function InputImage<T extends FieldValues>({
         <div className="absolute inset-0 flex items-center justify-center">
           <ImagePreview
             src={localImage.src}
-            width={`${width}px`}
-            height={`${height}px`}
+            width={width}
+            height={height}
             onRemove={handleRemove}
           />
         </div>

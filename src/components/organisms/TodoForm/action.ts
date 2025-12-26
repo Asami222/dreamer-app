@@ -1,6 +1,6 @@
 "use server";
 
-import { getServerSession } from "src/libs/auth";
+import { createClient } from "@/libs/supabase/server";
 import { prisma } from "src/libs/prisma";
 import { ZodError } from "zod";
 import { revalidateTag } from "next/cache";
@@ -20,10 +20,30 @@ export async function createTodo(
   formData: FormData,
 ): Promise<FormState<TodoInput>> {
 
-  const session = await getServerSession();
-  if (!session) return handleError(prevState, errors[401]);
+   //e2e playwrightテスト用
+   const isE2E = process.env.NEXT_PUBLIC_E2E_TEST === "true";
 
-  const userId = session.user.id;
+   if (isE2E) {
+     // フォームの値だけ軽くバリデーションして即成功
+     try {
+       validateFormData(formData, todoSchema);
+       return handleSuccess(prevState);
+     } catch (err) {
+       if (err instanceof ZodError) {
+         return handleError(prevState, {
+           ...errors[400],
+           fieldErrors: transformFieldErrors(err),
+         });
+       }
+       return handleError(prevState, errors[500]);
+     }
+   }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return handleError(prevState, errors[401]);
+
+  const userId = user.id;
 
   try {
     // -----------------------
@@ -45,8 +65,8 @@ export async function createTodo(
     // ② limit を 1つの配列にまとめる
     // -----------------------
     const limitArr: number[] = [];
-    if (limit1) limitArr.push(limit1);
-    if (limit2) limitArr.push(limit2);
+    if (limit1 !== undefined) limitArr.push(limit1);
+    if (limit2 !== undefined) limitArr.push(limit2);
 
     // -----------------------
     // ③ FormData から File を取得
@@ -60,18 +80,37 @@ export async function createTodo(
       }
     }
 
+    const MAX_SIZE = 5 * 1024 * 1024;
+    const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+    if (formFile && formFile.size > 0) {
+      if (formFile.size > MAX_SIZE) {
+        return handleError(prevState, {
+          ...errors[400],
+          message: "画像サイズは5MB以内にしてください",
+        });
+      }
+
+      if (!ALLOWED_TYPES.includes(formFile.type)) {
+        return handleError(prevState, {
+          ...errors[400],
+          message: "jpg / png / webp のみアップロードできます",
+        });
+      }
+    }
+
     // -----------------------
     // ④ 新規アップロード or 既存URL
     // -----------------------
-    let imageUrl: string | null = null;
+    let imagePath: string | null = null;
 
     if (formFile) {
       // 新しく画像をアップロード
-      imageUrl = await uploadImage(formFile, userId, "todo");
+      imagePath = await uploadImage(formFile, userId, "todo");
 
     } else if (image?.src && image.src.startsWith("http")) {
       // 編集時：既存画像をそのまま保存
-      imageUrl = image.src;
+      imagePath = image.src;
     }
 
     // -----------------------
@@ -79,8 +118,8 @@ export async function createTodo(
     // -----------------------
     await prisma.todo.create({
       data: {
-        user: { connect: { id: userId } },
-        image: imageUrl ?? "", // 画像なしは空文字
+        userId,
+        image: imagePath, // 画像なしは空文字
         title,
         category,
         limit: limitArr,

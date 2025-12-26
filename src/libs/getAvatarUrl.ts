@@ -1,10 +1,10 @@
 // src/lib/getAvatarUrl.ts
 "use client";
 
-import { client } from "@/libs/supabase/client";
+import { createClient } from "@/libs/supabase/server";
 
 export async function getAvatarUrl() {
-  const supabase = client;
+  const supabase = await createClient();
 
   const {
     data: { user },

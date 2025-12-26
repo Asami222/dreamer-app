@@ -12,21 +12,21 @@ describe("LoginForm", () => {
     expect(button).toBeDisabled();
   });
 
-  it("ユーザー名だけ入力してもログインボタンはdisabledのまま", async () => {
+  it("メールアドレスだけ入力してもログインボタンはdisabledのまま", async () => {
     render(<LoginForm />);
-    const nameInput = screen.getByPlaceholderText("ユーザー名");
-    fireEvent.change(nameInput, { target: { value: "testuser" } });
+    const emailInput = screen.getByPlaceholderText("メールアドレス");
+    fireEvent.change(emailInput, { target: { value: "testuser@gmail.com" } });
     const button = screen.getByRole("button", { name: "ログイン" });
     expect(button).toBeDisabled();
   });
 
-  it("ユーザー名とパスワードを入力するとログインボタンが有効化される", async () => {
+  it("メールアドレスとパスワードを入力するとログインボタンが有効化される", async () => {
     render(<LoginForm />);
-    const nameInput = screen.getByPlaceholderText("ユーザー名");
+    const emailInput = screen.getByPlaceholderText("メールアドレス");
     const passwordInput = screen.getByPlaceholderText("パスワード");
     const button = screen.getByRole("button", { name: "ログイン" });
 
-    fireEvent.change(nameInput, { target: { value: "testuser" } });
+    fireEvent.change(emailInput, { target: { value: "testuser@gmail.com" } });
     fireEvent.change(passwordInput, { target: { value: "secret123" } });
 
     // フォーム状態が反映されるのを待つ
@@ -37,11 +37,11 @@ describe("LoginForm", () => {
     const mockOnSign = vi.fn();
     render(<LoginForm onLogin={mockOnSign} />);
 
-    const nameInput = screen.getByPlaceholderText("ユーザー名");
+    const emailInput = screen.getByPlaceholderText("メールアドレス");
     const passwordInput = screen.getByPlaceholderText("パスワード");
     const button = screen.getByRole("button", { name: "ログイン" });
 
-    fireEvent.change(nameInput, { target: { value: "testuser" } });
+    fireEvent.change(emailInput, { target: { value: "testuser@gmail.com" } });
     fireEvent.change(passwordInput, { target: { value: "secret123" } });
 
     await waitFor(() => expect(button).toBeEnabled());
@@ -49,20 +49,19 @@ describe("LoginForm", () => {
 
     await waitFor(() => {
       expect(mockOnSign).toHaveBeenCalledTimes(1);
-      expect(mockOnSign).toHaveBeenCalledWith("testuser", "secret123");
+      expect(mockOnSign).toHaveBeenCalledWith("testuser@gmail.com", "secret123");
     });
   });
 
-  it("テストユーザーでログインボタンを押すと onTestSign が呼ばれる", async () => {
-    const mockOnTestSign = vi.fn();
-    render(<LoginForm onGuestLogin={mockOnTestSign} />);
+  it("ゲストユーザーでログインボタンを押すと onTestSign が呼ばれる", async () => {
+    const mockOnGuestSign = vi.fn();
+    render(<LoginForm onGuestLogin={mockOnGuestSign} />);
 
-    const testButton = screen.getByRole("button", { name: "テストユーザーでログイン" });
-    fireEvent.click(testButton);
+    const GuestButton = screen.getByRole("button", { name: "ゲストユーザーでログイン" });
+    fireEvent.click(GuestButton);
 
     await waitFor(() => {
-      expect(mockOnTestSign).toHaveBeenCalledTimes(1);
-      expect(mockOnTestSign).toHaveBeenCalledWith("test", "111");
+      expect(mockOnGuestSign).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -72,14 +71,18 @@ describe("LoginForm", () => {
     expect(button).toBeDisabled();
   });
 
-  it("submitError があるときにエラーメッセージが表示される", () => {
-    render(<LoginForm submitError="ユーザー名またはパスワードが正しくありません" />);
-    expect(screen.getByText("ユーザー名またはパスワードが正しくありません")).toBeInTheDocument();
+  it("submitError があるときに alert とメッセージ内容が表示される", () => {
+    const message = "メールアドレスまたはパスワードが正しくありません";
+  
+    render(<LoginForm submitError={message} />);
+  
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent(message);
   });
 
   it("エラーメッセージがない場合は、危険系クラスが付与されていない", () => {
     render(<LoginForm />);
-    const nameInput = screen.getByPlaceholderText("ユーザー名");
-    expect(nameInput.className).not.toContain("border-(--danger)");
+    const emailInput = screen.getByPlaceholderText("メールアドレス");
+    expect(emailInput.className).not.toContain("border-(--danger)");
   });
 });

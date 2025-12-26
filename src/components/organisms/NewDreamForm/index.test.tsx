@@ -6,7 +6,7 @@ import NewDreamForm from "src/components/organisms/NewDreamForm";
 describe("NewDreamForm", () => {
   it("入力後にonSaveが呼ばれる", async () => {
     const onSave = vi.fn();
-    render(<NewDreamForm onSave={onSave} />);
+    render(<NewDreamForm />);
 
     await userEvent.type(screen.getByPlaceholderText(/夢を記入/), "世界一周旅行に行く");
     await userEvent.type(screen.getByPlaceholderText(/期限を記入/), "2026年夏まで");

@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { toast } from "react-hot-toast";
-import Layout from "src/components/templates/Layout";
 import Button from "src/components/atoms/Button";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function GlobalError({
   error,
@@ -15,11 +14,9 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     console.error(error);
-    toast.error("予期しないエラーが発生しました");
   }, [error]);
 
     return (
-      <Layout>
           <div className="flex flex-col items-center justify-center min-h-[50vh] px-6 text-center">
             <div className="w-[180px] h-[145px] mx-auto mt-[40px]">
               <Image
@@ -40,7 +37,13 @@ export default function GlobalError({
               >
                 再読み込み
             </Button>
+            <div className="text-center mt-8">
+              <Link href={`/`}>
+                <p className="hover:underline hover:cursor-pointer text-(--text) text-[16px]">
+                  ホームへ戻る
+                </p>
+              </Link>
+            </div>
           </div>
-      </Layout>
   );
 }

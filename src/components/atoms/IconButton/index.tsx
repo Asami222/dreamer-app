@@ -80,7 +80,7 @@ export interface IconButtonProps {
   size?: number
   ariaLabel?: string
   hover?: boolean
-  'data-testid'?: string
+  dataTestId?: string
 }
 
 /**
@@ -91,7 +91,7 @@ function withIconStyle(
   defaultTestId?: string
 ): React.ComponentType<IconButtonProps> {
   const IconWithStyle = (props: IconButtonProps) => {
-    const { onClick, className, size = 24, 'data-testid': testId, ariaLabel, hover = true, ...rest } = props
+    const { onClick, className, size = 24, dataTestId: testId, ariaLabel, hover = true, ...rest } = props
     const cursor = onClick ? 'pointer' : ''
 
     return (

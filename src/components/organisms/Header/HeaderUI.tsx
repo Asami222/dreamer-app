@@ -4,14 +4,13 @@ import Link from "next/link";
 import AppLogo from "src/components/atoms/AppLogo";
 import { ChecklistIcon, AccountCircleIcon, CreateIcon, NoAccountsIcon, EmojiEventsIcon, LogoutIcon, PersonIcon, StarIcon, SettingsIcon } from "src/components/atoms/IconButton";
 import ShapeImage from "src/components/atoms/ShapeImage";
-import { Session } from "next-auth"
-//import Spinner from "src/components/atoms/Spinner";
-//import { roboto, m_plus_1p } from 'src/app/layout'
+import { Profile } from "@/types/data"
 import clsx from "clsx"
 
 interface HeaderUIProps {
-  authUser?: Session["user"] | null
-  onLogout?: () => void
+  profile: Profile | null
+  profileImageUrl: string | null;
+  onLogout: () => void
 }
 
 interface ListItemProps {
@@ -64,7 +63,7 @@ const MenuLink =({ href, children }: { href: string; children: React.ReactNode }
   );
 }
 
-export const HeaderUI = ({ authUser, onLogout }: HeaderUIProps) => {
+export const HeaderUI = ({ profile, profileImageUrl, onLogout }: HeaderUIProps) => {
 
   return (
     <header className={`w-[92%] mx-auto pt-4 h-12`}>
@@ -73,55 +72,48 @@ export const HeaderUI = ({ authUser, onLogout }: HeaderUIProps) => {
         <nav>
         <ul className='flex gap-6'>
           <li>
-            {(() => {
-              if(authUser) {
-                return (
+            { profile ? (
                   <Link href={`/user`}>
-                    { authUser?.profileImageUrl ?
+                    { profileImageUrl ?
                     <ShapeImage
+                      alt='ユーザーイメージ'
                       shape="circle"
-                      src={authUser.profileImageUrl}
-                      width="24px"
-                      height="24px"
+                      src={profileImageUrl}
+                      width={24}
+                      height={24}
+                      header
+                      aliaLabel='ユーザーイメージ'
                     />
                     :
                     <AccountCircleIcon size={24} color='var(--text)' data-testid="profile-image" ariaLabel='ユーザーページへ'/>
                     }
                   </Link>
-                )
-              } else {
-                return (
+                ):(
                   <Link href="/login">
                     <NoAccountsIcon size={24} color='var(--text)' data-testid="profile-noimage" ariaLabel='ログインページへ'/>
                   </Link>
                 )
-              }
-            })()}
+            }
           </li>
           <li>
             <Link href='/newTodo'><CreateIcon size={24} color='var(--text)' ariaLabel='todo作成ページへ'/></Link>
           </li>
           <li>
-          {(() => {
-              if(authUser) {
-                return (
-                  <Link href={`/todo`}>
-                    <ChecklistIcon size={24} color='var(--text)' ariaLabel='todoページへ'/>
-                  </Link>
-                )
-              } else {
-                return (
-                  <Link href="/login">
-                    <ChecklistIcon size={24} color='var(--text)' ariaLabel='サインインへ'/>
-                  </Link>
-                )
-              }
-            })()}
+          { profile ?(
+              <Link href={`/todo`}>
+                <ChecklistIcon size={24} color='var(--text)' ariaLabel='todoページへ'/>
+              </Link>
+            ):(
+              <Link href="/auth/login">
+                <ChecklistIcon size={24} color='var(--text)' ariaLabel='サインインへ'/>
+              </Link>
+            )
+          }
           </li>
           <li>
           <Menu as="div" className="relative font-(--font-base)">
             <MenuButton className="block border-none p-0 bg-none cursor-pointer">
-                <SettingsIcon size={24} color='var(--text)' ariaLabel='設定メニュー'/>
+                <SettingsIcon size={24} color='var(--text)' dataTestId="settings-menu" ariaLabel='設定メニュー'/>
             </MenuButton>
             <Transition
               as={Fragment}
@@ -132,12 +124,10 @@ export const HeaderUI = ({ authUser, onLogout }: HeaderUIProps) => {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <MenuItems className="absolute z-5000 right-0 w-[180px] mt-2 origin-top-right bg-[rgba(250,250,250,0.4)] bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-100 rounded-4xl shadow-[0_0_10px_rgba(80,62,62,0.25)]/10 outline-0 focus:outline-none">
+              <MenuItems data-testid="settings-menu-items" className="absolute z-5000 right-0 w-[180px] mt-2 origin-top-right bg-[rgba(250,250,250,0.4)] bg-clip-padding backdrop-filter backdrop-blur-sm border border-gray-100 rounded-4xl shadow-[0_0_10px_rgba(80,62,62,0.25)]/10 outline-0 focus:outline-none">
               <div className="relative">
                 <ul className='py-6 px-4 flex flex-col gap-6'>
-                {(() => {
-              if(authUser) {
-                return (
+                { profile ? (
                   <>
                     <MenuItem as="li">
                       {({ focus }) => (
@@ -190,15 +180,11 @@ export const HeaderUI = ({ authUser, onLogout }: HeaderUIProps) => {
                       )}
                     </MenuItem>
                   </>
-                )
-              } else {
-                return (
+                ):(
                   <Link href="/signin">
                     <p className='text-[16px] font-medium text-(--placeholder) hover:text-(--text)'>ログイン</p>
                   </Link>
-                )
-              }
-            })()}
+                )}
                 </ul>
                 </div>
               </MenuItems>

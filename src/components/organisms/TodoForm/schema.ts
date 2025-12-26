@@ -5,10 +5,20 @@ export const todoSchema = z.object({
     .enum(["year", "month", "week", "day", "time"])
     .refine((val) => !!val, { message: "カテゴリーを選択してください" }),
 
-  title: z.string().min(1, "todoを入力してください"),
+  title: z.preprocess(
+    (v) => (v === undefined || v === null ? "" : v),
+    z.string().min(1, "todoを入力してください")
+  ),
 
-  limit1: z.coerce.number().int().min(1, "1以上の整数を入力してください").optional(),
-  limit2: z.coerce.number().int().min(1, "1以上の整数を入力してください").optional(),
+  limit1: z.preprocess(
+    (v) => (v === "" || v === undefined ? undefined : v),
+    z.coerce.number().int("整数を入力してください").min(1, "1以上の整数を入力してください")
+  ).optional(),
+
+  limit2: z.preprocess(
+    (v) => (v === "" || v === undefined ? undefined : v),
+    z.coerce.number().int("整数を入力してください").min(1, "1以上の整数を入力してください")
+  ).optional(),
 
   detail: z.string().optional().or(z.literal("")),
   description: z.string().optional().or(z.literal("")),

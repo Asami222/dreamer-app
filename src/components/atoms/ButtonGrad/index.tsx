@@ -3,6 +3,8 @@ import Spinner from "../Spinner"
 
 type SelectColor = "Red" | "Pink"
 type ButtonGradProps = {
+  dataTestid?: string
+  ariaLabel?: string
   hasError?: boolean
   hasBorder?: boolean
   selectcolor?: SelectColor
@@ -16,6 +18,8 @@ type ButtonGradProps = {
 };
 
 export default function ButtonGrad({
+  dataTestid,
+  ariaLabel,
   hasError,
   selectcolor = "Red",
   disabled,
@@ -31,6 +35,8 @@ export default function ButtonGrad({
     <button
       disabled={disabled}
       type={type}
+      data-testid={dataTestid}
+      aria-label={ariaLabel}
       onClick={onClick}
       className={clsx(
         "relative w-[223px] h-[62px] z-0 inline-flex items-center justify-center gap-2 rounded-full text-white text-[16px] leading-[62px] enabled:cursor-pointer font-medium tracking-[0.25em] text-center bg-transparent box-border transition-all duration-100 select-none outline-none border-none overflow-hidden enabled:hover:transition-all enabled:hover:duration-300",

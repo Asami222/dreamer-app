@@ -35,8 +35,8 @@ export const Default: Story = {
   args: {
     src: "/sample.png",
     shape: "square",
-    width: "100px",
-    height: "100px",
+    width: 100,
+    height: 100,
   },
   render: (args) => (
     <div style={{ display: "grid", placeItems: "center", width: "400px", height: "400px", margin: "0 auto" }}>
@@ -51,8 +51,8 @@ export const Circle: Story = {
   args: {
     src: "/sample.png",
     shape: "circle",
-    width: "100px",
-    height: "100px",
+    width: 100,
+    height: 100,
   },
   render: (args) => (
     <div style={{ display: "grid", placeItems: "center", width: "400px", height: "400px", margin: "0 auto" }}>

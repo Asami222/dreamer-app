@@ -6,9 +6,9 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  //directUrl = env("DIRECT_URL")
+  directUrl = env("DIRECT_URL")
 }
-
+/*
 model User {
   id              String   @id @default(uuid()) @db.Uuid
   name            String   @unique
@@ -25,15 +25,20 @@ model User {
   accounts        Account[]
   sessions        Session[]
 }
-
+*/
 model Profile {
-  id            String  @id @default(uuid()) @db.Uuid
-  dream         String?
-  limit         String?
-  displayName   String?
-  stars         Int?    @default(0)
-  userId        String  @unique @db.Uuid
-  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String  @id @default(uuid()) @db.Uuid
+  userId          String  @unique @db.Uuid  // auth.users.id
+  dream           String?
+  limit           String?
+  displayName     String?
+  stars           Int?    @default(0)
+  profileImageUrl String? 
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  rewards         Reward[]
+  GotRewards      GotReward[]
+  todos           Todo[]
 }
 
 model Reward {
@@ -43,7 +48,7 @@ model Reward {
   image      String?
   createdAt  DateTime @default(now())
   userId     String   @db.Uuid
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile    Profile  @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model GotReward {
@@ -52,13 +57,13 @@ model GotReward {
   star       Int?
   createdAt  DateTime @default(now())
   userId     String   @db.Uuid
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile    Profile  @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model Todo {
   id          String   @id @default(uuid()) @db.Uuid
   userId      String   @db.Uuid
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile     Profile  @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   category    TodoCategory
   title       String
@@ -80,7 +85,7 @@ enum TodoCategory {
   day
   time
 }
-
+/*
 model Account {
   id                String  @id @default(uuid()) @db.Uuid
   userId            String  @db.Uuid
@@ -108,7 +113,7 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-/*
+
 model VerificationRequest {
   id         String   @id @default(cuid())
   identifier String

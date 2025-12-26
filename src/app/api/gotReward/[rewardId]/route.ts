@@ -1,17 +1,23 @@
 // app/api/GotReward/[rewardId]/route.ts
 import { prisma } from "src/libs/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "src/libs/auth";
+import { createClient } from "@/libs/supabase/server";
+//import { getServerSession } from "src/libs/auth";
 import { revalidateTag } from "next/cache";
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ rewardId: string}> }) {
-  const session = await getServerSession();
-  const userId = session?.user?.id;
+  const supabase = await createClient();
+const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (!userId) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-  
+if (!user?.id) {
+  return new Response(
+    JSON.stringify({ message: "Unauthorized" }),
+    { status: 401, headers: { "Content-Type": "application/json" } }
+  );
+}
+
+const userId = user.id;
+
   const { rewardId } = await params;
 
   const deleted = await prisma.gotReward.deleteMany({

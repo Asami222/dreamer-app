@@ -1,7 +1,8 @@
+"use client";
 
-import Image from "next/image";
 import Button from "src/components/atoms/Button";
 import { StarIcon, DeleteForeverIcon } from "src/components/atoms/IconButton";
+import ShapeImage from "@/components/atoms/ShapeImage";
 
 interface RewardCardUIProps {
   rewardId: string;
@@ -26,17 +27,15 @@ const RewardCardUI =({
 }: RewardCardUIProps) => {
 
   return (
-      <div className='flex gap-4 items-center w-[320px]'>
+      <div className='flex gap-4 items-center justify-end w-[320px]'>
       { rewardImageUrl &&
           <div className='relative w-[100px] h-[98px] mx-auto'>
-            <Image
-              quality="85"
+            <ShapeImage 
               src={rewardImageUrl}
-              alt="ご褒美イメージ"
-              sizes="25.6vw"
-              fill
-              style={{objectFit:"contain", objectPosition: '50% 50%'}}
-              priority
+              width={100}
+              height={98}
+              shape="square"
+              alt="ご褒美画像"
             />
           </div>
         }
@@ -53,10 +52,11 @@ const RewardCardUI =({
             type="button"
             selectcolor="Yellow"
             onClick={() => onChangeButtonClick?.(rewardId)}
-            disabled={(starNum > 0 && userHasStar <= starNum) || isLoading} //disabled={!isPossible}の書き方でも可
+            disabled={(starNum > 0 && userHasStar < starNum) || isLoading} //disabled={!isPossible}の書き方でも可
             loading={isLoading}
             loadingMessage="交換中..."
             className='w-[104px] h-[28px] rounded-[5px] text-[14px] inline-block text-(--text) text-center'
+            dataTestid="exchange-button"
             >交換する
           </Button>
         </div>

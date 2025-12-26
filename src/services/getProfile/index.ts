@@ -1,4 +1,5 @@
-import { handleFailed, handleSucceed,path } from "..";
+// services/getProfile/index.ts
+import { handleFailed, handleSucceed } from "..";
 import type { Profile } from "src/types/data";
 
 type Props = {
@@ -7,12 +8,14 @@ type Props = {
 
 export async function getProfile({
   revalidate,
-}: Props): Promise<{ profile: Profile }> {
-  return fetch(`/api/profile`, {
-    next: {
-      tags: [`profile`],
-      ...(revalidate !== undefined && { revalidate }),
-    },
+}: Props = {}): Promise<{ profile: Profile | null }> {
+  return fetch("/api/profile/me", {
+    ...(revalidate !== undefined && {
+      next: {
+        tags: ["profile"],
+        revalidate,
+      },
+    }),
   })
     .then(handleSucceed)
     .catch(handleFailed);

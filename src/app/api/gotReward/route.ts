@@ -1,17 +1,20 @@
 import { prisma } from "src/libs/prisma";
 //import { notFound } from "next/navigation";
-import { getServerSession } from "src/libs/auth";
+import { createClient } from "@/libs/supabase/server";
 import { NextRequest } from "next/server";
 import { revalidateTag } from "next/cache";
 import { toGotRewardsUI } from "src/utils/transform";
 
 
 export async function GET() {
-  const session = await getServerSession();
-  const userId = session?.user?.id;
-  if (!userId) {
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user?.id) {
     return Response.json({ message: "Unauthorized" }, { status: 401 });
   }
+  const userId = user.id;
 
   const gotReward = await prisma.gotReward.findMany({
     where: { userId },
@@ -28,11 +31,17 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
 
-  const session = await getServerSession();
-  const userId = session?.user?.id;
-  if (!userId) {
-    return Response.json({ message: "Unauthorized" }, { status: 401 });
-  }
+  const supabase = await createClient();
+const { data: { user }, error } = await supabase.auth.getUser();
+
+if (!user?.id) {
+  return new Response(
+    JSON.stringify({ message: "Unauthorized" }),
+    { status: 401, headers: { "Content-Type": "application/json" } }
+  );
+}
+
+const userId = user.id;
 
   try {
     const body = await req.json();

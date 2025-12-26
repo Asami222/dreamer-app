@@ -4,7 +4,11 @@ import type { Todo, Reward, GotReward } from "@prisma/client";
 import { TodoUIModel, RewardUIModel, GotRewardUIModel } from "src/types/data";
 
 // Todo
-export function toTodoUI(todo: Todo): TodoUIModel {
+type TodoWithImageUrl = Todo & {
+  imageUrl?: string;
+};
+
+export function toTodoUI(todo: TodoWithImageUrl): TodoUIModel {
   return {
     id: todo.id,
     title: todo.title,
@@ -13,27 +17,34 @@ export function toTodoUI(todo: Todo): TodoUIModel {
     limit: todo.limit.length > 0 ? todo.limit : undefined,
     detail: todo.detail ?? undefined,
     description: todo.description ?? undefined,
-    image: todo.image ?? undefined,
+    image: todo.imageUrl,
     createdAt: todo.createdAt.toISOString(), // DateのままだとJSON化で崩れやすい
   };
 }
 
-export function toTodosUI(todos: Todo[]): TodoUIModel[] {
+export function toTodosUI(todos: TodoWithImageUrl[]): TodoUIModel[] {
   return todos.map(toTodoUI);
 }
 
 // Reawrd
-export function toRewardUI(reward: Reward): RewardUIModel {
+// libs/reward.ts から返る型を想定
+type RewardWithImageUrl = Reward & {
+  imageUrl?: string;
+};
+
+export function toRewardUI(reward: RewardWithImageUrl): RewardUIModel {
   return {
     id: reward.id,
     title: reward.title,
-    star: reward.star ?? 0, // ⭐ nullを0に統一
-    image: reward.image ?? undefined,
-    createdAt: reward.createdAt.toISOString(), // DateのままだとJSON化で崩れやすい
+    star: reward.star ?? 0, // ⭐ null → 0
+    image: reward.imageUrl,
+    createdAt: reward.createdAt.toISOString(),
   };
 }
 
-export function toRewardsUI(rewards: Reward[]): RewardUIModel[] {
+export function toRewardsUI(
+  rewards: RewardWithImageUrl[],
+): RewardUIModel[] {
   return rewards.map(toRewardUI);
 }
 

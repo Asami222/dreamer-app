@@ -1,27 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-//import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
+import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
 import LoginForm from "src/components/organisms/LoginForm";
-import { login, loginAsGuest } from "src/services/auth";
-import { signIn } from "next-auth/react";
+//import { signIn } from "next-auth/react";
+import { login, loginAsGuest, googleLogin } from "src/services/auth";
 import toast from "react-hot-toast";
 
 
 const LoginFormContainer = () => {
   const router = useRouter()
-  //const setGlobalSpinner = useGlobalSpinnerActionsContext()
+  const searchParams = useSearchParams();
+  const oauthError = searchParams.get("error");
+  const setGlobalSpinner = useGlobalSpinnerActionsContext()
   const [isLoading, setIsLoading] = useState(false)
   const [submitError, setSubmitError] = useState<string | undefined>()
 
+  useEffect(() => {
+    if (oauthError === "oauth_error") {
+      setSubmitError("Googleログインに失敗しました。再度お試しください");
+    }
+  }, [oauthError]);
+
+
   // name と password でログイン
-  const handleLogin = async (name: string, password: string) => {
+  const handleLogin = async (email: string, password: string) => {
     setSubmitError(undefined)
     try {
       setIsLoading(true)
       //setGlobalSpinner(true)
-      const result = await login({name, password})
+      const result = await login({email, password})
       toast.success(result.message);
       router.push('/user')
     } catch(err: unknown) {
@@ -35,21 +45,21 @@ const LoginFormContainer = () => {
     }
   }
 
-   //　googleでログイン
+   //googleでログイン
   const handleGoogleLogin = async () => {
     setSubmitError(undefined)
     try {
       setIsLoading(true)
-      //setGlobalSpinner(true)
-      await signIn("google")
-      router.push('/user')
+      setGlobalSpinner(true)
+      await googleLogin();
+      //router.push('/user')
     } catch (err) {
       if (err instanceof Error) {
         setSubmitError(err.message)
       } 
     } finally {
       setIsLoading(false)
-      //setGlobalSpinner(false)
+      setGlobalSpinner(false)
     }
   }
 
@@ -65,7 +75,7 @@ const LoginFormContainer = () => {
     } catch (err: unknown) {
       if(err instanceof Error) {
         setSubmitError(err.message)
-        toast.error(err.message); //失敗時は err のみ渡す
+        //toast.error(err.message); //失敗時は err のみ渡す
       }
     } finally {
       setIsLoading(false)
@@ -73,7 +83,7 @@ const LoginFormContainer = () => {
     }
   };
 
-  return <LoginForm onLogin={handleLogin} onGuestLogin={handleGuestLogin} onGoogleLogin={handleGoogleLogin} isLoading={isLoading} submitError={submitError}/>
+  return <LoginForm onLogin={handleLogin} onGuestLogin={handleGuestLogin} isLoading={isLoading} submitError={submitError} onGoogleLogin={handleGoogleLogin}/>
   
 }
 

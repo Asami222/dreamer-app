@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 export const rewardSchema = z.object({
-  title: z.string().min(1, "ご褒美を入力してください"),
+ 
+  title: z.preprocess(
+    (v) => (v === undefined || v === null ? "" : v),
+    z.string().min(1, "ご褒美を入力してください")
+  ),
 
   // ★ TodoForm と同じ書き方に統一（required_error を使わない）
   star: z.coerce

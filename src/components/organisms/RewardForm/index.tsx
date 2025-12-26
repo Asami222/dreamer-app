@@ -19,19 +19,7 @@ import { transformFieldErrors, validateFormData } from "src/utils/validate";
 import { ZodError } from "zod";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
-/*
-export type RewardFormData = {
-  image?: FileData[]
-  reward: string
-  starNum: number
-}
 
-interface RewardFormProps {
-  onRewardSave?: (data: RewardInput) => void
-  isLoading?: boolean;
-  submitError?: string
-}
-*/
 const initialFormState = (
   initialState?: Partial<FormState<RewardInput>>,
 ): FormState<RewardInput> => ({
@@ -129,6 +117,7 @@ const RewardForm = () => {
     return (
       <>
       <form onSubmit={handleSubmit} action={formAction}>
+      <input type="hidden" name="__forceServerError" value={process.env.NEXT_PUBLIC_E2E_TEST === 'true' ? '1' : ''} />
         <div className="flex flex-col items-center gap-2">
           <div className='flex items-center gap-6'>
             <div>
@@ -142,9 +131,15 @@ const RewardForm = () => {
                 name="image"
                 register={register}
                 onChange={field.onChange}
+                hasError={!!errors?.image}
               />
-            )}
+              )}
             />
+            {errors?.image && (
+              <p role="alert" data-testid="reward-image" className="text-(--danger) text-[13px] pl-1">
+                {errors.image.message}
+              </p>
+            )}
             </div>
             <div className='flex flex-col gap-2'>
                 <Input
@@ -153,7 +148,7 @@ const RewardForm = () => {
                   height='28px'
                   type='text'
                   placeholder="テディベア"
-                  hasError={!!errors?.reward}
+                  hasError={!!errors?.title}
                   className='text-center'
                 />
               <div className='flex items-center gap-2'>
@@ -165,27 +160,29 @@ const RewardForm = () => {
                   type='number'
                   placeholder='100'
                   small
-                  hasError={!!errors?.starPieces}
+                  hasError={!!errors?.star}
                 />
                 <p className='text-[14px] text-(--text)'>個と交換</p>
               </div>
             </div>
           </div>
-          {errors?.reward && (
-            <p className='text-(--danger) text-[13px]'>{errors.reward.message}</p>
+          {errors?.title && (
+            <p role="alert" data-testid="reward-title" className='text-(--danger) text-[13px]'>{errors.title.message}</p>
           )}
-          {errors?.starPieces && (
-            <p className='text-(--danger) text-[13px]'>{errors.starPieces.message}</p>
+          {errors?.star && (
+            <p role="alert" data-testid="reward-star" className='text-(--danger) text-[13px]'>{errors.star.message}</p>
           )}
           <button 
             type='submit'
             disabled={isDisabled} 
             className={clsx(
               "border-b border-(--text) text-(--text) text-[16px] enabled:cursor-pointer enabled:hover:text-(--placeholder) enabled:hover:border-(--placeholder)",
-              !!errors?.reward || !!errors?.starPieces || !!state.error ? "text-[#b00000] border-b-0" : "text-(--border) border-(--border)",
+              !!errors?.title || !!errors?.star || !!state.error ? "text-(--danger) border-b-0" : "text-(--border) border-(--border)",
               isDisabled && "opacity-50 cursor-not-allowed",
               isPending && "opacity-100 border-b-0",
             )}
+            data-testid="add-reward"
+            aria-label="ご褒美作成"
           >
             {isPending ? (
               <div className="flex items-center gap-2">
@@ -197,7 +194,7 @@ const RewardForm = () => {
             )}
           </button>
           {state.error?.message && (
-            <div className="mt-1 text-center text-(--danger) text-[13px]">
+            <div role="alert" data-testid="rewardform-server-error" className="mt-1 text-center text-(--danger) text-[13px]">
               {state.error.message}
             </div>
         )}

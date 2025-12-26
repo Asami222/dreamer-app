@@ -9,6 +9,7 @@ import Input from "src/components/atoms/Input";
 import clsx from "clsx"
 import Image from "next/image";
 import Separator from "src/components/atoms/Separator";
+//import GoogleLoginButton from "./GoogleLoginButton";
 
 /*zod の loginSchema から型をインポートしているため不要
 export type LoginFormData = {
@@ -18,7 +19,7 @@ export type LoginFormData = {
 */
 
 interface LoginFormProps {
-  onLogin?: (name: string, password: string) => void
+  onLogin?: (email: string, password: string) => void
   onGuestLogin?: () => void; // ゲスト用専用ハンドラ
   onGoogleLogin?: () => void
   isLoading?: boolean;
@@ -44,8 +45,8 @@ const LoginForm = ({ onLogin, onGuestLogin, onGoogleLogin, isLoading, submitErro
   }
   
   const onSubmit = (data: LoginSchema) => {
-    const { name, password } = data
-    onLogin?.(name,password);
+    const { email, password } = data
+    onLogin?.(email,password);
   }
 
   const isDisabled = isLoading || isSubmitting;
@@ -57,17 +58,17 @@ const LoginForm = ({ onLogin, onGuestLogin, onGoogleLogin, isLoading, submitErro
           <div>
             <div className="mb-3">
               <Input
-              {...register('name', { required: true})}
-              name="name"
-              type="text"
+              {...register('email', { required: true})}
+              name="email"
+              type="email"
               height="72px"
-              placeholder="ユーザー名"
-              hasError={!!errors.name}
+              placeholder="メールアドレス"
+              hasError={!!errors.email}
               hasBorder
               />
-              {errors.name && (
+              {errors.email && (
                 <p className="text-[#b00000] text-[13px] pl-1 text-center mt-1">
-                  {errors.name.message}
+                  {errors.email.message}
                 </p>
               )}
             </div>
@@ -90,7 +91,7 @@ const LoginForm = ({ onLogin, onGuestLogin, onGoogleLogin, isLoading, submitErro
           </div>
           {/* --- Error Message --- */}
             {submitError && (
-              <p className="text-(--danger) text-center text-[14px] my-4">
+              <p role="alert" data-testid="login-error" className="text-(--danger) text-center text-[14px] my-4">
                 {submitError}
               </p>
             )}
@@ -99,18 +100,27 @@ const LoginForm = ({ onLogin, onGuestLogin, onGoogleLogin, isLoading, submitErro
             <div className="mx-auto">
               <ButtonGrad 
                 selectcolor="Pink"
-                hasError={!!errors.name || !!errors.password || !!submitError}
+                hasError={!!errors.email || !!errors.password || !!submitError}
                 loading={isLoading}
                 loadingMessage="送信中..."
                 disabled={!isValid || isDisabled}
+                dataTestid="login"
+                ariaLabel="ログイン"
               >
                 ログイン
               </ButtonGrad>
+                 {/* --- Forfot Password --- */}
+              <div className="text-center mt-2">
+                <Link href={`/auth/forgot-password`}>
+                  <p className="hover:underline hover:cursor-pointer text-(--text) text-[13px]">
+                    パスワードを忘れましたか？
+                  </p>
+                </Link>
+              </div>
             </div>
-            
           {/* --- Signin Link --- */}
           <div className="text-center">
-            <Link href={`/signup`}>
+            <Link href={`/auth/signup`}>
               <p className="hover:underline hover:cursor-pointer text-(--text) text-[16px]">
                 新規登録はこちらへ
               </p>
@@ -122,21 +132,20 @@ const LoginForm = ({ onLogin, onGuestLogin, onGoogleLogin, isLoading, submitErro
       <Separator>or</Separator>
       <div className="flex flex-col gap-4">
       {/* Google ログイン */}
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          aria-label="グーグルでログイン"
-          className="mx-auto flex justify-center items-center w-auto gap-2 px-4 py-2 rounded-full bg-[rgba(255,255,255,0.3)] border border-transparent transition-all duration-200 enabled:hover:border-(--text) enabled:hover:cursor-pointer enabled:hover:transition-all enabled:hover:duration-500"
-        >
-          <Image
-            src="https://www.svgrepo.com/show/355037/google.svg"
-            alt="Google"
-            width={20}
-            height={20}
-          />
-          <span>Googleでログイン</span>
-        </button>
-
+      <button
+      type="button"
+      onClick={handleGoogleLogin}
+      aria-label="グーグルでログイン"
+      className="mx-auto flex justify-center items-center w-auto gap-2 px-4 py-2 rounded-full bg-[rgba(255,255,255,0.3)] border border-transparent transition-all duration-200 enabled:hover:border-(--text) enabled:hover:cursor-pointer enabled:hover:transition-all enabled:hover:duration-500"
+      >
+      <Image
+        src="https://www.svgrepo.com/show/355037/google.svg"
+        alt="Google"
+        width={20}
+        height={20}
+      />
+      <span>Googleでログイン</span>
+    </button>
       {/* --- ゲストユーザー　ログイン --- */}
         <button 
           type="button"

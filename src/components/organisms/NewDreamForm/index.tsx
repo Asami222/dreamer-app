@@ -73,7 +73,7 @@ const NewDreamForm = () => {
             )}
         />
         <div className="flex flex-col items-center my-6 mx-0 self-center gap-2">
-          <Button selectcolor='Pink' className="px-5 py-1" loading={isPending}>登録する</Button>
+          <Button selectcolor='Pink' className="px-5 py-1" loading={isPending} loadingMessage="送信中..." >登録する</Button>
           {formState?.message && (
             <p className="text-(--danger) text-center text-[14px] font-medium">
               {formState.message}

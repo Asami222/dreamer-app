@@ -36,6 +36,7 @@ const UserTodoListContainer = ({
   //const userHasStar = user.numberOfStars
   const setGlobalSpinner = useGlobalSpinnerActionsContext()
   const router = useRouter();
+  
   const handleCopyTextClick = async(id: string) => {
     //todos.filter((item: { id: number }) => item.id === userid);
     //const newTodo = userTodos[0]

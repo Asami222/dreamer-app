@@ -1,60 +1,120 @@
-import { prisma } from "src/libs/prisma";
 import { notFound } from "next/navigation";
-import { getServerSession } from "src/libs/auth";
+import { createClient } from "@/libs/supabase/server";
+import { getUserProfile, getProfileImageUrl } from "@/libs/profile";
 import { SITE_NAME } from "src/constants";
 import type { Metadata } from "next";
 import UserRewardListContainer from 'src/containers/UserRewardListContainer'
 import UserProfileContainer from 'src/containers/UserProfileContainer'
-//import { getReward } from "src/services/getReward";
-//import { getProfile } from "src/services/getProfile";
 import Separator from "src/components/atoms/Separator";
 import { toRewardsUI } from "src/utils/transform";
+import { getUserRewardsWithImageUrl } from "@/libs/reward";
+import { RewardUIModel } from "src/types/data";
+import type { Profile } from "@prisma/client";
+import type { ResolvingMetadata } from "next";
+import { buildPageMetadata } from "@/libs/metadata";
 
+const E2E_STARS = Number(process.env.NEXT_PUBLIC_E2E_STARS ?? 5);
+const E2E_PROFILE: Profile = {
+  id: "profile-1",
+  userId: "test-user",
+  dream: "テストの夢",
+  limit: null,
+  displayName: "E2Eユーザー",
+  stars: E2E_STARS,
+  profileImageUrl: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
 
-export async function generateMetadata(): Promise<Metadata> {
-  const session = await getServerSession();
-  if (!session) {
-    notFound();
+const E2E_REWARDS: RewardUIModel[] = [
+  {
+    id: 'reward-1',
+    title: '旅行',
+    star: 6,
+    image: '/images/bear01.webp'
+  },
+];
+
+export async function generateMetadata(
+  _: unknown,
+  parent: ResolvingMetadata
+) {
+  const isE2E = process.env.NEXT_PUBLIC_E2E_TEST === "true";
+  if (isE2E) {
+    return buildPageMetadata("E2E", "テスト用", parent);
   }
-  return { title: `${SITE_NAME} | ${session.user.name}` };
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) notFound();
+
+  const titleName =
+    user.email === "guest@gmail.com"
+      ? "ゲスト"
+      : user.user_metadata?.name ?? "";
+  return buildPageMetadata(`${titleName}`, "ユーザーページです。ユーザー情報、獲得した星の合計数、作成したご褒美一覧を見ることができます。", parent);
 }
 
 export default async function Page() {
-/*
-  const [session, { rewards }, {profile}] = await Promise.all([
-    getServerSession(),
-    getReward({revalidate: 10}),
-    getProfile({revalidate: 10})
-  ]);
-  if (!getReward || !getProfile || !session?.user) {
-    notFound();
-  }
-*/
+  const isE2E = process.env.NEXT_PUBLIC_E2E_TEST === "true"
+  let rewards: RewardUIModel[]
+  let profile;
+  let userName: string;
+  let userImage: string | null;
 
-  const session = await getServerSession();
-  const userId = session?.user?.id;
+  if (isE2E) {
+    // ✅ E2E時：完全スタブ
+    rewards = E2E_REWARDS;
+    profile = E2E_PROFILE;
+    userName = "E2Eユーザー";
+    userImage = "/images/bear01.webp"; // 任意
+  } else {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!userId) notFound();
+  if (!user?.id) notFound();
+  const userId = user.id;
 
   // ⭐ Prisma を直接呼ぶ
-  const [reward, profile] = await Promise.all([
-    prisma.reward.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.profile.upsert({
-      where: { userId },
-      update: {},
-      create: { userId, stars: 0 },
-    }),
+  const [rewardsWithImageUrl, fetchedProfile] = await Promise.all([
+    getUserRewardsWithImageUrl(userId),
+    getUserProfile(userId),
   ]);
 
-  const rewards = toRewardsUI(reward)
+  // profile は auth callback で必ず作られている前提
+  if (!fetchedProfile) {
+    notFound(); // or throw new Error("Profile not found");
+  }
 
+  rewards = toRewardsUI(rewardsWithImageUrl)
+  profile = fetchedProfile;
+  userImage = await getProfileImageUrl(profile);
+
+  userName = user.email === "guest@gmail.com"
+    ? "ゲスト"
+    : user.user_metadata?.name ?? "";
+  }
+
+  /* profileImageUrl から public URL を生成
+  let userImageUrl = "/images/noImg.webp";
+
+  if (profile.profileImageUrl) {
+    if (profile.profileImageUrl.startsWith("http")) {
+      // ✅ Google / 外部URL
+      userImageUrl = profile.profileImageUrl;
+    } else {
+    const { data } = supabase.storage
+      .from("images")
+      .getPublicUrl(profile.profileImageUrl);
+  
+    userImageUrl = data.publicUrl + `?v=${profile.updatedAt.getTime()}`;
+    }
+  }
+  */
   return (
       <div className="flex flex-col gap-[40px] mt-[24px] mb-[64px] mx-auto">
         <div>
-            <UserProfileContainer profile={profile} userName={session.user.name} userImage={session.user.profileImageUrl ? session.user.profileImageUrl : ""}/>
+            <UserProfileContainer profile={profile} userName={userName} userImage={userImage}/>
             <Separator />
         </div>
         <div className="mx-auto">

@@ -24,8 +24,8 @@ const initialFormState = (
   updatedAt: Date.now().toString(),
   image: {},
   title: "",
-  limit1: 0,
-  limit2: 0,
+  limit1: undefined,
+  limit2: undefined,
   category: "day",
   detail: "",
   description: "",
@@ -70,21 +70,13 @@ const TodoForm = ({ category }: { category: Category2 }) => {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     try {
       const formData = new FormData(event.currentTarget);
-
-      console.log("DEBUG_Client image:", formData.get("image"));
-      console.log("DEBUG_Client all:", formData.getAll("image"));
-      console.log("DEBUG_Client title:", formData.get("title"));
-      console.log("DEBUG_Client all:", formData.getAll("title"));
-      // バリデーションエラーが発生した場合 catch 句へ
       validateFormData(formData, todoSchema);
-      // Client バリデーションエラーをクリア
       setClientErrors(undefined);
     } catch (err) {
-      // ★: Form のサブミット（action 実行）を中止
       event.preventDefault();
+
       if (!(err instanceof ZodError)) throw err;
-      // Zod のバリデーションエラーをマッピング
-      setClientErrors(transformFieldErrors(err));
+      setClientErrors(transformFieldErrors(err))
     }
   }
 
@@ -111,16 +103,16 @@ const TodoForm = ({ category }: { category: Category2 }) => {
 
   const [selectedStars, setSelectedStars] = useState(0)
 
-  const title = categoryNameDict[category as Category2]
+  const period = categoryNameDict[category as Category2]
 
-  const isDisabled = isPending;
+  const isDisabled = isPending
 
   return (
-    <form onSubmit={handleSubmit} action={formAction}>
+    <form action={formAction} noValidate>
       <input type="hidden" name="category" value={category} />
       <input type="hidden" name="star" value={selectedStars} />
       <div className="flex flex-col items-center gap-8">
-        <p className="text-[16px] text-(--text) font-medium">{title}単位</p>
+        <p className="text-[16px] text-(--text) font-medium">{period}単位</p>
         <div className="flex flex-col gap-6 w-full">
           {/* --- todo入力 --- */}
           <div className="flex flex-col gap-2">
@@ -130,11 +122,11 @@ const TodoForm = ({ category }: { category: Category2 }) => {
               type="text"
               height="48px"
               placeholder="todoを入力してください"
-              hasError={!!errors?.todo}
+              hasError={!!errors?.title}
             />
-            {errors?.todo && (
-              <p className="text-[#b00000] text-[13px] pl-1">
-                {errors.todo.message}
+            {errors?.title && (
+              <p role="alert" data-testid="todoform-error" className="text-[#b00000] text-[13px] pl-1">
+                {errors.title.message}
               </p>
             )}
           </div>
@@ -143,45 +135,55 @@ const TodoForm = ({ category }: { category: Category2 }) => {
           <div className="flex flex-col gap-2">
             <label className="text-[16px] text-(--text) font-normal">期限</label>
             <div className="flex flex-col gap-1">
-            {title !== "時間" ? (
+            {period !== "時間" ? (
               <div className="flex items-center gap-2">
                 <Input
-                  {...register("limit1", { required: false })}
-                  type="number"
+                  {...register("limit1", { setValueAs: (v) => (v === "" ? undefined : v),required: false })}
+                  type="text"
+                  inputMode="numeric"
                   height="32px"
                   placeholder="1"
                   small
+                  hasError={!!errors?.limit1}
                 />
                 <p className="text-[16px] text-(--text) font-normal">
-                  {periodNameDict[title as string]}
+                  {periodNameDict[period as string]}
                 </p>
               </div>
             ) : (
               <div className="flex items-center gap-2">
                 <Input
-                  {...register("limit1", { required: false })}
-                  type="number"
+                  {...register("limit1", { setValueAs: (v) => (v === "" ? undefined : v),required: false })}
+                  type="text"
+                  inputMode="numeric"
                   height="32px"
                   placeholder="1"
                   small
+                  hasError={!!errors?.limit1}
                 />
                 <p className="text-[16px] text-(--text) font-normal">時から</p>
                 <Input
-                  {...register("limit2", { required: false })}
-                  type="number"
+                  {...register("limit2", { setValueAs: (v) => (v === "" ? undefined : v),required: false })}
+                  type="text"
+                  inputMode="numeric"
                   height="32px"
                   placeholder="12"
                   small
+                  hasError={!!errors?.limit2}
                 />
                 <p className="text-[16px] text-(--text) font-normal">時まで</p>
               </div>
             )}
-
+            {(errors?.limit1 || errors?.limit2) && (
+              <p role="alert" data-testid="todoform-error" className="text-[#b00000] text-[13px] pl-1">
+                {errors.limit1.message || errors.limit2.message}
+              </p>
+            )}
               <Input
                 {...register("detail")}
                 type="text"
                 height="48px"
-                placeholder={placeholderNameDict[title as string]}
+                placeholder={placeholderNameDict[period as string]}
               />
             </div>
           </div>
@@ -215,15 +217,21 @@ const TodoForm = ({ category }: { category: Category2 }) => {
                   name="image"
                   register={register}
                   onChange={field.onChange}
+                  hasError={!!errors?.image}
                 />
               )}
             />
+            {errors?.image && (
+              <p role="alert" data-testid="todoform-error" className="text-[#b00000] text-[13px] pl-1">
+                {errors.image.message}
+              </p>
+            )}
           </div>
 
           {/* --- 星の数 --- */}
           <div className="flex flex-col gap-2 text-left sm:text-center">
             <label className="text-[16px] text-(--text) font-normal">星の数</label>
-            <div className="mx-auto">
+            <div data-testid="star" className="mx-auto">
               <StarRating1 value={selectedStars} setValue={setSelectedStars} />
               <input type="hidden" name="star" value={selectedStars} />
               <p className="text-[13px] text-center font-normal text-(--text)">
@@ -241,16 +249,18 @@ const TodoForm = ({ category }: { category: Category2 }) => {
         <div className="flex flex-col gap-2">
           <ButtonGrad
             selectcolor="Red"
-            hasError={!!errors?.todo || !!state.error}
+            hasError={!!errors?.title || !!state.error}
             loading={isPending}
             loadingMessage="作成中..."
             disabled={isDisabled}
+            dataTestid="add-todo"
+            ariaLabel="todo作成"
           >
             追加する
           </ButtonGrad>
 
           {state.error?.message && (
-            <p className="text-(--danger) text-center text-[14px]">
+            <p role="alert" data-testid="todoform-server-error" className="text-(--danger) text-center text-[14px]">
               {state.error.message}
             </p>
           )}

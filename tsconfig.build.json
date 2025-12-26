@@ -1,5 +1,15 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",   // ← ここが最重要
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "src/*": ["src/*"]
+    }
+  },
+  "include": ["src"],
   "exclude": [
     "node_modules",
     "**/*.stories.tsx",
@@ -7,6 +17,9 @@
     "**/*.test.tsx",
     "**/*.spec.tsx",
     ".storybook",
-    "tests"
+    "tests",
+    ".next",
+    "dist",
+    "e2e"
   ]
 }

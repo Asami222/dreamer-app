@@ -7,6 +7,8 @@ import Button from "src/components/atoms/Button";
 import { StarRating2 } from "src/components/molecules/StarRating";
 import clsx from "clsx"
 import { TodoUIModel } from 'src/types/data';
+import RectLoader from '@/components/atoms/RectLoader';
+import ShapeImage from '@/components/atoms/ShapeImage';
 
 type TodoCardProps = TodoUIModel & {
   className?: string
@@ -47,6 +49,7 @@ const TodoCard = ({
   const [isChecked, setIsChecked] = useState(false)
   const refText = useRef<HTMLParagraphElement>(null)
   const [textHeight, setTextHeight] = useState("0px")
+  const [imageLoaded, setImageLoaded] = useState(false)
 
   useEffect(() => {
     if (refText.current) {
@@ -77,6 +80,7 @@ const TodoCard = ({
         <p
           onClick={() => onRemoveTextClick && onRemoveTextClick(id,isChecked)}
           className='cursor-pointer hover:underline text-(--text) text-[15px]'
+          data-testid="todo-fin"
         >
           完了
         </p>
@@ -85,15 +89,13 @@ const TodoCard = ({
       {/* 右側内容欄 */}
       <div className='flex flex-col gap-4 grow'>
         { image &&
-          <div className='relative w-full h-[98px] mx-auto'>
-            <Image
-              quality="85"
+          <div className='relative w-[100px] h-[98px] mx-auto'>
+            <ShapeImage 
               src={image}
-              alt="Todoイメージ"
-              sizes="25.6vw"
-              fill
-              style={{objectFit:"contain", objectPosition: '50% 50%'}}
-              priority
+              width={100}
+              height={98}
+              shape="square"
+              alt='Todoイメージ'
             />
           </div>
         }
@@ -125,6 +127,7 @@ const TodoCard = ({
               onClick={onDetailBtnClick }
               disabled={!description}
               className='w-[64px] h-[28px] text-[13px] rounded-[3px] text-center px-4 py-1'
+              dataTestid='detail-button'
             >
               詳細
             </Button>
@@ -134,6 +137,7 @@ const TodoCard = ({
           {description && 
             <p 
               ref={refText}
+              data-testid="todo-description"
               className="todo-text text-[13px] font-normal overflow-hidden h-0 transition-[height] duration-500"
               style={{ 
                 "--text-height": textHeight,

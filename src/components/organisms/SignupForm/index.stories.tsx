@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test';
+import type { Meta} from '@storybook/react'
 import SignupForm from './index'
 
 // --- Meta情報 ---
@@ -13,9 +12,9 @@ const meta: Meta<typeof SignupForm> = {
 }
 
 export default meta
-type Story = StoryObj<typeof SignupForm>
+//type Story = StoryObj<typeof SignupForm>
 
-// --- ① 通常状態 ---
+/* --- ① 通常状態 ---
 export const Default: Story = {
   args: {
     onSign: fn(),
@@ -27,8 +26,8 @@ export const Default: Story = {
     </div>
   ),
 }
-
-// --- ② ローディング中 ---
+*/
+/* --- ② ローディング中 ---
 export const Loading: Story = {
   args: {
     onSign: fn(),
@@ -40,8 +39,8 @@ export const Loading: Story = {
     </div>
   ),
 }
-
-// --- ③ エラー表示中（UI見た目のみ再現）---
+*/
+/* --- ③ エラー表示中（UI見た目のみ再現）---
 export const WithErrors: Story = {
   args: {
     onSign: fn(),
@@ -54,3 +53,4 @@ export const WithErrors: Story = {
     </div>
   ),
 }
+*/

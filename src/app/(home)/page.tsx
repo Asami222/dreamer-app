@@ -1,12 +1,21 @@
 import Image from "next/image";
-import Layout from "src/components/templates/Layout"
+import ServerLayout from "src/components/templates/Layout/ServerLayout"
 import AppLogo from "src/components/atoms/AppLogo"
 import ButtonGrad from "src/components/atoms/ButtonGrad"
 import Link from "next/link"
+import type { ResolvingMetadata } from "next";
+import { buildPageMetadata } from "@/libs/metadata";
+
+export async function generateMetadata(
+  _: unknown,
+  parent: ResolvingMetadata
+) {
+  return buildPageMetadata("ホーム", "ホーム画面です", parent);
+}
 
 export default function Home() {
   return (
-    <Layout top>
+    <ServerLayout top>
       <div className="flex flex-col items-center justify-center min-h-dvh overflow-hidden">
         <AppLogo width="184px"/>
         <div className="w-full mx-auto xs:hidden">
@@ -19,16 +28,18 @@ export default function Home() {
           />
         </div>
         <div className="p-2">
-        <Link href="/login">
+        <Link href="/auth/login">
         <ButtonGrad
           type="button"
           selectcolor="Pink"
+          dataTestid="start-button"
+          ariaLabel="スタートボタン"
         >
           はじめる
         </ButtonGrad>
         </Link>
         </div>
       </div>
-    </Layout>
+    </ServerLayout>
   )
 }

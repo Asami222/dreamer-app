@@ -12,7 +12,7 @@ describe("UserForm", () => {
 
   it("name と dream, limit を入力すると onSave が呼ばれる", async () => {
     const mockSave = vi.fn();
-    render(<UserForm onSave={mockSave} />);
+    render(<UserForm />);
 
     const nameInput = screen.getByPlaceholderText("表示名");
     const dreamInput = screen.getByPlaceholderText("夢や目標を記入してください");
@@ -42,22 +42,20 @@ describe("UserForm", () => {
   });
 
   it("isLoading=true の場合はスピナーと『作成中...』が表示される", () => {
-    render(<UserForm isLoading={true} />);
+    render(<UserForm />);
     expect(screen.getByText("作成中...")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "作成中..." })).toBeDisabled();
   });
 
   it("submitError がある場合は赤文字のエラーメッセージが表示される", () => {
-    render(<UserForm submitError="送信エラーが発生しました" />);
+    render(<UserForm />);
     expect(screen.getByText("送信エラーが発生しました")).toBeInTheDocument();
   });
 
   it("フォーム全体のエラー（_form）がある場合、エラーメッセージが表示される", async () => {
     // react-hook-formのバリデーションを通さず強制的に_errorを与えるケースの代替
     render(
-      <UserForm
-        submitError="フォーム全体に問題があります"
-      />
+      <UserForm />
     );
     expect(screen.getByText("フォーム全体に問題があります")).toBeInTheDocument();
   });

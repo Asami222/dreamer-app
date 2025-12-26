@@ -1,7 +1,14 @@
-
 import Image from "next/image";
 import BtnLink from 'src/components/atoms/BtnLink';
+import type { ResolvingMetadata } from "next";
+import { buildPageMetadata } from "@/libs/metadata";
 
+export async function generateMetadata(
+  _: unknown,
+  parent: ResolvingMetadata
+) {
+  return buildPageMetadata("Todoカテゴリー", "Todoを年、月、週、日、時間単位で作成できます。", parent);
+}
 
 const NewTodo= () => {
   return (

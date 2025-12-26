@@ -17,8 +17,8 @@ type Story = StoryObj<typeof LoginForm>;
 // --- ① 通常状態 ---
 export const Default: Story = {
   args: {
-    onLogin: (username: string, password: string) => {
-      console.log("✅ 通常ログイン:", { username, password });
+    onLogin: (email: string, password: string) => {
+      console.log("✅ 通常ログイン:", { email, password });
     },
     onGuestLogin: () => {
       console.log("🧪 テストユーザーログイン:");

@@ -143,20 +143,15 @@ describe("TodoForm", () => {
 */
   it("submitErrorがあるとエラーメッセージが表示される", () => {
     render(
-      <TodoForm
-        title="月"
-        value={1}
-        setValue={setValue}
-        submitError="サーバーエラー"
-      />
+      <TodoForm category="year"/>
     );
 
     expect(screen.getByText("サーバーエラー")).toBeInTheDocument();
   });
 
   it("星ボタンをクリックすると setValue が呼ばれる", async () => {
-    render(<TodoForm title="年" value={2} setValue={setValue} />);
-
+    render(<TodoForm category="month"/>);
+  
     const starButton = screen.getByRole("button", { name: "increase-star" });
     expect(starButton).toHaveTextContent("★2");
 

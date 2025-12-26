@@ -1,26 +1,33 @@
 // /api/reward/purchase/[rewardId]/route.ts
 import type { Prisma } from "@prisma/client";
 import { prisma } from "src/libs/prisma";
-import { getServerSession } from "src/libs/auth";
+import { createClient } from "@/libs/supabase/server";
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
+import { deleteRewardImage } from "@/libs/supabase/deleteRewardImage";
 
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ rewardId: string}> }
 ) {
-  const session = await getServerSession();
-  const userId = session?.user?.id;
-  const { rewardId } = await params;
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (!userId) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!user?.id) {
+    return new Response(
+      JSON.stringify({ message: "Unauthorized" }),
+      { status: 401, headers: { "Content-Type": "application/json" } }
+    );
   }
+
+  const userId = user.id;
+
+  const { rewardId } = await params;
 
   try {
     const reward = await prisma.reward.findUnique({
       where: { id: rewardId },
-      select: { title: true, star: true }
+      select: { title: true, star: true, image: true }
     });
 
     if (!reward) {
@@ -62,6 +69,8 @@ export async function POST(
         },
       });
     });
+
+    await deleteRewardImage(reward.image);
 
     revalidateTag("rewards","auto");
     revalidateTag("profile","auto");

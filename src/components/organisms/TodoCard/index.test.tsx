@@ -13,9 +13,9 @@ vi.mock("next/image", () => ({
 
 describe("Todo", () => {
   const defaultProps = {
-    id: 1,
+    id: "test1",
     imageUrl: "/todo.png",
-    todo: "日記を書く",
+    title: "日記を書く",
     limit: [9, 18],
     limitDetail: "自宅で",
     rate: 4,
@@ -39,7 +39,7 @@ describe("Todo", () => {
   });
 
   it("画像URLがない場合、Imageタグが表示されない", () => {
-    render(<Todo {...defaultProps} imageUrl={undefined} />);
+    render(<Todo {...defaultProps} image={undefined} />);
     expect(screen.queryByAltText("Todoイメージ")).not.toBeInTheDocument();
   });
 

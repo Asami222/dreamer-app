@@ -1,14 +1,38 @@
 import { notFound } from "next/navigation";
-import { getServerSession } from "src/libs/auth";
+import { createClient } from "@/libs/supabase/server";
 import RewardForm from "src/components/organisms/RewardForm";
+import type { ResolvingMetadata } from "next";
+import { buildPageMetadata } from "@/libs/metadata";
+
+const E2E_USER = {
+  id: "e2e-user",
+  email: "e2e@test.com",
+  app_metadata: {},
+  user_metadata: {},
+};
+
+export async function generateMetadata(
+  _: unknown,
+  parent: ResolvingMetadata
+) {
+  return buildPageMetadata("ご褒美作成", "ご褒美を作成して、獲得した星と交換しましょう。", parent);
+}
 
 const NewReward = async() => {
 
-  const session = await getServerSession();
+  const isE2E = process.env.NEXT_PUBLIC_E2E_TEST === "true";
 
-  if ( !session || !session.user) {
-    notFound();
+  let user;
+
+  if (isE2E) {
+    user = E2E_USER;            // 認証完全スキップ
+  } else {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
   }
+
+  if (!user) notFound();
 
   return (
     <>

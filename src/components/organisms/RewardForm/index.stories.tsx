@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+//import { fn } from '@storybook/test'
 import RewardForm from './index'
 
 // --- Meta情報 ---
@@ -32,7 +32,7 @@ export const Default: Story = {
   ),
 }
 
-// --- ② ローディング中 ---
+/* --- ② ローディング中 ---
 export const Loading: Story = {
   args: {
     onRewardSave: fn(),
@@ -51,7 +51,7 @@ export const Loading: Story = {
     </div>
   ),
 }
-
+*/
 // --- ③ エラー表示中（UI見た目のみ再現）---
 export const WithErrors: Story = {
  

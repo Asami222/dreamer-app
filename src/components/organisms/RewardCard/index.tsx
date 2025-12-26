@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-//import { useTotalStarContext } from 'src/contexts/TotalStarContext';
-//import { useMyRewardsContext } from 'src/contexts/RewardContext';
-//import { useGotRewardContext } from "src/contexts/GotRewardContext";
 import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
-//import { formatDate } from 'src/utils';
-//import addUser from "services/users/add-user"
-//import addGodReward from 'services/rewards/addGotreward';
-//import deleteReward from 'services/rewards/deleteReward';
 import RewardCardUI from 'src/components/organisms/RewardCard/RewardCardUI';
 import { Profile } from 'src/types/data';
 import { exchangeReward } from 'src/services/exchangeReward';
@@ -31,20 +24,14 @@ export default function RewardCard({
   starNum,
   profile,
 }: RewardCardProps) {
-  //const { totalStar, decreStar } = useTotalStarContext();
-  //const { removeReward } =useMyRewardsContext();
-  //const { addgotRewardToPage } = useGotRewardContext();
+ 
   const setGlobalSpinner = useGlobalSpinnerActionsContext();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-
   const userHasStar = profile.stars ? profile.stars : 0
-
+  
   //ご褒美GET!
   const handleChangeButtonClick = async (id: string) => {
-    //decreStar(num);
-    //removeReward(id);
-    //addgotRewardToPage({...gotreward, id: item.id})
 
     try {
       setIsLoading(true)
@@ -76,21 +63,6 @@ export default function RewardCard({
       setGlobalSpinner(false)
     }
   }
-  /*
-  useEffect(() => {
-    if(starNum === 0 || totalStar === 0) {
-      setIsPossible(false)
-    } else if(starNum <= totalStar){
-      setIsPossible(true)
-    } else {
-      setIsPossible(false)
-    }
-  },[starNum, totalStar]);
-  /** 下の書き方でもok
-  useEffect(() => {
-    setIsPossible(starNum > 0 && totalStar >= starNum);
-  }, [starNum, totalStar]);
-   */
 
   return (
     <RewardCardUI

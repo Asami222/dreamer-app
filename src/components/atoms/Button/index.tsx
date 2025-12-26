@@ -11,6 +11,7 @@ export type ButtonProps = {
   onClick?: () => void;
   children: React.ReactNode
   className?: string;
+  dataTestid?: string;
   type?: "submit" | "reset" | "button" | undefined
 } 
 
@@ -22,6 +23,7 @@ export default function Button({
   onClick,
   children,
   className,
+  dataTestid,
   type = "submit",
 }: ButtonProps) {
   const isDisabled = disabled || loading;
@@ -30,6 +32,7 @@ export default function Button({
       disabled={isDisabled}
       onClick={onClick}
       type={type}
+      data-testid={dataTestid}
       className={clsx(
         "relative inline-flex items-center justify-center gap-2 font-normal text-center no-underline px-2 py-1 transition-all duration-500 outline-none rounded-[5px] enabled:cursor-pointer shadow-[0_2px_4px_0_rgba(177,88,82,0.25)] enabled:hover:transition-all enabled:hover:duration-100",
         // 状態ごとに条件付け

@@ -82,7 +82,7 @@ type RewardUIModel = {
   title: string;
   star?: number;
   image?: string;
-  createdAt: string;
+  createdAt?: string;
 }
 
 export type Reward = PrismaReward;

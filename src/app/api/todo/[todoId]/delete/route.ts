@@ -1,25 +1,31 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "src/libs/prisma";
 //import { notFound } from "next/navigation";
-import { getServerSession } from "src/libs/auth";
+import { createClient } from "@/libs/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
+import { supabaseAdmin } from "@/libs/supabase/admin";
 
 export async function POST(req: NextRequest, { params }: {params: Promise<{ todoId: string}>} ) {
-  const session = await getServerSession();
-  const userId = session?.user?.id;
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (!userId) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!user?.id) {
+    return new Response(
+      JSON.stringify({ message: "Unauthorized" }),
+      { status: 401, headers: { "Content-Type": "application/json" } }
+    );
   }
 
+  const userId = user.id;
   const { todoId } = await params;
 
   try {
     const body = await req.json();
+  console.log("DELETE TODO BODY:", body);
     const todo = await prisma.todo.findUnique({
       where: { id: todoId },
-      select: { title: true, star: true }
+      select: { title: true, star: true, image: true }
     });
 
     if (!todo) {
@@ -32,7 +38,6 @@ export async function POST(req: NextRequest, { params }: {params: Promise<{ todo
       const profile = await tx.profile.findUnique({ where: { userId } });
       const currentStars = profile?.stars ?? 0;
       const cost = body.check === true ? (todo.star ?? 0) : 0;
-
       await tx.profile.update({
         where: { userId },
         data: {
@@ -45,6 +50,13 @@ export async function POST(req: NextRequest, { params }: {params: Promise<{ todo
         where: { id: todoId }
       });
     });
+
+    // transaction の外で storage 削除
+    if (todo.image) {
+      await supabaseAdmin.storage
+        .from("images")
+        .remove([todo.image]);
+    }
 
     revalidateTag("todos","auto");
     revalidateTag("profile","auto");

@@ -41,7 +41,6 @@ interface DropzoneProps<T extends FieldValues> {
   onDrop?: (files: File[]) => void;
   onChange?: (files: File[]) => void;
   register: UseFormRegister<T>;               // ⬅ ジェネリック register
-  multiple: boolean;
 }
 
 export default function Dropzone<T extends FieldValues>({
@@ -55,7 +54,6 @@ export default function Dropzone<T extends FieldValues>({
   onDrop,
   onChange,
   register,
-  multiple,
 }: DropzoneProps<T>) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -85,12 +83,9 @@ export default function Dropzone<T extends FieldValues>({
       );
     }
 
-    const newFiles = multiple
-      ? [...value, ...dropped]
-      : [dropped[dropped.length - 1]];
-
-    onDrop?.(newFiles);
-    onChange?.(newFiles);
+    const newFiles = dropped[dropped.length - 1];
+    onDrop?.([newFiles]);
+    onChange?.([newFiles]);
   };
 
   useEffect(() => {
@@ -107,6 +102,17 @@ export default function Dropzone<T extends FieldValues>({
 
   const radiusClass = radius ? "rounded-full" : "rounded-[5px]";
 
+  const bgStyle = !hasImage
+  ? {
+      backgroundImage: "url(/images/bear02.webp)",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "center",
+      backgroundSize: "contain",
+      backgroundColor: "rgba(246,238,237,0.65)",
+      backgroundBlendMode: "lighten",
+    }
+  : undefined;
+
   return (
     <div
       onDrop={handleDrop}
@@ -119,11 +125,8 @@ export default function Dropzone<T extends FieldValues>({
         "relative cursor-pointer border border-dashed transition-all duration-150 flex items-center justify-center",
         borderColor,
         radiusClass,
-        !hasImage
-        ?"bg-[url('/sample2.png')] bg-[rgba(246,238,237,0.65)] bg-no-repeat bg-center bg-contain bg-blend-lighten"
-        : ""
       )}
-      style={{ width, height }}
+      style={{ width, height, ...bgStyle }}
     >
       <input
         type="file"

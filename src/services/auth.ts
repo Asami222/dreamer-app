@@ -112,12 +112,10 @@ export async function loginAsGuest() {
     });
   
     if (error) {
-      switch (error.code) {
-        case "invalid_credentials":
-          throw new Error("ゲストログインが現在利用できません");
-        default:
-          throw new Error("ゲストログインに失敗しました");
+      if (error.code === "invalid_credentials") {
+        throw new Error("ゲストログイン用アカウントが無効です");
       }
+      throw error;
     }
     
     if (!data.user) {

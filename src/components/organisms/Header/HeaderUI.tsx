@@ -89,7 +89,7 @@ export const HeaderUI = ({ profile, profileImageUrl, onLogout }: HeaderUIProps) 
                     }
                   </Link>
                 ):(
-                  <Link href="/login">
+                  <Link href="/auth/login">
                     <NoAccountsIcon size={24} color='var(--text)' data-testid="profile-noimage" ariaLabel='ログインページへ'/>
                   </Link>
                 )
@@ -181,7 +181,7 @@ export const HeaderUI = ({ profile, profileImageUrl, onLogout }: HeaderUIProps) 
                     </MenuItem>
                   </>
                 ):(
-                  <Link href="/signin">
+                  <Link href="/auth/login">
                     <p className='text-[16px] font-medium text-(--placeholder) hover:text-(--text)'>ログイン</p>
                   </Link>
                 )}

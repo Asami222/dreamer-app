@@ -17,7 +17,6 @@ import {
 } from "src/utils/state";
 import { rewardSchema } from "./schema";
 import type { RewardInput } from "./schema";
-import { resizeImage } from "@/libs/image/resizeImage";
 import { uploadImage } from "src/libs/supabase/uploadImage";
 
 export async function createReward(
@@ -102,8 +101,7 @@ export async function createReward(
     let imagePath: string | null = null;
 
     if (formFile) {
-      const resized = await resizeImage(formFile);
-      imagePath = await uploadImage(resized, userId, "reward");
+      imagePath = await uploadImage(formFile, userId, "reward");
     } else if (image?.src) {
       imagePath = image.src;
     }

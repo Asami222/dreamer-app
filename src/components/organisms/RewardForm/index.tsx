@@ -1,6 +1,6 @@
 'use client';
 
-//import { zodResolver } from '@hookform/resolvers/zod';
+import { resizeImage } from "@/libs/image/resizeImage";
 import { rewardSchema, type RewardInput } from './schema'
 //import { Transition } from '@headlessui/react'
 import { FormEvent, Fragment, useState } from 'react'
@@ -56,16 +56,22 @@ const RewardForm = () => {
   const errors = clientErrors || state.error?.fieldErrors;
 
   // 送信前に Client バリデーションを実施
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     try {
       const formData = new FormData(event.currentTarget);
       // バリデーションエラーが発生した場合 catch 句へ
       validateFormData(formData, rewardSchema);
       // Client バリデーションエラーをクリア
       setClientErrors(undefined);
+      const file = formData.get("image.file") as File | null;
+
+      if (file && file.size > 0) {
+        const resized = await resizeImage(file);
+        formData.set("image.file", resized);   // ★ 差し替え
+      }
+      await formAction(formData);
     } catch (err) {
-      // ★: Form のサブミット（action 実行）を中止
-      event.preventDefault();
       if (!(err instanceof ZodError)) throw err;
       // Zod のバリデーションエラーをマッピング
       setClientErrors(transformFieldErrors(err));
@@ -116,7 +122,7 @@ const RewardForm = () => {
 
     return (
       <>
-      <form onSubmit={handleSubmit} action={formAction}>
+      <form onSubmit={handleSubmit}>
       <input type="hidden" name="__forceServerError" value={process.env.NEXT_PUBLIC_E2E_TEST === 'true' ? '1' : ''} />
         <div className="flex flex-col items-center gap-2">
           <div className='flex items-center gap-6'>

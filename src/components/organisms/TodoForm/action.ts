@@ -13,7 +13,6 @@ import {
 } from "src/utils/state";
 import { todoSchema } from "./schema";
 import type { TodoInput } from "./schema";
-import { resizeImage } from "@/libs/image/resizeImage";
 import { uploadImage } from "src/libs/supabase/uploadImage";
 
 export async function createTodo(
@@ -106,10 +105,8 @@ export async function createTodo(
     let imagePath: string | null = null;
 
     if (formFile) {
-      //リサイズ
-      const resized = await resizeImage(formFile);
       // 新しく画像をアップロード
-      imagePath = await uploadImage(resized, userId, "todo");
+      imagePath = await uploadImage(formFile, userId, "todo");
 
     } else if (image?.src && image.src.startsWith("http")) {
       // 編集時：既存画像をそのまま保存

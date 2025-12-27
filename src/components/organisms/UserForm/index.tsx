@@ -1,5 +1,6 @@
 "use client";
 
+import { resizeImage } from "@/libs/image/resizeImage";
 import { useActionState, useEffect } from "react";
 import { updateUser } from "./action";
 import { useForm, Controller } from "react-hook-form";
@@ -47,16 +48,23 @@ export default function UserForm({ isGuest }: { isGuest?: boolean }) {
    * useActionState の formAction を自分で呼ばない！
    * submit はブラウザが `<form action>` で実行する。
    */
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     try {
       const formData = new FormData(event.currentTarget);
 
       // クライアント側 Zod バリデーション
       validateFormData(formData, userFormSchema);
-
       setClientErrors(undefined);
+
+      const file = formData.get("image.file") as File | null;
+
+      if (file && file.size > 0) {
+        const resized = await resizeImage(file);
+        formData.set("image.file", resized);   // ★ 差し替え
+      }
+      await formAction(formData);
     } catch (err) {
-      event.preventDefault();
       if (!(err instanceof ZodError)) throw err;
       setClientErrors(transformFieldErrors(err));
     }
@@ -83,7 +91,7 @@ export default function UserForm({ isGuest }: { isGuest?: boolean }) {
   const isDisabled = isPending;
 
   return (
-    <form onSubmit={handleSubmit} action={formAction}>
+    <form onSubmit={handleSubmit}>
       <fieldset>
       {/* 既存フォーム */}
       <div className="flex flex-col gap-6">

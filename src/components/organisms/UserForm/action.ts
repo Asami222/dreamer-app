@@ -16,7 +16,6 @@ import {
 
 import { userFormSchema } from "./schema";
 import type { UserFormInput } from "./schema";
-import { resizeImage } from "@/libs/image/resizeImage";
 import { uploadImage } from "src/libs/supabase/uploadImage";
 import { createClient } from "src/libs/supabase/server";
 import { isGuestUser } from "src/utils/isGuestUser";
@@ -101,8 +100,7 @@ export async function updateUser(
     // ② upload
     let imagePath: string | null = null;
     if (imageFile && imageFile.size > 0) {
-      const resized = await resizeImage(imageFile);
-      imagePath = await uploadImage(resized, userId, "avatar");
+      imagePath = await uploadImage(imageFile, userId, "avatar");
     }
 
     // ③ 古い画像削除

@@ -1,6 +1,6 @@
 "use client"
 
-//import { useFormState } from "react-dom";
+import { resizeImage } from "@/libs/image/resizeImage";
 import { useActionState, useEffect } from 'react';
 import { useState, type FormEvent } from "react"
 import { useForm, Controller } from "react-hook-form"
@@ -9,12 +9,12 @@ import Input from "src/components/atoms/Input"
 import TextArea from "src/components/atoms/TextArea"
 import InputImages from "src/components/molecules/InputImages"
 import { StarRating1 } from "src/components/molecules/StarRating"
-import { todoSchema, type TodoInput } from "./schema"
+import type { TodoInput } from "./schema"
 import type { FormState } from "src/utils/state";
 import { createTodo } from "./action"
-import type { FieldErrors } from "src/utils/state";
+//import type { FieldErrors } from "src/utils/state";
 import { ZodError } from "zod";
-import { transformFieldErrors, validateFormData } from "src/utils/validate";
+//import { transformFieldErrors, validateFormData } from "src/utils/validate";
 import { Category2 } from "src/types/data";
 import toast from 'react-hot-toast';
 
@@ -59,24 +59,27 @@ const periodNameDict: Record<string, string> = {
 
 const TodoForm = ({ category }: { category: Category2 }) => {
   const [state, formAction, isPending] = useActionState(createTodo, initialFormState());
-
+/*
   const [clientErrors, setClientErrors] = useState<FieldErrors | undefined>(
     state.error?.fieldErrors
   );
-
-  const errors = clientErrors || state.error?.fieldErrors;
+*/
+  const errors = state.error?.fieldErrors;
 
   // 送信前に Client バリデーションを実施
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     try {
       const formData = new FormData(event.currentTarget);
-      validateFormData(formData, todoSchema);
-      setClientErrors(undefined);
-    } catch (err) {
-      event.preventDefault();
+      const file = formData.get("image.file") as File | null;
 
+      if (file && file.size > 0) {
+        const resized = await resizeImage(file);
+        formData.set("image.file", resized);   // ★ 差し替え
+      }
+      await formAction(formData);
+    } catch (err) {
       if (!(err instanceof ZodError)) throw err;
-      setClientErrors(transformFieldErrors(err))
     }
   }
 
@@ -108,7 +111,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
   const isDisabled = isPending
 
   return (
-    <form action={formAction} noValidate>
+    <form onSubmit={handleSubmit} noValidate>
       <input type="hidden" name="category" value={category} />
       <input type="hidden" name="star" value={selectedStars} />
       <div className="flex flex-col items-center gap-8">

@@ -1,8 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
 import clsx from "clsx";
-import Image from "next/image";
 import RectLoader from "../RectLoader";
 
 type ImageShape = "circle" | "square";
@@ -12,10 +12,9 @@ type ShapeImageProps = {
   shape?: ImageShape;
   width: number;
   height: number;
-  unoptimized?: boolean;
-  header?: boolean
-  aliaLabel?: string
-  alt: string
+  header?: boolean;
+  aliaLabel?: string;
+  alt: string;
 };
 
 function ImageWithShape({
@@ -23,24 +22,20 @@ function ImageWithShape({
   width,
   height,
   children,
-  aliaLabel
+  aliaLabel,
 }: {
   shape?: ImageShape;
   width: number;
   height: number;
   children: React.ReactNode;
-  aliaLabel?: string
+  aliaLabel?: string;
 }) {
   const radius = shape === "circle" ? "50%" : "5px";
 
   return (
     <div
       className="relative overflow-hidden"
-      style={{
-        width,
-        height,
-        borderRadius: radius,
-      }}
+      style={{ width, height, borderRadius: radius }}
       aria-label={aliaLabel}
     >
       {children}
@@ -53,31 +48,27 @@ export default function ShapeImage({
   shape,
   width,
   height,
-  unoptimized,
   header,
   aliaLabel,
-  alt = 'image'
+  alt = "image",
 }: ShapeImageProps) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const loader = !imageLoaded && !header
+  const [loaded, setLoaded] = useState(false);
+  const loader = !loaded && !header;
 
   return (
     <ImageWithShape shape={shape} width={width} height={height} aliaLabel={aliaLabel}>
-      {/* スケルトン */}
+      {/* skeleton */}
       {loader && <RectLoader width={width} height={height} />}
 
-      <Image
+      <img
         src={src}
         alt={alt}
-        fill
-        sizes="25.6vw"
-        quality={75}
-        unoptimized={unoptimized}
-        style={{ objectFit: "contain", objectPosition: "50% 50%" }}
-        onLoadingComplete={() => setImageLoaded(true)}
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setLoaded(true)}
         className={clsx(
-          "transition-opacity duration-300",
-          !loader ? "opacity-100" : "opacity-0"
+          "absolute inset-0 w-full h-full object-contain transition-opacity duration-300",
+          loaded ? "opacity-100" : "opacity-0"
         )}
       />
     </ImageWithShape>

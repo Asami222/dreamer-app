@@ -83,6 +83,8 @@ const Todo = async() => {
   todos = toTodosUI(todosWithImageUrl)
   }
 
+  
+
   const yearCategory = todos.filter((todo) => todo.category === 'year')
   const monthCategory = todos.filter((todo) => todo.category === 'month')
   const weekCategory = todos.filter((todo) => todo.category === 'week')

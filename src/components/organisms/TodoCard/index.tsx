@@ -37,6 +37,8 @@ const TodoCard = ({
   const [textHeight, setTextHeight] = useState("0px")
   //const [imageLoaded, setImageLoaded] = useState(false)
 
+  console.log("image",image)
+
   useEffect(() => {
     if (refText.current) {
       setTextHeight(`${refText.current.scrollHeight}px`)

@@ -43,13 +43,13 @@ export async function signupAndLogin({
   }
 
   // 自動ログイン
-  const { error: loginError } = await supabase.auth.signInWithPassword({
+  const { data: signInData, error: loginError } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
-  if (loginError) {
-    switch (loginError.code) {
+  if (loginError || !signInData.session) {
+    switch (loginError?.code) {
       case "invalid_credentials":
         throw new Error("メールアドレスまたはパスワードが正しくありません");
       case "email_not_confirmed":
@@ -58,6 +58,9 @@ export async function signupAndLogin({
         throw new Error("ログインに失敗しました");
     }
   }
+
+  // これが無いと Header は絶対に更新されない
+  await supabase.auth.setSession(signInData.session);
 
   return { message: "サインアップ・ログインに成功しました" };
 }

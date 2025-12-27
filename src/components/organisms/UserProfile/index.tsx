@@ -36,7 +36,6 @@ const UserProfile = ({
               width={100}
               height={98}
               shape="square"
-              unoptimized
               alt="プロフィール画像"
             />
         <div className='flex flex-col items-center gap-2'>

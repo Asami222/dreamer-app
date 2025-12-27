@@ -7,60 +7,26 @@ import { supabase } from "@/libs/supabase/client";
 // -------------------------------
 export async function signupAndLogin({
   name,
+  email,
   password,
-  email
 }: {
   name: string;
+  email: string;
   password: string;
-  email: string
 }) {
-  if (process.env.NEXT_PUBLIC_E2E_TEST === "true") {
-    // E2EではSupabaseを完全スキップ
-    return { message: "サインアップ・ログインに成功しました" };
-  }
-
-  // Supabase の Email では name を email にする必要無し
-  // "name" をそのまま ID 相当として扱う場合は metadata に入れる
-  const { error: signUpError } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { name }, // プロフィールデータとして保存
-    },
+  const res = await fetch("/api/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password }),
   });
 
-  if (signUpError) {
-    switch (signUpError.code) {
-      case "user_already_exists":
-        throw new Error("すでに登録されているメールアドレスです");
-      case "weak_password":
-        throw new Error("パスワードが簡単すぎます");
-      case "invalid_email":
-        throw new Error("メールアドレスの形式が正しくありません");
-      default:
-        throw new Error("サインアップに失敗しました");
-    }
-  }
+  if (!res.ok) throw new Error("サインアップに失敗しました");
 
-  // 自動ログイン
-  const { data: signInData, error: loginError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const { session } = await res.json();
+  if (!session) throw new Error("セッション取得失敗");
 
-  if (loginError || !signInData.session) {
-    switch (loginError?.code) {
-      case "invalid_credentials":
-        throw new Error("メールアドレスまたはパスワードが正しくありません");
-      case "email_not_confirmed":
-        throw new Error("メールアドレスの確認が完了していません");
-      default:
-        throw new Error("ログインに失敗しました");
-    }
-  }
-
-  // これが無いと Header は絶対に更新されない
-  await supabase.auth.setSession(signInData.session);
+  // ★これで onAuthStateChange が即発火
+  await supabase.auth.setSession(session);
 
   return { message: "サインアップ・ログインに成功しました" };
 }
@@ -125,41 +91,7 @@ export async function loginAsGuest() {
   await supabase.auth.setSession(session);
 
   return { message: "ゲストログインに成功しました" };
-
-  
-  /*
-  const email = "guest@gmail.com";
-  const password = "guestpass";
-
-  // ① signIn を試す
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (!signInError) {
-    return { message: "ゲストログインに成功しました" };
-  }
-
-  // ② なければ signUp
-  const { error: signUpError } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        displayName: "ゲスト",
-      },
-    },
-  });
-
-  if (signUpError) {
-    throw new Error(signUpError.message);
-  }
-
-  return { message: "ゲストログインに成功しました" };
-  */
 }
-
 
 //Reset Password（メール送信用）Schema
 export async function requestPasswordReset(email: string) {

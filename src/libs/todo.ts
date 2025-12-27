@@ -1,4 +1,4 @@
-// src/libs/reward.ts
+// src/libs/todo.ts
 import { prisma } from "@/libs/prisma";
 import { createClient } from "@/libs/supabase/server";
 import type { Todo } from "@prisma/client"
@@ -45,20 +45,16 @@ export async function getUserTodosWithImageUrl(userId: string) {
   const supabase = await createClient();
 
   return todos.map((todo) => {
-    if (!todo.image) {
-      return {
-        ...todo,
-        imageUrl: undefined,
-      };
-    }
+    if (!todo.image) return todo;
+
     const { data } = supabase
       .storage
-      .from("images")
+      .from("images")  // ← bucket は images
       .getPublicUrl(todo.image);
 
     return {
       ...todo,
-      imageUrl: `${data.publicUrl}?v=${todo.createdAt.getTime()}`,
+      image: `${data.publicUrl}?v=${todo.createdAt.getTime()}`,
     };
   });
 }

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react'
-import Image from "next/image";
+//import Image from "next/image";
 import CheckBox from "src/components/molecules/CheckBox";
 import Button from "src/components/atoms/Button";
 import { StarRating2 } from "src/components/molecules/StarRating";
 import clsx from "clsx"
 import { TodoUIModel } from 'src/types/data';
-import RectLoader from '@/components/atoms/RectLoader';
+//import RectLoader from '@/components/atoms/RectLoader';
 import ShapeImage from '@/components/atoms/ShapeImage';
 
 type TodoCardProps = TodoUIModel & {
@@ -16,21 +16,7 @@ type TodoCardProps = TodoUIModel & {
   onCopyTextClick?: (id: string) => void
   onRemoveTextClick?: (id: string, isChecked?: boolean) => void
 }
-/*
-interface TodoCardProps {
-  id: string
-  imageUrl?: string
-  todo: string
-  limit?: number[]
-  limitDetail: string | null
-  rate?: number
-  description?: string
-  className?: string
-  limitPeriod?: string
-  onCopyTextClick?: (id: string) => void
-  onRemoveTextClick?: (id: string, isChecked?: boolean) => void
-}
-*/
+
 const TodoCard = ({
   id,
   image,
@@ -49,7 +35,7 @@ const TodoCard = ({
   const [isChecked, setIsChecked] = useState(false)
   const refText = useRef<HTMLParagraphElement>(null)
   const [textHeight, setTextHeight] = useState("0px")
-  const [imageLoaded, setImageLoaded] = useState(false)
+  //const [imageLoaded, setImageLoaded] = useState(false)
 
   useEffect(() => {
     if (refText.current) {

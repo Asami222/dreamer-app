@@ -112,8 +112,14 @@ export async function loginAsGuest() {
     throw new Error("ゲストログインが現在利用できません");
   }
 
-  // ★ ここが必須：cookie → client auth state 同期
-  await supabase.auth.getSession();
+  const { session } = await res.json();
+
+  if (!session) {
+    throw new Error("セッションが取得できませんでした");
+  }
+
+  // ★これが Header を即時ログイン状態にする本体
+  await supabase.auth.setSession(session);
 
   return { message: "ゲストログインに成功しました" };
 

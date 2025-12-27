@@ -1,4 +1,3 @@
-// /api/auth/guest/route.ts
 import { NextResponse } from "next/server";
 import { createClient } from "@/libs/supabase/server";
 import { prisma } from "@/libs/prisma";
@@ -10,20 +9,18 @@ export async function POST() {
   const email = `guest_${randomUUID()}@guest.local`;
   const password = randomUUID();
 
-  // 1. Auth ユーザー作成
+  // 1. signup
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      data: { name: "ゲスト" },
-    },
+    options: { data: { name: "ゲスト" } },
   });
 
   if (signUpError || !signUpData.user) {
     return NextResponse.json({ error: "ゲスト作成失敗" }, { status: 500 });
   }
 
-  // 2. signIn
+  // 2. signin
   const { data: signInData, error: signInError } =
     await supabase.auth.signInWithPassword({ email, password });
 
@@ -31,7 +28,7 @@ export async function POST() {
     return NextResponse.json({ error: "guest login failed" }, { status: 500 });
   }
 
-  // 3. profiles を必ず作る
+  // 3. profile upsert
   await prisma.profile.upsert({
     where: { userId: signUpData.user.id },
     update: {},
@@ -42,5 +39,8 @@ export async function POST() {
     },
   });
 
-  return NextResponse.json({ ok: true });
+  // ★ここが最重要
+  return NextResponse.json({
+    session: signInData.session,
+  });
 }

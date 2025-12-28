@@ -6,15 +6,7 @@ import { formatDateToJapanese } from 'src/utils';
 type GotRewardCardProps = GotRewardUIModel & {
   onRemoveButtonClick?: (id: string) => void;
 };
-/*
-interface GotRewardCardProps {
-  id: number
-  gotreward: string
-  starNum: number
-  time: string
-  onRemoveButtonClick?: (id: number) => void
-}
-*/
+
 const GotRewardCard =({
   id,
   title,

@@ -1,15 +1,8 @@
 "use client";
 
 import TodoCard from "src/components/organisms/TodoCard"
-//import { useTotalStarContext } from "src/contexts/TotalStarContext"
-//import useSearch from "services/todos/use-search"
-//import useUser from "services/users/use-user"
-//import addUser from "services/users/add-user"
-//import deleteTodo from "services/todos/deleteTodo"
-//import addTodo from "services/todos/add-todo"
 import type { TodoUIModel } from "src/types/data"
 import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
-//import { useMyTodosContext } from "src/contexts/TodoContext"
 import { useRouter } from 'next/navigation';
 import { copyTodo } from "src/services/copyTodo"
 import { deleteTodo } from "src/services/deleteTodo"
@@ -23,24 +16,12 @@ interface UserTodoListContainerProps {
 const UserTodoListContainer = ({
   period, todos
 }: UserTodoListContainerProps) => {
-/*
-  const { removeTodo } = useMyTodosContext()
- 
-  const { todos: userTodos } = useSearch(context, {
-    category,
-    userId,
-    initial: todos,
-  })
-*/
- // const { addStar } = useTotalStarContext()
-  //const userHasStar = user.numberOfStars
+
   const setGlobalSpinner = useGlobalSpinnerActionsContext()
   const router = useRouter();
   
   const handleCopyTextClick = async(id: string) => {
-    //todos.filter((item: { id: number }) => item.id === userid);
-    //const newTodo = userTodos[0]
-    //const { id, ...todo } = newTodo;
+   
     try {
       setGlobalSpinner(true)
       await copyTodo(id)

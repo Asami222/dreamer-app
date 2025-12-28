@@ -93,22 +93,6 @@ export default async function Page() {
     : user.user_metadata?.name ?? "";
   }
 
-  /* profileImageUrl から public URL を生成
-  let userImageUrl = "/images/noImg.webp";
-
-  if (profile.profileImageUrl) {
-    if (profile.profileImageUrl.startsWith("http")) {
-      // ✅ Google / 外部URL
-      userImageUrl = profile.profileImageUrl;
-    } else {
-    const { data } = supabase.storage
-      .from("images")
-      .getPublicUrl(profile.profileImageUrl);
-  
-    userImageUrl = data.publicUrl + `?v=${profile.updatedAt.getTime()}`;
-    }
-  }
-  */
   return (
       <div className="flex flex-col gap-[40px] mt-[24px] mb-[64px] mx-auto">
         <div>

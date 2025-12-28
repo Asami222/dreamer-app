@@ -23,35 +23,15 @@ export const todoSchema = z.object({
     z.string().min(1, "todoを入力してください")
   ),
 
-  limit1: z.preprocess(
-    normalizeNumber,
-    z.any()
-      .refine((v) => typeof v === "number" && !Number.isNaN(v), {
-        message: "数字を入力してください",
-      })
-      .transform((v) => Number(v))
-      .refine((v) => Number.isInteger(v), {
-        message: "整数を入力してください",
-      })
-      .refine((v) => v >= 1, {
-        message: "1以上の整数を入力してください",
-      })
-  ).optional(),
+  limit1: z.number()
+  .int("整数を入力してください")
+  .min(1, "1以上の整数を入力してください")
+  .optional(),
   
-  limit2: z.preprocess(
-    normalizeNumber,
-    z.any()
-      .refine((v) => typeof v === "number" && !Number.isNaN(v), {
-        message: "数字を入力してください",
-      })
-      .transform((v) => Number(v))
-      .refine((v) => Number.isInteger(v), {
-        message: "整数を入力してください",
-      })
-      .refine((v) => v >= 1, {
-        message: "1以上の整数を入力してください",
-      })
-  ).optional(),
+  limit2: z.number()
+  .int("整数を入力してください")
+  .min(1, "1以上の整数を入力してください")
+  .optional(),
 
   detail: z.string().optional().or(z.literal("")),
   description: z.string().optional().or(z.literal("")),

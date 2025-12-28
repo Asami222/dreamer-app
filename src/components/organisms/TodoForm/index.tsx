@@ -1,7 +1,7 @@
 "use client"
 
 import { resizeImage } from "@/libs/image/resizeImage";
-import { useActionState, useEffect } from 'react';
+import { useTransition, useActionState, useEffect } from 'react';
 import { useState, type FormEvent } from "react"
 import { useForm, Controller } from "react-hook-form"
 import ButtonGrad from "src/components/atoms/ButtonGrad"
@@ -59,6 +59,7 @@ const periodNameDict: Record<string, string> = {
 
 const TodoForm = ({ category }: { category: Category2 }) => {
   const [state, formAction, isPending] = useActionState(createTodo, initialFormState());
+  const [isTransitionPending, startTransition] = useTransition();
 /*
   const [clientErrors, setClientErrors] = useState<FieldErrors | undefined>(
     state.error?.fieldErrors
@@ -66,18 +67,23 @@ const TodoForm = ({ category }: { category: Category2 }) => {
 */
   const errors = state.error?.fieldErrors;
 
-  // 送信前に Client バリデーションを実施
+  
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+  
     try {
       const formData = new FormData(event.currentTarget);
       const file = formData.get("image.file") as File | null;
-
+  
       if (file && file.size > 0) {
         const resized = await resizeImage(file);
-        formData.set("image.file", resized);   // ★ 差し替え
+        formData.set("image.file", resized);
       }
-      await formAction(formData);
+  
+      startTransition(() => {
+        formAction(formData);   // ★ ここが最重要
+      });
+  
     } catch (err) {
       if (!(err instanceof ZodError)) throw err;
     }
@@ -94,12 +100,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
 
   useEffect(() => {
     if (state.status === "success") {
-      toast.success(`追加しました！`,{
-        iconTheme: {
-          primary: '#e8524a',  // アイコン自体の色
-          secondary: '#F3E4E3', // アイコンの背景色
-        },
-      });
+      toast.success(`追加しました！`);
       reset(initialFormState());
     }
   }, [state.status, reset]);
@@ -108,7 +109,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
 
   const period = categoryNameDict[category as Category2]
 
-  const isDisabled = isPending
+  const isDisabled = isPending || isTransitionPending;
 
   return (
     <form onSubmit={handleSubmit} noValidate>
@@ -141,7 +142,9 @@ const TodoForm = ({ category }: { category: Category2 }) => {
             {period !== "時間" ? (
               <div className="flex items-center gap-2">
                 <Input
-                  {...register("limit1", { setValueAs: (v) => (v === "" ? undefined : v),required: false })}
+                  {...register("limit1", {
+                    setValueAs: (v) => (v === "" ? undefined : Number(v)),
+                  })}
                   type="text"
                   inputMode="numeric"
                   height="32px"
@@ -156,7 +159,9 @@ const TodoForm = ({ category }: { category: Category2 }) => {
             ) : (
               <div className="flex items-center gap-2">
                 <Input
-                  {...register("limit1", { setValueAs: (v) => (v === "" ? undefined : v),required: false })}
+                  {...register("limit1", {
+                    setValueAs: (v) => (v === "" ? undefined : Number(v)),
+                  })}
                   type="text"
                   inputMode="numeric"
                   height="32px"
@@ -166,7 +171,9 @@ const TodoForm = ({ category }: { category: Category2 }) => {
                 />
                 <p className="text-[16px] text-(--text) font-normal">時から</p>
                 <Input
-                  {...register("limit2", { setValueAs: (v) => (v === "" ? undefined : v),required: false })}
+                  {...register("limit2", {
+                    setValueAs: (v) => (v === "" ? undefined : Number(v)),
+                  })}
                   type="text"
                   inputMode="numeric"
                   height="32px"
@@ -253,7 +260,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
           <ButtonGrad
             selectcolor="Red"
             hasError={!!errors?.title || !!state.error}
-            loading={isPending}
+            loading={isDisabled}
             loadingMessage="作成中..."
             disabled={isDisabled}
             dataTestid="add-todo"

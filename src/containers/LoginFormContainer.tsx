@@ -52,7 +52,7 @@ const LoginFormContainer = () => {
       setIsLoading(true)
       setGlobalSpinner(true)
       await googleLogin();
-      //router.push('/user')
+      
     } catch (err) {
       if (err instanceof Error) {
         setSubmitError(err.message)

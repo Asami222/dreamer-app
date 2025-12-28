@@ -1,6 +1,7 @@
 'use client';
 
 import { resizeImage } from "@/libs/image/resizeImage";
+import { useTransition } from "react";
 import { rewardSchema, type RewardInput } from './schema'
 //import { Transition } from '@headlessui/react'
 import { FormEvent, Fragment, useState } from 'react'
@@ -34,6 +35,7 @@ const initialFormState = (
 const RewardForm = () => {
 
   const [state, formAction, isPending] = useActionState( createReward, initialFormState());
+  const [isTransitionPending, startTransition] = useTransition();
 
   /* 成功後3秒でメッセージ非表示 
   useEffect(() => {
@@ -70,7 +72,10 @@ const RewardForm = () => {
         const resized = await resizeImage(file);
         formData.set("image.file", resized);   // ★ 差し替え
       }
-      await formAction(formData);
+      startTransition(() => {
+        formAction(formData);   // ★ ここが最重要
+      });
+  
     } catch (err) {
       if (!(err instanceof ZodError)) throw err;
       // Zod のバリデーションエラーをマッピング
@@ -89,36 +94,14 @@ const RewardForm = () => {
 
     useEffect(() => {
       if (state.status === "success") {
-        toast.success(`追加しました！`,{
-          iconTheme: {
-            primary: '#e8524a',  // アイコン自体の色
-            secondary: '#F3E4E3', // アイコンの背景色
-          },
-        });
+        toast.success(`追加しました！`);
          // フォームの値を初期化
       reset(initialFormState());
       }
     }, [state.status, reset]);
-/*
-    const [isShowing, setIsShowing] = useState(false)
-    const [, , resetIsShowing] = useTimeoutFn(() => setIsShowing(false), 2000)
 
-    const onSubmit = (data: RewardInput) => {
-      try {
-        onRewardSave?.(data)
-        // 成功時のみメッセージを表示
-        setIsShowing(true)
-        resetIsShowing()
-        // フォームリセット
-        reset()
-      } catch (err) {
-        console.error('Reward save failed:', err)
-        // エラー時は何も表示しない
-      }
-    }
-*/
     // ボタンdisabled制御
-  const isDisabled = isPending;
+  const isDisabled = isPending || isTransitionPending;
 
     return (
       <>

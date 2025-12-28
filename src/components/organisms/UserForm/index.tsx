@@ -1,6 +1,7 @@
 "use client";
 
 import { resizeImage } from "@/libs/image/resizeImage";
+import { useTransition } from "react";
 import { useActionState, useEffect } from "react";
 import { updateUser } from "./action";
 import { useForm, Controller } from "react-hook-form";
@@ -38,13 +39,15 @@ export default function UserForm({ isGuest }: { isGuest?: boolean }) {
     initialFormState()
   );
 
+  const [isTransitionPending, startTransition] = useTransition();
+
   const [clientErrors, setClientErrors] = useState<FieldErrors | undefined>(
     state.error?.fieldErrors
   );
 
   const errors = clientErrors || state.error?.fieldErrors;
 
-  /** ←★★重要★★
+  /** 
    * useActionState の formAction を自分で呼ばない！
    * submit はブラウザが `<form action>` で実行する。
    */
@@ -61,9 +64,11 @@ export default function UserForm({ isGuest }: { isGuest?: boolean }) {
 
       if (file && file.size > 0) {
         const resized = await resizeImage(file);
-        formData.set("image.file", resized);   // ★ 差し替え
+        formData.set("image.file", resized);   // 差し替え
       }
-      await formAction(formData);
+      startTransition(() => {
+        formAction(formData);   // ★ ここが最重要
+      });
     } catch (err) {
       if (!(err instanceof ZodError)) throw err;
       setClientErrors(transformFieldErrors(err));
@@ -78,17 +83,12 @@ export default function UserForm({ isGuest }: { isGuest?: boolean }) {
   // 成功したときの toast + reset
   useEffect(() => {
     if (state.status === "success") {
-      toast.success("変更しました！", {
-        iconTheme: {
-          primary: "#e8524a",
-          secondary: "#F3E4E3",
-        },
-      });
+      toast.success("変更しました！");
       reset(initialFormState());
     }
   }, [state.status, reset]);
 
-  const isDisabled = isPending;
+  const isDisabled = isPending || isTransitionPending;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -174,7 +174,7 @@ export default function UserForm({ isGuest }: { isGuest?: boolean }) {
         <div className="mt-10 mb-8 self-center">
           <ButtonGrad
             selectcolor="Red"
-            loading={isPending}
+            loading={isDisabled}
             loadingMessage="保存中..."
             disabled={isDisabled}
           >

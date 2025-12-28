@@ -35,7 +35,37 @@ export default function RootLayout({
       <body className={`${m_plus_1p.variable} ${roboto.variable}`}>
         <Providers>
           {children}
-          <Toaster position="top-center" reverseOrder={false} />
+          <Toaster 
+          position="top-center" 
+          reverseOrder={false}
+          toastOptions={{
+            style: {
+              background: '#F9EEEE', // 背景色
+              color: '#6B3734', // テキスト色
+              //border: '1px solid #713200', // ボーダー
+              padding: '16px',
+            },
+            // successやerrorなどの特定のタイプの設定も可能
+            success: {
+              style: {
+                color: '#DD7414',
+              },
+              iconTheme: {
+                primary: '#DD7414', // アイコンのプライマリカラー
+                secondary: '#F9EEEE', // アイコンのセカンダリカラー (チェックマークなど)
+              },
+            },
+            error: {
+              style: {
+                color: '#DB4442',
+              },
+              iconTheme: {
+                primary: '#DB4442', // アイコンのプライマリカラー
+                secondary: '#F9EEEE', // アイコンのセカンダリカラー (チェックマークなど)
+              },
+            },
+          }}
+          />
         </Providers>
       </body>
     </html>

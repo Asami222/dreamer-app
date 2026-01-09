@@ -3,7 +3,7 @@
 # Dreamer
 ### ストーリー
 <!-- プロジェクトについて -->
-以前制作したご褒美機能つきのTodoアプリ「Dreamer」を改修しました。フォームのサーバー側のバリデーション強化や、ユーザーがストレージに画像をアップロードできるようにしました。それに伴い、DBの変更、よりストーリーに合うUIの変更、styled-componentsからtailwindcssに変更し、余分なstyleやthemaの削除を行うことでコードを見やすくしました。テスト内容を前回より増やし、全体的に保守性をアップした変更を行いました。
+以前制作したご褒美機能つきのTodoアプリ「Dreamer」をブラッシュアップしました。フォームのサーバー側のバリデーション強化や、ユーザーがストレージに画像をアップロードできるようにしました。それに伴い、DBの変更、よりストーリーに合うUIの変更、styled-componentsからTailwind CSSに変更し、余分なstyleやthemeの削除を行うことでコードを見やすくしました。テスト内容を前回より増やし、全体的に保守性をアップした変更を行いました。
 
 
 ## URL
@@ -11,6 +11,13 @@ https://dreamer-app.vercel.app
  <br >
 テストユーザーでログインから、ユーザー名とパスワードを入力せずにログインできます。
 
+https://asami-portfolio.vercel.app/projects/dreamer-app
+<br>
+Dreamer詳細(ポートフォリオ)
+
+https://github.com/Asami222/dreamer
+<br>
+アップデート前のDreamer詳細（アプリ自体は現在稼働していません）
 ## 使用技術一覧
 
 <!-- シールド一覧 -->
@@ -34,12 +41,16 @@ https://dreamer-app.vercel.app
 </p>
 
 ## 機能一覧
-- ユーザー認証、データ管理 ( Supabase、Supabase Auth )
+- ユーザー認証、データ管理、画像アップロード ( Supabase Auth、Supabase Postgres、Supabase Storage )
 - ORM (Prisma)
-- データ取得・更新API ( Server Action )
+- データ取得・更新API ( Server Action、route handler)
 
 ## アップデート前との違い
-- データ取得 ( SWR・fetcher  →  route handler/Server Actions )
+- ルーティング ( Pages Router  →  App Router )
+- CSS ( styled-components  →  Tailwind CSS )
+- DB ( Heroku  →  Supabase )
+- ストレージ ( なし  →  Supabase Storage )
+- データ取得 ( SWR・fetcher  →  route handler・fetcher / Server Actions )
 - サーバー側バリデーション( json-server  →  フロントエンド側と共通のzodスキーマ )
 
 <!-- 
@@ -81,33 +92,36 @@ https://dreamer-app.vercel.app
 
 ## プロジェクト詳細
 
-<h3 align="center">ログイン状態による画像表示の切り替え</h3>
+<h3 align="center">UIの変更</h3>
 <p>
-useContextフックを使用し、グローバルにユーザーのログイン状態を管理しています。未ログイン、ユーザーイメージを登録済の場合のログイン、イメージを登録していない場合のログイン状態で表示画像を切り替え分かりやすいUIにしています。
+Dreamerのアプリ内容により合わせるため、背景色などを変更し、透明感や軽さを出しました。
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Asami222/dreamer-app/main/public/git/1.webp" width="500" style="max-width: 100%;" />
+  <img src="https://raw.githubusercontent.com/Asami222/dreamer-app/main/public/git/1.webp" width="328" style="max-width: 100%;" />
 </p>
-<h3 align="center">新規登録の場合のみ表示</h3>
+<br />
+<h3 align="center">サーバー側とフロント側の共通のバリデーション</h3>
 <p>
-新規登録でユーザー情報を登録した場合は、新規登録の時にだけ表示するページに移行するようになっています。
+Server Actions内で、フロント側と共通のzodスキーマを利用することで、バリデーション内容の違いを防いでいます。
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Asami222/dreamer-app/main/public/git/2.webp" width="500" style="max-width: 100%;" />
+  <img src="https://raw.githubusercontent.com/Asami222/dreamer-app/main/public/git/2.webp" width="328" style="max-width: 100%;" />
 </p>
-<h3 align="center">ユーザーフォームとご褒美設定フォーム</h3>
+<br />
+<h3 align="center">パスワードリセットフォームの設置</h3>
 <p>
-ユーザー情報は後から、ポップアップのメニューより内容を編集することができます。ユーザー設定、ご褒美設定はどちらもreact-hook-formを使用してバリデーションチェックをしています。
+前回はなかったパスワードリセットの設定を取り入れることで、UXを良くしました。
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Asami222/dreamer-app/main/public/git/3.webp" width="500" style="max-width: 100%;" />
+  <img src="https://raw.githubusercontent.com/Asami222/dreamer-app/main/public/git/3.webp" width="328" style="max-width: 100%;" />
 </p>
-<h3 align="center">Todoページ</h3>
+<br />
+<h3 align="center">Storageの追加</h3>
 <p>
-TodoはuseContextでグローバルに状態管理し、useReducerで作成、削除などの更新関数を作成し、フォームやTodoページのコピー、完了ボタンで使用しています。フォームではreact-hook-formを利用しバリデーションチェックを行なっています。
+Supabase Storageを利用し、ユーザーがストレージに画像をアップロードできるようにしました。前回では仮の画像を表示していましたが、今回は、ユーザーがアップロードした画像を表示できます。
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Asami222/dreamer-app/main/public/git/4.webp" width="500" style="max-width: 100%;" />
+  <img src="https://raw.githubusercontent.com/Asami222/dreamer-app/main/public/git/4.webp" width="328" style="max-width: 100%;" />
 </p>
 
 <p align="right">(<a href="#top">トップへ</a>)</p>

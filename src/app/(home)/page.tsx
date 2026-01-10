@@ -14,12 +14,13 @@ export async function generateMetadata(
   return buildPageMetadata("ホーム", "ホーム画面です", parent);
 }
 
-export default function Home() {
+export default async function Home() {
+
   return (
     <ServerLayout top>
       <div className="flex flex-col items-center justify-center min-h-dvh overflow-hidden">
         <AppLogo width="184px"/>
-        <div className="w-full mx-auto xs:hidden">
+        <div className="w-full mx-auto xs:hidden max-w-[405px]">
           <Image
             width={732}
             height={1012}

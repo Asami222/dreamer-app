@@ -94,7 +94,7 @@ export default async function Page() {
   }
 
   return (
-      <div className="flex flex-col gap-[40px] mt-[24px] mb-[56px] mx-auto">
+      <div className="flex flex-col gap-[40px] mt-[24px] mb-[64px] mx-auto">
         <div>
             <UserProfileContainer profile={profile} userName={userName} userImage={userImage}/>
             <Separator />

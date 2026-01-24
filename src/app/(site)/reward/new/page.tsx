@@ -36,7 +36,7 @@ const NewReward = async() => {
 
   return (
     <>
-      <div className="text-center mt-10 mb-10">
+      <div className="text-center mt-10 mb-16">
         <h1 className="text(--text) text-[20px] font-normal">
           ご褒美設定
         </h1>

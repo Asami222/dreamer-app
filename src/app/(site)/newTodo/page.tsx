@@ -12,7 +12,7 @@ export async function generateMetadata(
 
 const NewTodo= () => {
   return (
-      <div className='flex flex-col gap-[32px] items-center justify-center mt-6 mb-10'>
+      <div className='flex flex-col gap-[32px] items-center justify-center mt-6 mb-16'>
           <div className='w-[132px] h-[81px] mt-[40px] mx-auto'>
             <Image
               src="/images/rainbow1.webp"

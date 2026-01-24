@@ -74,8 +74,8 @@ const LoggedInView = ({ name }: { name: string }) => (
 // ---------------------------
 
 const LoggedOutView = () => (
-  <div className="flex flex-col gap-6 mt-8 mx-auto">
-          <div className="w-[126px] h-[178px] mt-0 mr-[10%] mb-0 ml-auto">
+  <div className="flex flex-col gap-6 mt-8 mb-10 mx-auto">
+          <div className="w-[112px] sm:w-[126px] h-[159px] sm:h-[178px] mt-0 mr-[10%] mb-0 ml-auto">
             <Image
               src="/images/signinImg.webp"
               alt=""

@@ -13,8 +13,8 @@ export async function generateMetadata(
 const SignupPage = () => {
 
   return (
-        <div className="flex flex-col gap-6 mt-8">
-          <div className="w-[123px] h-[175px] mt-0 mr-[10%] mb-0 ml-auto">
+        <div className="flex flex-col gap-6 mt-8 mb-10">
+          <div className="w-[112px] sm:w-[123px] h-[159px] sm:h-[175px] mt-0 mr-[10%] mb-0 ml-auto">
             <Image
               src="/images/signinImg2.webp"
               alt=""

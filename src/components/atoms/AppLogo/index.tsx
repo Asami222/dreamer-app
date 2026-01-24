@@ -8,12 +8,11 @@ const AppLogo = ({width}: AppLogoProps) => {
   return (
     <div style={{width}}>
       <Image
-        quality="75"
         width={567}
         height={150}
         src='/images/logoApp.webp'
         alt="Dreamer"
-        sizes="20vw"
+        sizes={width}
         style={{width: '100%', height: 'auto'}}
         priority
       />

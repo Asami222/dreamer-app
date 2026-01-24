@@ -104,7 +104,7 @@ const Todo = async() => {
   //const thisCategory = categories.filter(c => Object.keys(categoryNameDict).map(t => t === c.category))
 
   return (
-      <div className='w-full overflow-hidden flex flex-col gap-[24px] mt-6'>
+      <div className='w-full overflow-hidden flex flex-col gap-[24px] mt-6 mb-10'>
         <TabGroup>
           <CategoryTabs categories={categories}/>
           <Separator />

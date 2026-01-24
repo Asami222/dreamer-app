@@ -35,7 +35,7 @@ const UserSetting = async() => {
   if (!user) notFound();
 
   return (
-      <div className="mt-4 mb-[80px]">
+      <div className="mt-10 mb-[56px]">
         <UserForm isGuest={isGuestUser(user)}/>
       </div>
   )

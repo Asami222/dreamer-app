@@ -20,7 +20,7 @@ export default async function Home() {
     <ServerLayout top>
       <div className="flex flex-col items-center justify-center min-h-dvh overflow-hidden">
         <AppLogo width="184px"/>
-        <div className="w-full mx-auto xs:hidden max-w-[405px]">
+        <div className="w-full mx-auto max-w-[405px] sm:max-w-[92%]">
           <Image
             width={732}
             height={1012}

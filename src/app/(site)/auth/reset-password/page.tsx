@@ -11,8 +11,8 @@ import ExpiredResetUI from "@/components/organisms/ResetPasswordForm/ExpiredRese
 const ResetPassword = () => {
 
   const router = useRouter();
-  const [checking, setChecking] = useState(true);
-  const [expired, setExpired] = useState(false);
+  const [checking, setChecking] = useState(true); // 今、Supabaseにセッション確認中か？
+  const [expired, setExpired] = useState(false); // リセット用セッションが切れているか？
 
   useEffect(() => {
     const checkSession = async () => {

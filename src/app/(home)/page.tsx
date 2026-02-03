@@ -5,7 +5,7 @@ import ButtonGrad from "src/components/atoms/ButtonGrad"
 import Link from "next/link"
 import type { ResolvingMetadata } from "next";
 import { buildPageMetadata } from "@/libs/metadata";
-import homeImg from 'public/images/homeImg.webp'
+import homeImg from 'src/assets/homeImg.webp';
 
 export async function generateMetadata(
   _: unknown,

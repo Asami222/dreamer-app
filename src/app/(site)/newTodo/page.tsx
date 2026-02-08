@@ -7,13 +7,13 @@ export async function generateMetadata(
   _: unknown,
   parent: ResolvingMetadata
 ) {
-  return buildPageMetadata("Todoカテゴリー", "Todoを年、月、週、日、時間単位で作成できます。", parent);
+  return buildPageMetadata("ToDoカテゴリー", "ToDoを年、月、週、日、時間単位で作成できます。", parent);
 }
 
 const NewTodo= () => {
   return (
-      <div className='flex flex-col gap-[32px] items-center justify-center mt-6 mb-16'>
-          <div className='w-[132px] h-[81px] mt-[40px] mx-auto'>
+      <div className='flex flex-col gap-8 items-center justify-center mt-6 mb-16'>
+          <div className='w-[132px] h-[81px] mt-10 mx-auto'>
             <Image
               src="/images/rainbow1.webp"
               alt=""
@@ -29,7 +29,7 @@ const NewTodo= () => {
           やるべきことを小さな単位にしていきましょう。
           </h2>
         </div>
-        <div className='flex flex-col gap-[16px] w-[90%] mx-auto'>
+        <div className='flex flex-col gap-4 w-[90%] mx-auto'>
           <BtnLink href="/newTodo/year" className="bg-[linear-gradient(90deg,rgba(246,200,188,100%)_0%,rgba(244,134,175,100%)_44%,rgba(246,200,188,100%)_100%)]">
             年単位
           </BtnLink>

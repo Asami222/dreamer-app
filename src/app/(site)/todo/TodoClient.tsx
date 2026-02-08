@@ -8,7 +8,7 @@ import { Fragment } from 'react';
 
 export function CategoryTabs({ categories }: { categories: Categories[]}) {
   return (
-    <TabList className="flex justify-between gap-[8px]">
+    <TabList className="flex justify-between gap-2">
       {categories.map(({ label }) => (
         <Tab key={label} as={Fragment}>
           {({ selected }) => (

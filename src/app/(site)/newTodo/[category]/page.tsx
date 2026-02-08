@@ -7,14 +7,14 @@ export async function generateMetadata(
   _: unknown,
   parent: ResolvingMetadata
 ) {
-  return buildPageMetadata("Todo作成", "Todo作成ページです。", parent);
+  return buildPageMetadata("ToDo作成", "ToDo作成ページです。", parent);
 }
 
 const AddTodo = async({params}: {params: Promise<{ category: Category2}>}) => {
   const { category } =  await params;
 
   return (
-      <div className='mt-4 mb-[80px]'>
+      <div className='mt-4 mb-20'>
         <TodoForm category={category}/>
       </div>
   )

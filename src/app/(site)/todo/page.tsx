@@ -16,7 +16,7 @@ export async function generateMetadata(
   _: unknown,
   parent: ResolvingMetadata
 ) {
-  return buildPageMetadata("Todo", "Todoページです。", parent);
+  return buildPageMetadata("ToDo", "ToDoページです。", parent);
 }
 
 const E2E_TODOS: TodoUIModel[] = [
@@ -104,13 +104,13 @@ const Todo = async() => {
   //const thisCategory = categories.filter(c => Object.keys(categoryNameDict).map(t => t === c.category))
 
   return (
-      <div className='w-full overflow-hidden flex flex-col gap-[24px] mt-6 mb-16'>
+      <div className='w-full overflow-hidden flex flex-col gap-6 mt-6 mb-16'>
         <TabGroup>
           <CategoryTabs categories={categories}/>
           <Separator />
           <TabPanels>
           { allCategory.map(({label}) => (
-              <TabPanel key={label} className="pb-[48px]">
+              <TabPanel key={label} className="pb-12">
                 { otherCategory.map(({label,category}) => (
                   <Fragment key={label}>
                     <div className='my-2 text-center'>

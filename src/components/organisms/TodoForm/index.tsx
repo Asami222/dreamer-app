@@ -120,12 +120,12 @@ const TodoForm = ({ category }: { category: Category2 }) => {
         <div className="flex flex-col gap-6 w-full">
           {/* --- todo入力 --- */}
           <div className="flex flex-col gap-2">
-            <label className="text-[16px] text-(--text) font-normal tracking-wider">todo</label>
+            <label className="text-[16px] text-(--text) font-normal tracking-wider">ToDo</label>
             <Input
               {...register("title")}
               type="text"
               height="48px"
-              placeholder="todoを入力してください"
+              placeholder="ToDoを入力してください"
               hasError={!!errors?.title}
             />
             {errors?.title && (
@@ -246,7 +246,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
               <input type="hidden" name="star" value={selectedStars} />
               <p className="text-[13px] text-center font-normal text-(--text)">
                 *項目ごとに星マークをつけることができます。<br />
-                todoを完了すると貰えます。<br />
+                ToDoを完了すると貰えます。<br />
                 星を集めて頑張った自分にご褒美を上げましょう。<br />
                 星をクリックして好きな数を設定できます。<br />
                 最大７つまでです。

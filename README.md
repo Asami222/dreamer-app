@@ -1,6 +1,9 @@
 <div id="top"></div>
 
-# Dreamer
+# Dreamer APP
+
+#### 【既存サイト(Dreamer)のブラッシュアップサイト】
+
 ### アプリケーションについて
 <!-- プロジェクトについて -->
 ToDoアプリにご褒美機能を追加したものを制作しました。ToDoを作成すると同時に達成したらもらえる星の数を設定します。別ページで星の数つきのご褒美を設定します。そしてToDoを達成して貯めた星をご褒美と交換できます。ToDoは年、月、日、週、時間単位ごとに細かく設定できます。コピーもできるので、新たに作り直さなくても既に作成済みのToDoを利用できます。
@@ -51,7 +54,7 @@ https://github.com/Asami222/dreamer
 - ORM (Prisma)
 - データ取得・更新API ( Server Actions、route handler)
 
-## アップデート前との違い
+## ブラッシュアップ前との違い
 (矢印前がブラッシュアップ前、矢印後が後)
 - ルーティング ( Pages Router  →  App Router )
 - CSS ( styled-components  →  Tailwind CSS )
@@ -97,7 +100,7 @@ https://github.com/Asami222/dreamer
 その他のパッケージのバージョンは package.json を参照してください. 
 
 
-## プロジェクト詳細
+## アプリ詳細
 
 <h3 align="center">UIの変更</h3>
 <p>

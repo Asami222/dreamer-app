@@ -139,7 +139,7 @@ const LoginForm = ({ onLogin, onGuestLogin, onGoogleLogin, isLoading, submitErro
       className="mx-auto flex justify-center items-center w-auto gap-2 px-4 py-2 rounded-full bg-[rgba(255,255,255,0.3)] border border-transparent transition-all duration-200 enabled:hover:border-(--text) enabled:hover:cursor-pointer enabled:hover:transition-all enabled:hover:duration-500"
       >
       <Image
-        src="https://www.svgrepo.com/show/355037/google.svg"
+        src="/google.svg"
         alt="Google"
         width={20}
         height={20}

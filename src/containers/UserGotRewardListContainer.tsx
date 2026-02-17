@@ -4,16 +4,16 @@ import { Fragment } from 'react';
 import GotRewardCard from "src/components/organisms/GotRewardCard";
 //import useSearch from "services/rewards/use-gotsearch";
 //import { useGotRewardContext } from "src/contexts/GotRewardContext";
-import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
-import { useRouter } from 'next/navigation';
+//import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
+//import { useRouter } from 'next/navigation';
 //import deleteGotReward from "services/rewards/deleteGotRewards";
 import clsx from "clsx"
 import type { GotRewardUIModel } from 'src/types/data';
-import { deleteGotReward } from 'src/services/deleteGotReward';
+//import { deleteGotReward } from 'src/services/deleteGotReward';
 import toast from "react-hot-toast";
+import { useDeleteGotReward } from "@/hooks/useDeleteGotReward";
 
 interface UserGotRewardListContainerProps {
-  userId: string
   gotRewards?: GotRewardUIModel[]
 }
 
@@ -21,24 +21,24 @@ const UserGotRewardListContainer = ({
   gotRewards
 }: UserGotRewardListContainerProps) => {
   
-  const router = useRouter();
-  const setGlobalSpinner = useGlobalSpinnerActionsContext()
+  //const router = useRouter();
+  //const setGlobalSpinner = useGlobalSpinnerActionsContext()
+  const deleteMutation = useDeleteGotReward()
   
   //const { gotRewards, removegotRewardFromPage, setgotRewardToPage } =useGotRewardContext()
   
   const handleRemoveButtonClick = async(id: string) => {
 
-    try {
-      setGlobalSpinner(true)
-      await deleteGotReward(id)
-      router.refresh();
-    } catch (err: unknown) {
-      if(err instanceof Error) {
-        toast.error(err.message);
+   deleteMutation.mutate(
+      id,
+      {
+        onError: (err: unknown) => {
+          if (err instanceof Error) {
+            toast.error(err.message)
+          }
+        },
       }
-    } finally {
-      setGlobalSpinner(false)
-    }
+    )
   }
 
   return (

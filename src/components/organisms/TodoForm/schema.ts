@@ -13,6 +13,23 @@ const normalizeNumber = (v: unknown) => {
   return v;
 };
 
+const numberField = z.preprocess((v) => {
+  const normalized = normalizeNumber(v);
+
+  if (normalized === undefined) return undefined;
+
+  if (!/^\d+$/.test(String(normalized))) {
+    return NaN; // number schema にエラーさせる
+  }
+
+  return Number(normalized);
+},
+z.number()
+  .int("整数を入力してください")
+  .min(1, "1以上の整数を入力してください")
+  .optional()
+);
+
 export const todoSchema = z.object({
   category: z
     .enum(["year", "month", "week", "day", "time"])
@@ -23,15 +40,9 @@ export const todoSchema = z.object({
     z.string().min(1, "todoを入力してください")
   ),
 
-  limit1: z.number()
-  .int("整数を入力してください")
-  .min(1, "1以上の整数を入力してください")
-  .optional(),
+  limit1: numberField,
   
-  limit2: z.number()
-  .int("整数を入力してください")
-  .min(1, "1以上の整数を入力してください")
-  .optional(),
+  limit2: numberField,
 
   detail: z.string().optional().or(z.literal("")),
   description: z.string().optional().or(z.literal("")),

@@ -15,6 +15,8 @@ type TodoCardProps = TodoUIModel & {
   limitPeriod?: string
   onCopyTextClick?: (id: string) => void
   onRemoveTextClick?: (id: string, isChecked?: boolean) => void
+  isCopying?: boolean
+  isDeleting?: boolean
 }
 
 const TodoCard = ({
@@ -29,6 +31,8 @@ const TodoCard = ({
   limitPeriod,
   onCopyTextClick,
   onRemoveTextClick,
+  isCopying,
+  isDeleting
 }: TodoCardProps) => {
 
   const [textIsOpen, setTextIsOpen] = useState(false)
@@ -36,8 +40,6 @@ const TodoCard = ({
   const refText = useRef<HTMLParagraphElement>(null)
   const [textHeight, setTextHeight] = useState("0px")
   //const [imageLoaded, setImageLoaded] = useState(false)
-
-  console.log("image",image)
 
   useEffect(() => {
     if (refText.current) {
@@ -48,6 +50,8 @@ const TodoCard = ({
   const onDetailBtnClick = () => {
     setTextIsOpen((prev)=> !prev)
   }
+
+  const isBusy = isCopying || isDeleting
   
   return (
     <div className={clsx(
@@ -58,20 +62,22 @@ const TodoCard = ({
     <div className={clsx("flex items-center gap-2")}>
       {/* 左側操作欄 */}
       <div className='flex flex-col items-center gap-1 w-[48px] text-(--text) self-center'>
-        <p 
+        <button 
           onClick={() => onCopyTextClick && onCopyTextClick(id)}
-          className='cursor-pointer hover:underline text-(--text) text-[15px]'
+          disabled={isCopying}
+          className={clsx("cursor-pointer hover:underline text-(--text) text-[15px]",isCopying && "cursor-not-allowed opacity-60")}
         >
-          コピー
-        </p>
+          {isCopying ?  <span className="dot-anim" /> : "コピー"}
+        </button>
         <CheckBox setIsChecked={setIsChecked} isChecked={isChecked}/>
-        <p
+        <button
           onClick={() => onRemoveTextClick && onRemoveTextClick(id,isChecked)}
-          className='cursor-pointer hover:underline text-(--text) text-[15px]'
+          disabled={isBusy}
+          className={clsx('cursor-pointer hover:underline text-(--text) text-[15px]', isDeleting && "cursor-not-allowed opacity-60")}
           data-testid="todo-fin"
         >
-          完了
-        </p>
+          {isDeleting ? <span className="dot-anim" /> : "完了"}
+        </button>
       </div>
 
       {/* 右側内容欄 */}

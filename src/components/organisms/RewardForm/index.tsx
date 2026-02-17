@@ -18,8 +18,10 @@ import { useActionState } from 'react';
 import type { FieldErrors } from "src/utils/state";
 import { transformFieldErrors, validateFormData } from "src/utils/validate";
 import { ZodError } from "zod";
-import toast from "react-hot-toast";
+//import toast from "react-hot-toast";
 import { useEffect } from "react";
+import { useQueryClient } from '@tanstack/react-query'
+import { useRouter } from "next/navigation"
 
 const initialFormState = (
   initialState?: Partial<FormState<RewardInput>>,
@@ -36,6 +38,8 @@ const RewardForm = () => {
 
   const [state, formAction, isPending] = useActionState( createReward, initialFormState());
   const [isTransitionPending, startTransition] = useTransition();
+  const queryClient = useQueryClient()
+  const router = useRouter()
 
   /* 成功後3秒でメッセージ非表示 
   useEffect(() => {
@@ -86,7 +90,7 @@ const RewardForm = () => {
   const {
       register,
       control,
-      reset
+      //reset
     } = useForm<RewardInput>({
       defaultValues: state,
       mode: 'onChange',
@@ -94,11 +98,13 @@ const RewardForm = () => {
 
     useEffect(() => {
       if (state.status === "success") {
-        toast.success(`追加しました！`);
+        //toast.success(`追加しました！`);
+        queryClient.invalidateQueries({ queryKey: ['rewards'] })
+        router.push('/user')
          // フォームの値を初期化
-      reset(initialFormState());
+        //reset(initialFormState());
       }
-    }, [state.status, reset]);
+    }, [state.status, queryClient, router]);
 
     // ボタンdisabled制御
   const isDisabled = isPending || isTransitionPending;

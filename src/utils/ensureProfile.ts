@@ -1,3 +1,4 @@
+/*
 import { prisma } from "src/libs/prisma";
 
 export async function ensureProfile(userId: string) {
@@ -7,3 +8,4 @@ export async function ensureProfile(userId: string) {
     create: { userId, stars: 0 },
   });
 }
+*/

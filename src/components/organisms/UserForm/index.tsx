@@ -20,6 +20,8 @@ import { ZodError } from "zod";
 import { useState, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import clsx from "clsx"
+import { useRouter } from "next/navigation"
+import { useQueryClient } from '@tanstack/react-query'
 
 const initialFormState = (
   initial?: Partial<FormState<UserFormInput>>,
@@ -40,6 +42,9 @@ export default function UserForm({ isGuest }: { isGuest?: boolean }) {
   );
 
   const [isTransitionPending, startTransition] = useTransition();
+  const queryClient = useQueryClient()
+  const router = useRouter()
+
 
   const [clientErrors, setClientErrors] = useState<FieldErrors | undefined>(
     state.error?.fieldErrors
@@ -83,10 +88,12 @@ export default function UserForm({ isGuest }: { isGuest?: boolean }) {
   // 成功したときの toast + reset
   useEffect(() => {
     if (state.status === "success") {
-      toast.success("変更しました！");
-      reset(initialFormState());
+      //toast.success("変更しました！");
+      queryClient.invalidateQueries({ queryKey: ['profile'] }) 
+      router.push('/user')
+      //reset(initialFormState());
     }
-  }, [state.status, reset]);
+  }, [state.status, queryClient, router]);
 
   const isDisabled = isPending || isTransitionPending;
 

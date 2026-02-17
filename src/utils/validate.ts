@@ -9,14 +9,11 @@ export function validateFormData<T extends z.ZodTypeAny>(
   const obj: Record<string, unknown> = {};
 
   for (const [key, value] of formData.entries()) {
-    if (value === "") continue;   // 未入力はキーごと消す
+    if (value === "") continue;
     if (value instanceof File && value.size === 0) continue;
 
-    if (key === "limit1" || key === "limit2") {
-      obj[key] = value === "" ? undefined : Number(value);
-    } else {
-      obj[key] = value;
-    }
+    // 数値変換を削除
+    obj[key] = value;
   }
 
   return schema.parse(obj);
@@ -34,8 +31,8 @@ export function transformFieldErrors<T>(
     // NaN 型エラーを日本語に差し替え(現在変換不可能)　対処法検討中
     if (
       issue.code === "invalid_type" &&
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (issue as any).received === "nan"
+      typeof issue.input === "number" &&
+      Number.isNaN(issue.input)
     ) {
       result[key] = { message: "数字を入力してください" };
       continue;

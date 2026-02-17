@@ -1,6 +1,6 @@
 import { prisma } from "src/libs/prisma";
 import { createClient } from "@/libs/supabase/server";
-import { revalidateTag } from "next/cache";
+//import { revalidateTag } from "next/cache";
 import { copyImage } from "src/libs/supabase/copyImage";
 
 export async function POST(
@@ -9,7 +9,7 @@ export async function POST(
 ) {
   const { todoId } =  await params;
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { user }} = await supabase.auth.getUser();
 
   if (!user?.id) {
     return new Response(
@@ -49,6 +49,7 @@ export async function POST(
       star: originalTodo.star, // ★は通常リセットするケース多い
     },
   });
-  revalidateTag("todos","auto");
+  //revalidateTag("todos","auto");   ***Server Component + fetch cacheの場合は使用。現在はReact Queryを使用しているため不要***
+
   return Response.json(copied);
 }

@@ -3,7 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "src/libs/prisma";
 import { createClient } from "@/libs/supabase/server";
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+//import { revalidateTag } from "next/cache";
 import { deleteRewardImage } from "@/libs/supabase/deleteRewardImage";
 
 export async function POST(
@@ -11,7 +11,7 @@ export async function POST(
   { params }: { params: Promise<{ rewardId: string}> }
 ) {
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user?.id) {
     return new Response(
@@ -72,9 +72,9 @@ export async function POST(
 
     await deleteRewardImage(reward.image);
 
-    revalidateTag("rewards","auto");
-    revalidateTag("profile","auto");
-    revalidateTag("gotRewards","auto");
+    //revalidateTag("rewards","auto");
+    //revalidateTag("profile","auto");
+    //revalidateTag("gotRewards","auto");
 
     return NextResponse.json({ message: "Success!",reward: reward.title });
 

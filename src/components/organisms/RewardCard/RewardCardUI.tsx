@@ -13,6 +13,8 @@ interface RewardCardUIProps {
   isLoading?: boolean;
   onChangeButtonClick?: (id: string) => void;
   onRemoveButtonClick?: (id: string) => void;
+  isExchanging?: boolean;
+  isDeleting?: boolean;
 }
 
 const RewardCardUI =({
@@ -21,9 +23,10 @@ const RewardCardUI =({
   reward,
   starNum,
   userHasStar,
-  isLoading,
+  //isLoading,
   onChangeButtonClick,
   onRemoveButtonClick,
+  isExchanging,
 }: RewardCardUIProps) => {
 
   return (
@@ -52,10 +55,10 @@ const RewardCardUI =({
             type="button"
             selectcolor="Yellow"
             onClick={() => onChangeButtonClick?.(rewardId)}
-            disabled={(starNum > 0 && userHasStar < starNum) || isLoading} //disabled={!isPossible}の書き方でも可
-            loading={isLoading}
+            disabled={(starNum > 0 && userHasStar < starNum) || isExchanging} //disabled={!isPossible}の書き方でも可
+            loading={isExchanging}
             loadingMessage="交換中..."
-            className='w-[104px] h-[28px] rounded-[5px] text-[14px] inline-block text-(--text) text-center'
+            className='w-[104px] h-7 rounded-[5px] text-[14px] inline-block text-(--text) text-center'
             dataTestid="exchange-button"
             >交換する
           </Button>

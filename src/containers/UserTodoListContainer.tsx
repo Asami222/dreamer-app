@@ -2,10 +2,13 @@
 
 import TodoCard from "src/components/organisms/TodoCard"
 import type { TodoUIModel } from "src/types/data"
-import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
-import { useRouter } from 'next/navigation';
-import { copyTodo } from "src/services/copyTodo"
-import { deleteTodo } from "src/services/deleteTodo"
+//import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
+//import { useRouter } from 'next/navigation';
+//import { copyTodo } from "src/services/copyTodo"
+//import { deleteTodo } from "src/services/deleteTodo"
+import { useCopyTodo } from "@/hooks/useCopyTodo";
+import { useDeleteTodo } from "@/hooks/useDeleteTodo";
+
 import toast from "react-hot-toast";
 
 interface UserTodoListContainerProps {
@@ -17,41 +20,49 @@ const UserTodoListContainer = ({
   period, todos
 }: UserTodoListContainerProps) => {
 
-  const setGlobalSpinner = useGlobalSpinnerActionsContext()
-  const router = useRouter();
+  //const setGlobalSpinner = useGlobalSpinnerActionsContext()
+  //const router = useRouter();
+  
+  const copyMutation = useCopyTodo()
+  const deleteMutation = useDeleteTodo()
   
   const handleCopyTextClick = async(id: string) => {
    
-    try {
-      setGlobalSpinner(true)
-      await copyTodo(id)
-    } catch (err: unknown) {
-      if(err instanceof Error) {
-        toast.error(err.message);
-      }
-    } finally {
-      setGlobalSpinner(false)
-      router.refresh();
-    }
+    copyMutation.mutate(id, {
+      onError: (err: unknown) => {
+        if (err instanceof Error) {
+          toast.error(err.message)
+        }
+      },
+    })
   }
   const handleRemoveButtonClick = async(id: string, isChecked: boolean | undefined) => {
     
-    try {
-      setGlobalSpinner(true)
-      await deleteTodo(id,isChecked)
-    } catch (err: unknown) {
-      if(err instanceof Error) {
-        toast.error(err.message);
+   deleteMutation.mutate(
+      { id, isChecked },
+      {
+        onError: (err: unknown) => {
+          if (err instanceof Error) {
+            toast.error(err.message)
+          }
+        },
       }
-    } finally {
-      setGlobalSpinner(false)
-      router.refresh();
-    }
+    )
   }
 
   return (
     <div className="flex flex-col gap-2">
-      { todos.map((t) => (
+      { todos.map((t) => {
+
+        const isCopying =
+          copyMutation.isPending &&
+          copyMutation.variables === t.id
+
+        const isDeleting =
+          deleteMutation.isPending &&
+          deleteMutation.variables?.id === t.id
+
+        return (
         <TodoCard
           key={t.id}
           id={t.id}
@@ -64,8 +75,11 @@ const UserTodoListContainer = ({
           description={t.description}
           onCopyTextClick={handleCopyTextClick}
           onRemoveTextClick={handleRemoveButtonClick}
+          isCopying={isCopying}
+          isDeleting={isDeleting}
         />
-      ))}
+        )
+      })}
     </div>
   )
 }

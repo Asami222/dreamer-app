@@ -1,8 +1,3 @@
-import { notFound } from "next/navigation";
-import { createClient } from "@/libs/supabase/server";
-import { prisma } from "src/libs/prisma";
-import { toGotRewardsUI } from "src/utils/transform";
-import UserGotRewardListContainer from 'src/containers/UserGotRewardListContainer'
 import type { ResolvingMetadata } from "next";
 import { buildPageMetadata } from "@/libs/metadata";
 import GotRewardClient from "./GotRewardClient";

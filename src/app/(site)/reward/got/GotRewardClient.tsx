@@ -1,10 +1,6 @@
-import { notFound } from "next/navigation";
-import { createClient } from "@/libs/supabase/server";
-import { prisma } from "src/libs/prisma";
-import { toGotRewardsUI } from "src/utils/transform";
+"use client";
+
 import UserGotRewardListContainer from 'src/containers/UserGotRewardListContainer'
-import type { ResolvingMetadata } from "next";
-import { buildPageMetadata } from "@/libs/metadata";
 import { useGotRewards } from '@/hooks/useGotRewards';
 import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
 import { useEffect } from "react";

@@ -7,7 +7,7 @@ import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContex
 import LoginForm from "src/components/organisms/LoginForm";
 //import { signIn } from "next-auth/react";
 import { login, loginAsGuest, googleLogin } from "src/services/auth";
-import toast from "react-hot-toast";
+//import toast from "react-hot-toast";
 
 
 const LoginFormContainer = () => {
@@ -31,8 +31,8 @@ const LoginFormContainer = () => {
     try {
       setIsLoading(true)
       //setGlobalSpinner(true)
-      const result = await login({email, password})
-      toast.success(result.message);
+      await login({email, password})
+      //toast.success(result.message);
       router.push('/user')
     } catch(err: unknown) {
       if(err instanceof Error) {
@@ -69,8 +69,8 @@ const LoginFormContainer = () => {
     try {
       setIsLoading(true)
       //setGlobalSpinner(true)
-      const result = await loginAsGuest();
-      toast.success(result.message); //成功時は err なし、result あり
+      await loginAsGuest();
+      //toast.success(result.message); //成功時は err なし、result あり
       router.push('/user')
     } catch (err: unknown) {
       if(err instanceof Error) {

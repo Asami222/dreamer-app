@@ -16,7 +16,9 @@ import { createTodo } from "./action"
 import { ZodError } from "zod";
 //import { transformFieldErrors, validateFormData } from "src/utils/validate";
 import { Category2 } from "src/types/data";
-import toast from 'react-hot-toast';
+//import toast from 'react-hot-toast';
+import { useRouter } from "next/navigation"
+import { useQueryClient } from '@tanstack/react-query'
 
 const initialFormState = (
   initialState?: Partial<FormState<TodoInput>>,
@@ -60,6 +62,9 @@ const periodNameDict: Record<string, string> = {
 const TodoForm = ({ category }: { category: Category2 }) => {
   const [state, formAction, isPending] = useActionState(createTodo, initialFormState());
   const [isTransitionPending, startTransition] = useTransition();
+  const queryClient = useQueryClient()
+  const router = useRouter()
+
 /*
   const [clientErrors, setClientErrors] = useState<FieldErrors | undefined>(
     state.error?.fieldErrors
@@ -92,7 +97,7 @@ const TodoForm = ({ category }: { category: Category2 }) => {
   const {
     register,
     control,
-    reset
+    //reset
   } = useForm<TodoInput>({
     mode: "onChange",
     defaultValues: state,
@@ -100,10 +105,12 @@ const TodoForm = ({ category }: { category: Category2 }) => {
 
   useEffect(() => {
     if (state.status === "success") {
-      toast.success(`追加しました！`);
-      reset(initialFormState());
+      //toast.success(`追加しました！`);
+      queryClient.invalidateQueries({ queryKey: ['todos'] }) 
+      router.push('/todo')
+      //reset(initialFormState());
     }
-  }, [state.status, reset]);
+  }, [queryClient, router, state.status]);
 
   const [selectedStars, setSelectedStars] = useState(0)
 

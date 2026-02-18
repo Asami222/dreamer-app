@@ -1,3 +1,4 @@
+/*
 import { handleFailed, handleSucceed } from "../";
 import { GotRewardUIModel } from "src/types/data";
 
@@ -14,3 +15,4 @@ export function postGotReward(payload: {
     .then(handleSucceed)
     .catch(handleFailed);
 }
+*/

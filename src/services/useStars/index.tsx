@@ -1,4 +1,4 @@
-// services/updateStars.ts
+/* services/updateStars.ts
 import { handleFailed, handleSucceed } from "../";
 
 export function buyReward(starNum: number) {
@@ -11,3 +11,4 @@ export function buyReward(starNum: number) {
     .then(handleSucceed)
     .catch(handleFailed);
 }
+*/

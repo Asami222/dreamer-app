@@ -1,6 +1,6 @@
 
 //utilsフォルダ　　　純粋関数、ロジックだけを書く。データではなくロジック（関数）を置く場所
-
+/*
 export const formatDate = () => {
   const now = new Date();
   const year = now.getFullYear();
@@ -39,7 +39,7 @@ export const chooseImage = (image: string[]) => {
   const arrayIndex = Math.floor(Math.random() * image.length);
   return image[arrayIndex];
 }
-
+*/
 export function formatDateToJapanese(dateString: string): string {
   const date = new Date(dateString);
 

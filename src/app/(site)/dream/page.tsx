@@ -23,7 +23,7 @@ const Dream = async() => {
  
   return (
         <div className="flex flex-col gap-6 mt-3 mb-6">
-          <div className="w-[120px] h-[67px] mx-auto mt-[40px] mb-16">
+          <div className="w-[120px] h-[67px] mx-auto mt-10 mb-4">
             <Image
               src="/images/shootingstar1.webp"
               alt=""

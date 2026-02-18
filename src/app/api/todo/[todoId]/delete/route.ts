@@ -3,12 +3,12 @@ import { prisma } from "src/libs/prisma";
 //import { notFound } from "next/navigation";
 import { createClient } from "@/libs/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+//import { revalidateTag } from "next/cache";
 import { supabaseAdmin } from "@/libs/supabase/admin";
 
-export async function POST(req: NextRequest, { params }: {params: Promise<{ todoId: string}>} ) {
+export async function DELETE(req: NextRequest, { params }: {params: { todoId: string}} ) {
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user?.id) {
     return new Response(
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest, { params }: {params: Promise<{ todo
       // ⭐ 星数をチェックして加算
       const profile = await tx.profile.findUnique({ where: { userId } });
       const currentStars = profile?.stars ?? 0;
-      const cost = body.check === true ? (todo.star ?? 0) : 0;
+      const cost = body.isChecked === true ? (todo.star ?? 0) : 0;
       await tx.profile.update({
         where: { userId },
         data: {
@@ -58,8 +58,8 @@ export async function POST(req: NextRequest, { params }: {params: Promise<{ todo
         .remove([todo.image]);
     }
 
-    revalidateTag("todos","auto");
-    revalidateTag("profile","auto");
+    //revalidateTag("todos","auto");
+    //revalidateTag("profile","auto");
 
     return NextResponse.json({ message: "Success!",todo: todo.title });
 

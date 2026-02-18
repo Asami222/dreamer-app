@@ -7,7 +7,7 @@ import { revalidateTag } from "next/cache";
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ rewardId: string}> }) {
   const supabase = await createClient();
-const { data: { user }, error } = await supabase.auth.getUser();
+const { data: { user } } = await supabase.auth.getUser();
 
 if (!user?.id) {
   return new Response(
@@ -31,7 +31,7 @@ const userId = user.id;
     return NextResponse.json({ message: "Not Found or Not Owner" }, { status: 404 });
   }
 
-  revalidateTag("gotRewards", "auto");
+  //revalidateTag("gotRewards", "auto");
 
   return NextResponse.json({ message: "Deleted successfully", gotRewardId: rewardId });
 }

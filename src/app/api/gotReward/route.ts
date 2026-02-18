@@ -28,11 +28,11 @@ export async function GET() {
   return Response.json(toGotRewardsUI(gotReward));
 }
 
-
+/*
 export async function POST(req: NextRequest) {
 
   const supabase = await createClient();
-const { data: { user }, error } = await supabase.auth.getUser();
+const { data: { user } } = await supabase.auth.getUser();
 
 if (!user?.id) {
   return new Response(
@@ -61,3 +61,4 @@ const userId = user.id;
     return Response.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }
+*/

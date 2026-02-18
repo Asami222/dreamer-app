@@ -5,7 +5,7 @@ import { signupAndLogin, googleLogin } from "src/services/auth";
 //import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+//import toast from "react-hot-toast";
 
 const SignupFormContainer = () => {
 
@@ -19,8 +19,8 @@ const SignupFormContainer = () => {
     try {
       setIsLoading(true)
       //setGlobalSpinner(true)
-      const result = await signupAndLogin({ name, password, email });
-      toast.success(result.message);
+      await signupAndLogin({ name, password, email });
+      //toast.success(result.message);
       router.push('/dream') //成功時は err なし、result あり
     } catch(err: unknown) {
       if(err instanceof Error) {

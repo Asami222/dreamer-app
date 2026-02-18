@@ -14,7 +14,6 @@ const AppLogo = ({width}: AppLogoProps) => {
         alt="Dreamer"
         sizes={width}
         style={{width: '100%', height: 'auto'}}
-        priority
       />
     </div>
   )

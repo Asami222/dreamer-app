@@ -19,6 +19,10 @@ ToDoアプリにご褒美機能を追加したものを制作しました。ToDo
 アプリ:  https://dreamer-app.vercel.app
  <br >
 テストユーザーでログインから、ユーザー名とパスワードを入力せずにログインできます。
+ 
+https://qiita.com/Asami222/items/a8308737917947dfac74
+<br >
+Qiita記事：データ取得をサーバーコンポーネント→TanStack Query使用に変更しました。
 
 https://asami-portfolio.vercel.app/projects/dreamer-app
 <br>
@@ -53,6 +57,7 @@ https://github.com/Asami222/dreamer
 - ユーザー認証、データ管理、画像アップロード ( Supabase Auth、Supabase Postgres、Supabase Storage )
 - ORM (Prisma)
 - データ取得・更新API ( Server Actions、route handler)
+- APIデータ状態管理（ TanStack Query ）
 
 ## ブラッシュアップ前との違い
 (矢印前がブラッシュアップ前、矢印後が後)
@@ -62,7 +67,7 @@ https://github.com/Asami222/dreamer
 - ストレージ ( なし  →  Supabase Storage )
 - データ取得 ( SWR・fetcher  →  route handler・fetcher / Server Actions )
 - サーバー側バリデーション( json-server  →  フロントエンド側と共通のzodスキーマ )
-
+- 状態管理 ( useReducer&useContext → TanStack Query )
 <!-- 
 - ユーザー登録、ログイン機能(devise)
 - 投稿機能

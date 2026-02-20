@@ -42,7 +42,7 @@ const UserGotRewardListContainer = ({
   }
 
   return (
-    <div className={clsx('flex flex-col gap-4 mt-[32px]', gotRewards?.length === 0 && "mt-[32px] text-center")}>
+    <div className={clsx('flex flex-col gap-4 mt-8', gotRewards?.length === 0 && "mt-8 text-center")}>
       { gotRewards?.length === 0 ?
       <p>獲得したご褒美はまだありません</p>
       : 

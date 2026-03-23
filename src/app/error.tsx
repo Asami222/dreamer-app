@@ -18,7 +18,7 @@ export default function GlobalError({
 
     return (
           <div className="flex flex-col items-center justify-center min-h-[50vh] px-6 text-center">
-            <div className="w-[180px] h-[145px] mx-auto mt-[40px]">
+            <div className="w-[180px] h-[145px] mx-auto mt-10">
               <Image
                 src="/images/dreamer.webp"
                 alt=""

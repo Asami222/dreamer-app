@@ -1,4 +1,4 @@
-import { prisma } from "src/libs/prisma";
+
 //import { notFound } from "next/navigation";
 import { createClient } from "@/libs/supabase/server";
 import { toRewardsUI } from "src/utils/transform";
@@ -20,7 +20,6 @@ export async function GET() {
   let rewards: RewardUIModel[]
 
   if (isE2E) {
-      // ✅ E2E時：完全スタブ
    rewards = E2E_REWARDS;
    return Response.json(rewards);
   } 

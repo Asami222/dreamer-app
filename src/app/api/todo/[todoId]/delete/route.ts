@@ -3,7 +3,7 @@ import { prisma } from "src/libs/prisma";
 //import { notFound } from "next/navigation";
 import { createClient } from "@/libs/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-//import { revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { supabaseAdmin } from "@/libs/supabase/admin";
 
 export async function DELETE(req: NextRequest, { params }: {params: { todoId: string}} ) {
@@ -58,8 +58,8 @@ export async function DELETE(req: NextRequest, { params }: {params: { todoId: st
         .remove([todo.image]);
     }
 
-    //revalidateTag("todos","auto");
-    //revalidateTag("profile","auto");
+    revalidateTag("todos","auto");
+    revalidateTag("user-data","auto");
 
     return NextResponse.json({ message: "Success!",todo: todo.title });
 

@@ -31,7 +31,7 @@ const userId = user.id;
     return NextResponse.json({ message: "Not Found or Not Owner" }, { status: 404 });
   }
 
-  //revalidateTag("gotRewards", "auto");
+  revalidateTag("gotRewards", "auto");
 
   return NextResponse.json({ message: "Deleted successfully", gotRewardId: rewardId });
 }

@@ -3,18 +3,25 @@
 import UserRewardListContainer from 'src/containers/UserRewardListContainer'
 import UserProfileContainer from 'src/containers/UserProfileContainer'
 import Separator from "src/components/atoms/Separator";
-import { useProfile } from "@/hooks/useProfile";
-import { useRewards } from "@/hooks/useRewards";
-import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
-import { useEffect } from "react";
+//import { useProfile } from "@/hooks/useProfile";
+//import { useRewards } from "@/hooks/useRewards";
+//import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
+//import { useEffect } from "react";
+import { useUserData } from '@/hooks/useUserData';
+import type { UserData } from '@/services/getUserData/core';
 
-export default function UserClient() {
+type Props = {
+  initialData: UserData | null
+}
 
-  const { data: profileData, isLoading: profileLoading } = useProfile()
-  const { data: rewards = [], isLoading: rewardsLoading } = useRewards()
+export default function UserClient({ initialData }: Props) {
 
+  const { data, isFetching } = useUserData(initialData ?? undefined)
+  //const { data: profileData, isLoading: profileLoading } = useProfile()
+  //const { data: rewards = [], isLoading: rewardsLoading } = useRewards()
+  /* 
   const setGlobalSpinner = useGlobalSpinnerActionsContext()
-  
+ 
   useEffect(() => {
     setGlobalSpinner(profileLoading || rewardsLoading)
   
@@ -23,15 +30,15 @@ export default function UserClient() {
       }
     }, [profileLoading, rewardsLoading, setGlobalSpinner])
 
-
-  const profile = profileData?.profile
-  const userImage = profileData?.userImage
-  const userName = profileData?.userName ?? ""
+  */
+  const profile = data?.profile
+  const userImage = data?.userImage
+  const userName = data?.userName ?? ""
 
   return (
       <div className="flex flex-col gap-10 mt-6 mb-16 mx-auto">
         <div>
-            <UserProfileContainer profile={profile} userName={userName} userImage={userImage}/>
+            <UserProfileContainer profile={profile} userName={userName} userImage={userImage} isFetching={isFetching}/>
             <Separator />
         </div>
         <div className="mx-auto">
@@ -39,7 +46,7 @@ export default function UserClient() {
               <h2 className="text-(--text) font-normal text-[20px]">ご褒美</h2>
             </div>
             <div>
-              <div><UserRewardListContainer rewards={rewards} user={profile}/></div>
+              <div><UserRewardListContainer rewards={data?.rewards ?? []} user={profile} isFetching={isFetching}/></div>
             </div>
         </div>
       </div>

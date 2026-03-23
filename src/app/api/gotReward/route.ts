@@ -1,8 +1,7 @@
 import { prisma } from "src/libs/prisma";
 //import { notFound } from "next/navigation";
 import { createClient } from "@/libs/supabase/server";
-import { NextRequest } from "next/server";
-import { revalidateTag } from "next/cache";
+//import { NextRequest } from "next/server";
 import { toGotRewardsUI } from "src/utils/transform";
 
 

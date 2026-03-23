@@ -14,14 +14,14 @@ export const useDeleteReward = () => {
       return res.json()
     },
     onMutate: async ( id ) => {
-      await queryClient.cancelQueries({ queryKey: ['rewards'] })
+      await queryClient.cancelQueries({ queryKey: ['user-data'] })
 
       const previousRewards =
-        queryClient.getQueryData<RewardUIModel[]>(['rewards'])
+        queryClient.getQueryData<RewardUIModel[]>(['user-data'])
 
       if (previousRewards) {
         queryClient.setQueryData(
-          ['rewards'],
+          ['user-data'],
           previousRewards.filter(r => r.id !== id)
         )
       }
@@ -31,11 +31,11 @@ export const useDeleteReward = () => {
 
     onError: (_err, _id, context) => {
       if (context?.previousRewards) {
-        queryClient.setQueryData(['rewards'], context.previousRewards)
+        queryClient.setQueryData(['user-data'], context.previousRewards)
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['rewards'] })
+      queryClient.invalidateQueries({ queryKey: ['user-data'] })
     },
   })
 }

@@ -10,6 +10,7 @@ import { CategoryTabs } from "./CategoryTabs";
 import { useTodos } from '@/hooks/useTodos';
 import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
 
+
 export type Categories = {
  label: string
  category: Category
@@ -42,9 +43,14 @@ const categories: Categories[] = [
   }
 ]
 
-const TodoClient = () => {
+type Props = {
+  initialData: TodoUIModel[]
+}
 
-  const { data: todos = [], isLoading } = useTodos()
+const TodoClient = ({ initialData }: Props) => {
+
+  const { data: todos = [], isFetching } = useTodos(initialData)
+  /*
   const setGlobalSpinner = useGlobalSpinnerActionsContext()
 
   useEffect(() => {
@@ -54,7 +60,7 @@ const TodoClient = () => {
       setGlobalSpinner(false)
     }
   }, [isLoading, setGlobalSpinner])
-
+*/
   const yearCategory = todos.filter((todo) => todo.category === 'year')
   const monthCategory = todos.filter((todo) => todo.category === 'month')
   const weekCategory = todos.filter((todo) => todo.category === 'week')
@@ -88,14 +94,14 @@ const TodoClient = () => {
                         {categoryNameDict[category].length === 0 ? '' : `${label}`}
                       </h2>
                     </div>
-                    <UserTodoListContainer todos={categoryNameDict[category]} period={label} />
+                    <UserTodoListContainer todos={categoryNameDict[category]} period={label} isFetching={isFetching}/>
                   </Fragment>
                 ))}
               </TabPanel>
             ))}
             { otherCategory.map(({label,category}) => (
               <TabPanel key={label} className="py-[54px] px-0">
-                <UserTodoListContainer todos={categoryNameDict[category]} period={label}/>
+                <UserTodoListContainer todos={categoryNameDict[category]} period={label} isFetching={isFetching}/>
               </TabPanel>
             ))}
           </TabPanels>

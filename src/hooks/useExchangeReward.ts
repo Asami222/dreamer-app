@@ -10,8 +10,9 @@ export const useExchangeReward = () => {
       return res.json()
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['rewards'] })
-      queryClient.invalidateQueries({ queryKey: ['profile'] })
+      queryClient.invalidateQueries({ queryKey: ['user-data'] })
+      //queryClient.invalidateQueries({ queryKey: ['rewards'] })
+      //queryClient.invalidateQueries({ queryKey: ['profile'] })
       queryClient.invalidateQueries({ queryKey: ['gotRewards'] })
     }
   })

@@ -12,13 +12,16 @@ import type { GotRewardUIModel } from 'src/types/data';
 //import { deleteGotReward } from 'src/services/deleteGotReward';
 import toast from "react-hot-toast";
 import { useDeleteGotReward } from "@/hooks/useDeleteGotReward";
+import Spinner from '@/components/atoms/Spinner';
 
 interface UserGotRewardListContainerProps {
   gotRewards?: GotRewardUIModel[]
+  isFetching?: boolean
 }
 
 const UserGotRewardListContainer = ({
-  gotRewards
+  gotRewards,
+  isFetching
 }: UserGotRewardListContainerProps) => {
   
   //const router = useRouter();
@@ -42,22 +45,25 @@ const UserGotRewardListContainer = ({
   }
 
   return (
-    <div className={clsx('flex flex-col gap-4 mt-8', gotRewards?.length === 0 && "mt-8 text-center")}>
-      { gotRewards?.length === 0 ?
-      <p>獲得したご褒美はまだありません</p>
-      : 
-      gotRewards?.map((p) => (
-        <Fragment key={p.id} >
-          <GotRewardCard
-          id={p.id}
-          title={p.title}
-          star={p.star}
-          onRemoveButtonClick={handleRemoveButtonClick}
-          createdAt={p.createdAt}
-          />
-        </Fragment>
-      ))}
-    </div>
+    <>
+      {isFetching && <Spinner />}
+      <div className={clsx('flex flex-col gap-4 mt-8', gotRewards?.length === 0 && "mt-8 text-center")}>
+        { gotRewards?.length === 0 ?
+        <p>獲得したご褒美はまだありません</p>
+        : 
+        gotRewards?.map((p) => (
+          <Fragment key={p.id} >
+            <GotRewardCard
+            id={p.id}
+            title={p.title}
+            star={p.star}
+            onRemoveButtonClick={handleRemoveButtonClick}
+            createdAt={p.createdAt}
+            />
+          </Fragment>
+        ))}
+      </div>
+    </>
   )
 }
 

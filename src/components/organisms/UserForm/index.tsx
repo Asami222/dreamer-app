@@ -18,7 +18,7 @@ import {
 } from "src/utils/validate";
 import { ZodError } from "zod";
 import { useState, type FormEvent } from "react";
-import toast from "react-hot-toast";
+//import toast from "react-hot-toast";
 import clsx from "clsx"
 import { useRouter } from "next/navigation"
 import { useQueryClient } from '@tanstack/react-query'
@@ -85,11 +85,10 @@ export default function UserForm({ isGuest }: { isGuest?: boolean }) {
     mode: "onBlur",
   });
 
-  // 成功したときの toast + reset
   useEffect(() => {
     if (state.status === "success") {
       //toast.success("変更しました！");
-      queryClient.invalidateQueries({ queryKey: ['profile'] }) 
+      queryClient.invalidateQueries({ queryKey: ['user-data'] }) 
       router.push('/user')
       //reset(initialFormState());
     }

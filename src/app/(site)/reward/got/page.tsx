@@ -1,6 +1,7 @@
 import type { ResolvingMetadata } from "next";
 import { buildPageMetadata } from "@/libs/metadata";
 import GotRewardClient from "./GotRewardClient";
+import { ownReward } from "@/services/gotReward";
 
 export async function generateMetadata(
   _: unknown,
@@ -10,8 +11,10 @@ export async function generateMetadata(
 }
 
 const GotReward = async() => {
+
+  const gotRewards = await ownReward();
   
-  return <GotRewardClient />
+  return <GotRewardClient initialData={gotRewards}/>
 }
 
 export default GotReward

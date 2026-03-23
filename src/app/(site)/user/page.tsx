@@ -3,6 +3,7 @@ import { createClient } from "@/libs/supabase/server";
 import type { ResolvingMetadata } from "next";
 import { buildPageMetadata } from "@/libs/metadata";
 import UserClient from "./UserClient";
+import { getUserData } from "@/services/getUserData";
 
 
 export async function generateMetadata(
@@ -25,6 +26,10 @@ export async function generateMetadata(
   return buildPageMetadata(`${titleName}`, "ユーザーページです。ユーザー情報、獲得した星の合計数、作成したご褒美一覧を見ることができます。", parent);
 }
 
+
 export default async function Page() {
-  return <UserClient />
+
+  const userdata = await getUserData();
+
+  return <UserClient initialData={userdata}/>
 }

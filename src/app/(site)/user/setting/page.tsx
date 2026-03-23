@@ -25,7 +25,7 @@ const UserSetting = async() => {
   let user;
 
   if (isE2E) {
-    user = E2E_USER;            // 認証完全スキップ
+    user = E2E_USER;  // 認証完全スキップ
   } else {
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
@@ -35,7 +35,7 @@ const UserSetting = async() => {
   if (!user) notFound();
 
   return (
-      <div className="mt-10 mb-[80px]">
+      <div className="mt-10 mb-20">
         <UserForm isGuest={isGuestUser(user)}/>
       </div>
   )

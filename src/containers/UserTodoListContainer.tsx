@@ -10,14 +10,16 @@ import { useCopyTodo } from "@/hooks/useCopyTodo";
 import { useDeleteTodo } from "@/hooks/useDeleteTodo";
 
 import toast from "react-hot-toast";
+import Spinner from "@/components/atoms/Spinner";
 
 interface UserTodoListContainerProps {
   todos: TodoUIModel[]
   period?: string
+  isFetching?: boolean
 }
 
 const UserTodoListContainer = ({
-  period, todos
+  period, todos, isFetching
 }: UserTodoListContainerProps) => {
 
   //const setGlobalSpinner = useGlobalSpinnerActionsContext()
@@ -51,36 +53,39 @@ const UserTodoListContainer = ({
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      { todos.map((t) => {
+    <>
+      {isFetching && <Spinner />}
+      <div className="flex flex-col gap-2">
+        { todos.map((t) => {
 
-        const isCopying =
-          copyMutation.isPending &&
-          copyMutation.variables === t.id
+          const isCopying =
+            copyMutation.isPending &&
+            copyMutation.variables === t.id
 
-        const isDeleting =
-          deleteMutation.isPending &&
-          deleteMutation.variables?.id === t.id
+          const isDeleting =
+            deleteMutation.isPending &&
+            deleteMutation.variables?.id === t.id
 
-        return (
-        <TodoCard
-          key={t.id}
-          id={t.id}
-          title={t.title}
-          limit={t.limit}
-          limitPeriod={period}
-          detail={t.detail}
-          image={t.image}
-          star={t.star}
-          description={t.description}
-          onCopyTextClick={handleCopyTextClick}
-          onRemoveTextClick={handleRemoveButtonClick}
-          isCopying={isCopying}
-          isDeleting={isDeleting}
-        />
-        )
-      })}
-    </div>
+          return (
+          <TodoCard
+            key={t.id}
+            id={t.id}
+            title={t.title}
+            limit={t.limit}
+            limitPeriod={period}
+            detail={t.detail}
+            image={t.image}
+            star={t.star}
+            description={t.description}
+            onCopyTextClick={handleCopyTextClick}
+            onRemoveTextClick={handleRemoveButtonClick}
+            isCopying={isCopying}
+            isDeleting={isDeleting}
+          />
+          )
+        })}
+      </div>
+    </>
   )
 }
 

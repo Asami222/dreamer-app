@@ -1,21 +1,13 @@
+import { fetchUserData } from '@/libs/fetchUserData';
 import { useQuery } from '@tanstack/react-query'
-import { useRouter } from "next/navigation"
 import { GotRewardUIModel } from "src/types/data";
 
-export const useGotRewards = () => {
-  const router = useRouter();
+
+export const useGotRewards = (initialData?: GotRewardUIModel[]) => {
   return useQuery<GotRewardUIModel[]>({
     queryKey: ['gotRewards'],
-    queryFn: async (): Promise<GotRewardUIModel[]> => {
-      const res = await fetch('/api/gotReward')
-      if (!res.ok) {
-         if (res.status === 401) {
-        router.replace('/login')
-        }
-        throw new Error('Failed')
-      }
-      return res.json()
-    },
+    queryFn: () => fetchUserData('gotReward'),
+    initialData: initialData ?? undefined,
     staleTime: 5 * 60 * 1000,
   })
 }

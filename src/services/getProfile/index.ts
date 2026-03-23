@@ -1,5 +1,6 @@
 // services/getProfile/index.ts
-import { handleFailed, handleSucceed } from "..";
+import { redirect } from "next/navigation"
+//import { handleFailed, handleSucceed } from "..";
 import type { Profile } from "src/types/data";
 
 type Props = {
@@ -9,7 +10,7 @@ type Props = {
 export async function getProfile({
   revalidate,
 }: Props = {}): Promise<{ profile: Profile | null }> {
-  return fetch("/api/profile/me", {
+  const res =  await fetch("/api/profile", {
     ...(revalidate !== undefined && {
       next: {
         tags: ["profile"],
@@ -17,6 +18,15 @@ export async function getProfile({
       },
     }),
   })
-    .then(handleSucceed)
-    .catch(handleFailed);
+
+  if (res.status === 401) {
+    redirect("/login")
+  }
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch profile")
+  }
+
+  return res.json()
+    
 }

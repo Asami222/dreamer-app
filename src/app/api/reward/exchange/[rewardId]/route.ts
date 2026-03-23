@@ -3,7 +3,7 @@ import type { Prisma } from "@prisma/client";
 import { prisma } from "src/libs/prisma";
 import { createClient } from "@/libs/supabase/server";
 import { NextResponse } from "next/server";
-//import { revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { deleteRewardImage } from "@/libs/supabase/deleteRewardImage";
 
 export async function POST(
@@ -72,9 +72,9 @@ export async function POST(
 
     await deleteRewardImage(reward.image);
 
-    //revalidateTag("rewards","auto");
+    revalidateTag("user-data","auto");
     //revalidateTag("profile","auto");
-    //revalidateTag("gotRewards","auto");
+    revalidateTag("gotRewards","auto");
 
     return NextResponse.json({ message: "Success!",reward: reward.title });
 

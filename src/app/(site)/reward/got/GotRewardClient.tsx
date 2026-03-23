@@ -2,13 +2,18 @@
 
 import UserGotRewardListContainer from 'src/containers/UserGotRewardListContainer'
 import { useGotRewards } from '@/hooks/useGotRewards';
-import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
-import { useEffect } from "react";
+//import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
+//import { useEffect } from "react";
+import { GotRewardUIModel } from "src/types/data";
 
+type Props = {
+  initialData: GotRewardUIModel[]
+}
 
-const GotRewardClient = () => {
+const GotRewardClient = ({ initialData }: Props) => {
   
-  const { data: gotRewards = [], isLoading } = useGotRewards()
+  const { data, isFetching } = useGotRewards(initialData)
+  /*
     const setGlobalSpinner = useGlobalSpinnerActionsContext()
   
     useEffect(() => {
@@ -18,7 +23,7 @@ const GotRewardClient = () => {
         setGlobalSpinner(false)
       }
     }, [isLoading, setGlobalSpinner])
-
+*/
   return (
     <>
       <div className="text-center mt-10 mb-16">
@@ -28,7 +33,7 @@ const GotRewardClient = () => {
       </div>
       <div>
         <div>
-          <UserGotRewardListContainer gotRewards={gotRewards} />
+          <UserGotRewardListContainer gotRewards={data} isFetching={isFetching}/>
         </div>
       </div>
     </>

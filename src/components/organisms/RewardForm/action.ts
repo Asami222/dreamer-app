@@ -118,7 +118,7 @@ export async function createReward(
       },
     });
 
-    revalidateTag("rewards","max");
+    revalidateTag("user-data","max");
     return handleSuccess(prevState);
 
   } catch (err) {

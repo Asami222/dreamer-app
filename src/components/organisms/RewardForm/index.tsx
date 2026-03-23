@@ -74,10 +74,10 @@ const RewardForm = () => {
 
       if (file && file.size > 0) {
         const resized = await resizeImage(file);
-        formData.set("image.file", resized);   // ★ 差し替え
+        formData.set("image.file", resized);  // 差し替え
       }
       startTransition(() => {
-        formAction(formData);   // ★ ここが最重要
+        formAction(formData);  // 重要
       });
   
     } catch (err) {
@@ -99,7 +99,7 @@ const RewardForm = () => {
     useEffect(() => {
       if (state.status === "success") {
         //toast.success(`追加しました！`);
-        queryClient.invalidateQueries({ queryKey: ['rewards'] })
+        queryClient.invalidateQueries({ queryKey: ['user-data'] })
         router.push('/user')
          // フォームの値を初期化
         //reset(initialFormState());

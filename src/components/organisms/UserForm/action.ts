@@ -160,8 +160,7 @@ export async function updateUser(
     // -------------------------------------
     // Revalidate
     // -------------------------------------
-    revalidateTag("profile", "max");
-    revalidateTag("user", "max");
+    revalidateTag("user-data", "max");
 
     return handleSuccess(prevState);
 

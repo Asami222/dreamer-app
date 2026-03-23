@@ -2,7 +2,7 @@
 import { prisma } from "src/libs/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/libs/supabase/server";
-//import { revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { deleteRewardImage } from "@/libs/supabase/deleteRewardImage";
 
 export async function DELETE(req: NextRequest, { params }: {params: Promise<{ rewardId: string}>}) {
@@ -50,7 +50,7 @@ export async function DELETE(req: NextRequest, { params }: {params: Promise<{ re
     return NextResponse.json({ message: "Not Found or Not Owner" }, { status: 404 });
   }
   */
-  //revalidateTag("rewards", "auto");
+  revalidateTag("user-data", "auto");
 
   return NextResponse.json({ message: "Deleted successfully", rewardId });
 }

@@ -39,7 +39,7 @@ const UserProfile = ({
               alt="プロフィール画像"
             />
         <div className='flex flex-col items-center gap-2'>
-          <p className='font-medium text-[20px] leading-[24px] text-(--text)'>
+          <p className='font-medium text-[20px] leading-6 text-(--text)'>
             {username}
           </p>
           <div className='flex items-center gap-1'>

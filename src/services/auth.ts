@@ -22,12 +22,6 @@ export async function signupAndLogin({
 
   if (!res.ok) throw new Error("サインアップに失敗しました");
 
-  const { session } = await res.json();
-  if (!session) throw new Error("セッション取得失敗");
-
-  // ★これで onAuthStateChange が即発火
-  await supabase.auth.setSession(session);
-
   return { message: "サインアップ・ログインに成功しました" };
 }
 
@@ -35,13 +29,22 @@ export async function signupAndLogin({
 // ログイン
 // -------------------------------
 export async function login({ email, password }: { email: string; password: string }) {
+
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+  /*
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
+  */
 
-  if (error) {
-    switch (error.code) {
+  if (!res.ok) {
+    const { error } = await res.json();
+
+    switch (error) {
       case "invalid_credentials":
         throw new Error("メールアドレスまたはパスワードが正しくありません");
       case "email_not_confirmed":
@@ -51,7 +54,7 @@ export async function login({ email, password }: { email: string; password: stri
     }
   }
 
-  return { message: "ログインに成功しました", user: data.user };
+  return { message: "ログインに成功しました" };
 }
 
 // -------------------------------
@@ -80,7 +83,7 @@ export async function loginAsGuest() {
   if (!res.ok) {
     throw new Error("ゲストログインが現在利用できません");
   }
-
+/*
   const { session } = await res.json();
 
   if (!session) {
@@ -89,7 +92,7 @@ export async function loginAsGuest() {
 
   // ★これが Header を即時ログイン状態にする本体
   await supabase.auth.setSession(session);
-
+*/
   return { message: "ゲストログインに成功しました" };
 }
 

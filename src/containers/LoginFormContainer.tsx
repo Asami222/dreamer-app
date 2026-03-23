@@ -33,6 +33,7 @@ const LoginFormContainer = () => {
       //setGlobalSpinner(true)
       await login({email, password})
       //toast.success(result.message);
+      router.refresh()
       router.push('/user')
     } catch(err: unknown) {
       if(err instanceof Error) {
@@ -71,6 +72,7 @@ const LoginFormContainer = () => {
       //setGlobalSpinner(true)
       await loginAsGuest();
       //toast.success(result.message); //成功時は err なし、result あり
+      router.refresh()
       router.push('/user')
     } catch (err: unknown) {
       if(err instanceof Error) {

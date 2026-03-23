@@ -1,10 +1,32 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/libs/supabase/server";
+//import { createClient } from "@/libs/supabase/server";
+import { createServerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 import { prisma } from "@/libs/prisma";
 
 export async function POST(req: Request) {
   const { name, email, password } = await req.json();
-  const supabase = await createClient();
+  //const supabase = await createClient();
+  const cookieStore = await cookies();
+
+  // レスポンスを先に作る
+  const response = NextResponse.json({ ok: true });
+
+  // Cookieをレスポンスに紐づける
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => cookieStore.getAll(),
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options); //重要
+          });
+        },
+      },
+    }
+  );
 
   // signup
   const { data: signUpData, error: signUpError } =
@@ -37,7 +59,5 @@ export async function POST(req: Request) {
     },
   });
 
-  return NextResponse.json({
-    session: signInData.session,
-  });
+  return response;
 }

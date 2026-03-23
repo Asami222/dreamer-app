@@ -1,10 +1,34 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/libs/supabase/server";
+import { createServerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+//import { createClient } from "@/libs/supabase/server";
 import { prisma } from "@/libs/prisma";
 import { randomUUID } from "crypto";
 
 export async function POST() {
-  const supabase = await createClient();
+  //const supabase = await createClient();
+  const cookieStore = await cookies();
+
+  // レスポンス作成
+  const response = NextResponse.json({ ok: true });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          //レスポンスにCookieをセット
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options);
+          });
+        },
+      },
+    }
+  );
 
   const email = `guest_${randomUUID()}@guest.local`;
   const password = randomUUID();
@@ -40,7 +64,5 @@ export async function POST() {
   });
 
   // ★ここが最重要
-  return NextResponse.json({
-    session: signInData.session,
-  });
+  return response;
 }

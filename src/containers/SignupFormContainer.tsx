@@ -20,7 +20,7 @@ const SignupFormContainer = () => {
       setIsLoading(true)
       //setGlobalSpinner(true)
       await signupAndLogin({ name, password, email });
-      //toast.success(result.message);
+      router.refresh()
       router.push('/dream') //成功時は err なし、result あり
     } catch(err: unknown) {
       if(err instanceof Error) {

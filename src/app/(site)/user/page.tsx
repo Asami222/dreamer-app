@@ -21,7 +21,7 @@ export async function generateMetadata(
 
   const titleName =
     user.email === "guest@gmail.com"
-      ? "ゲスト"
+      ? "ゲストユーザー"
       : user.user_metadata?.name ?? "";
   return buildPageMetadata(`${titleName}`, "ユーザーページです。ユーザー情報、獲得した星の合計数、作成したご褒美一覧を見ることができます。", parent);
 }

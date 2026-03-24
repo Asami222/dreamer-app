@@ -20,8 +20,13 @@ export async function signupAndLogin({
     body: JSON.stringify({ name, email, password }),
   });
 
-  if (!res.ok) throw new Error("サインアップに失敗しました");
+  const data = await res.json();
 
+  if (!res.ok) {
+    console.error("Signup error:", data); // ←超重要
+    throw new Error(data.error || "サインアップに失敗しました");
+  }
+  
   return { message: "サインアップ・ログインに成功しました" };
 }
 
@@ -96,7 +101,23 @@ export async function loginAsGuest() {
   return { message: "ゲストログインに成功しました" };
 }
 
+// -------------------------------
+// ログアウト
+// -------------------------------
+export async function logout() {
+  
+  const res = await fetch("/api/auth/logout", { method: "POST" });
+
+  if (!res.ok) {
+    throw new Error("ログアウトができません");
+  }
+
+  return { message: "ログアウトに成功しました" };
+}
+
+// -------------------------------
 //Reset Password（メール送信用）Schema
+// -------------------------------
 export async function requestPasswordReset(email: string) {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${location.origin}/auth/reset-password`,
@@ -110,7 +131,9 @@ export async function requestPasswordReset(email: string) {
   return { message: "登録されている場合、パスワード再設定メールを送信しました" };
 }
 
+// -------------------------------
 // 新しい password を保存
+// -------------------------------
 export async function updatePassword(newPassword: string) {
   const { error } = await supabase.auth.updateUser({
     password: newPassword,

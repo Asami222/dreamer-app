@@ -16,7 +16,7 @@ type Props = {
 
 export default function UserClient({ initialData }: Props) {
 
-  const { data, isFetching } = useUserData(initialData ?? undefined)
+  const { data, isLoading, isFetching } = useUserData(initialData ?? undefined)
   //const { data: profileData, isLoading: profileLoading } = useProfile()
   //const { data: rewards = [], isLoading: rewardsLoading } = useRewards()
   /* 
@@ -32,13 +32,13 @@ export default function UserClient({ initialData }: Props) {
 
   */
   const profile = data?.profile
-  const userImage = data?.userImage
+  const userImage = data?.userImage ?? "/images/noImg.webp"
   const userName = data?.userName ?? ""
 
   return (
       <div className="flex flex-col gap-10 mt-6 mb-16 mx-auto">
         <div>
-            <UserProfileContainer profile={profile} userName={userName} userImage={userImage} isFetching={isFetching}/>
+            <UserProfileContainer profile={profile} userName={userName} userImage={userImage} isLoading={isLoading}/>
             <Separator />
         </div>
         <div className="mx-auto">
@@ -46,7 +46,7 @@ export default function UserClient({ initialData }: Props) {
               <h2 className="text-(--text) font-normal text-[20px]">ご褒美</h2>
             </div>
             <div>
-              <div><UserRewardListContainer rewards={data?.rewards ?? []} user={profile} isFetching={isFetching}/></div>
+              <div><UserRewardListContainer rewards={data?.rewards ?? []} user={profile} isLoading={isLoading}/></div>
             </div>
         </div>
       </div>

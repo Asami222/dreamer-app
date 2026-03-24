@@ -49,7 +49,7 @@ type Props = {
 
 const TodoClient = ({ initialData }: Props) => {
 
-  const { data: todos = [], isFetching } = useTodos(initialData)
+  const { data: todos = [], isFetching, isLoading } = useTodos(initialData)
   /*
   const setGlobalSpinner = useGlobalSpinnerActionsContext()
 
@@ -94,14 +94,14 @@ const TodoClient = ({ initialData }: Props) => {
                         {categoryNameDict[category].length === 0 ? '' : `${label}`}
                       </h2>
                     </div>
-                    <UserTodoListContainer todos={categoryNameDict[category]} period={label} isFetching={isFetching}/>
+                    <UserTodoListContainer todos={categoryNameDict[category]} period={label} isLoading={isLoading}/>
                   </Fragment>
                 ))}
               </TabPanel>
             ))}
             { otherCategory.map(({label,category}) => (
               <TabPanel key={label} className="py-[54px] px-0">
-                <UserTodoListContainer todos={categoryNameDict[category]} period={label} isFetching={isFetching}/>
+                <UserTodoListContainer todos={categoryNameDict[category]} period={label} isLoading={isLoading}/>
               </TabPanel>
             ))}
           </TabPanels>

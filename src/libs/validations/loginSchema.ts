@@ -5,11 +5,7 @@ export const signupSchema = z.object({
   name: z
     .string()
     .min(1, { message: "ユーザー名は必須です" })
-    .min(3, { message: "ユーザー名は3文字以上で入力してください" })
-    .max(20, { message: "ユーザー名は20文字以内で入力してください" })
-    .regex(/^[a-zA-Z0-9_]+$/, {
-      message: "ユーザー名は英数字またはアンダースコアのみ使用できます",
-    }),
+    .max(20, { message: "ユーザー名は20文字以内で入力してください" }),
   password: z
     .string()
     .min(1, { message: "パスワードは必須です" })

@@ -20,8 +20,9 @@ const SignupFormContainer = () => {
       setIsLoading(true)
       //setGlobalSpinner(true)
       await signupAndLogin({ name, password, email });
-      router.refresh()
+      //window.location.href = "/dream";
       router.push('/dream') //成功時は err なし、result あり
+      router.refresh()
     } catch(err: unknown) {
       if(err instanceof Error) {
           if (err.message.includes("security purposes")) {
@@ -44,6 +45,8 @@ const SignupFormContainer = () => {
       //setGlobalSpinner(true)
       await googleLogin();
       router.push('/dream')
+      router.refresh()
+      //window.location.href = "/dream";
     } catch (err) {
       if (err instanceof Error) {
         setSubmitError(err.message)

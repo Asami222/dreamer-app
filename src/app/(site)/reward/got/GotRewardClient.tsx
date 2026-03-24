@@ -12,7 +12,7 @@ type Props = {
 
 const GotRewardClient = ({ initialData }: Props) => {
   
-  const { data, isFetching } = useGotRewards(initialData)
+  const { data, isFetching, isLoading } = useGotRewards(initialData)
   /*
     const setGlobalSpinner = useGlobalSpinnerActionsContext()
   
@@ -33,7 +33,7 @@ const GotRewardClient = ({ initialData }: Props) => {
       </div>
       <div>
         <div>
-          <UserGotRewardListContainer gotRewards={data} isFetching={isFetching}/>
+          <UserGotRewardListContainer gotRewards={data} isLoading={isLoading}/>
         </div>
       </div>
     </>

@@ -11,6 +11,7 @@ interface RectLoaderProps extends IContentLoaderProps {
  */
 const RectLoader = ({ width, height, ...rest }: RectLoaderProps) => (
   <ContentLoader
+    uniqueKey={`profile-skeleton-${width}-${height}`}
     speed={2}
     width={width}
     height={height}

@@ -5,7 +5,7 @@ import { getUserRewardsWithImageUrl } from "@/libs/reward";
 import { getUserProfile, getProfileImageUrl } from "@/libs/profile";
 import type { Profile } from "src/types/data";
 import { RewardUIModel } from "src/types/data";
-import { unstable_cache } from "next/cache";
+//import { unstable_cache } from "next/cache";
 
 export type UserData = {
   profile: Profile;
@@ -15,9 +15,7 @@ export type UserData = {
 };
 
 // userIdごとにキャッシュ
-export const getUserDataCore = (userId: string, email?: string, name?: string) =>
-  unstable_cache(
-    async (): Promise<UserData> => {
+export const getUserDataCore = async (userId: string, email?: string, name?: string): Promise<UserData> => {
       const [profile, rewardsWithImageUrl] = await Promise.all([
         getUserProfile(userId),
         getUserRewardsWithImageUrl(userId),
@@ -41,9 +39,4 @@ export const getUserDataCore = (userId: string, email?: string, name?: string) =
         userName,
         userImage,
       };
-    },
-    ["user-data", userId], // ← ユーザーごとに分離
-    {
-      tags: ["user-data"],
     }
-  )();

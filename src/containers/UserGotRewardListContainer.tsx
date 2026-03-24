@@ -16,12 +16,12 @@ import Spinner from '@/components/atoms/Spinner';
 
 interface UserGotRewardListContainerProps {
   gotRewards?: GotRewardUIModel[]
-  isFetching?: boolean
+  isLoading?: boolean
 }
 
 const UserGotRewardListContainer = ({
   gotRewards,
-  isFetching
+  isLoading
 }: UserGotRewardListContainerProps) => {
   
   //const router = useRouter();
@@ -44,9 +44,9 @@ const UserGotRewardListContainer = ({
     )
   }
 
+  if (isLoading) return <Spinner />
+
   return (
-    <>
-      {isFetching && <Spinner />}
       <div className={clsx('flex flex-col gap-4 mt-8', gotRewards?.length === 0 && "mt-8 text-center")}>
         { gotRewards?.length === 0 ?
         <p>獲得したご褒美はまだありません</p>
@@ -63,7 +63,6 @@ const UserGotRewardListContainer = ({
           </Fragment>
         ))}
       </div>
-    </>
   )
 }
 

@@ -15,11 +15,11 @@ import Spinner from "@/components/atoms/Spinner";
 interface UserTodoListContainerProps {
   todos: TodoUIModel[]
   period?: string
-  isFetching?: boolean
+  isLoading?: boolean
 }
 
 const UserTodoListContainer = ({
-  period, todos, isFetching
+  period, todos, isLoading
 }: UserTodoListContainerProps) => {
 
   //const setGlobalSpinner = useGlobalSpinnerActionsContext()
@@ -52,9 +52,9 @@ const UserTodoListContainer = ({
     )
   }
 
+  if (isLoading) return <Spinner />
+
   return (
-    <>
-      {isFetching && <Spinner />}
       <div className="flex flex-col gap-2">
         { todos.map((t) => {
 
@@ -85,7 +85,6 @@ const UserTodoListContainer = ({
           )
         })}
       </div>
-    </>
   )
 }
 

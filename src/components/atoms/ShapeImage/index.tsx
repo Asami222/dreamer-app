@@ -52,7 +52,8 @@ export default function ShapeImage({
   aliaLabel,
   alt = "image",
 }: ShapeImageProps) {
-  const [loaded, setLoaded] = useState(false);
+  
+  const [loaded, setLoaded] = useState(!!src);
   const loader = !loaded && !header;
 
   return (
@@ -61,11 +62,13 @@ export default function ShapeImage({
       {loader && <RectLoader width={width} height={height} />}
 
       <img
+        key={src}
         src={src}
         alt={alt}
         loading="lazy"
         decoding="async"
         onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
         className={clsx(
           "absolute inset-0 w-full h-full object-contain transition-opacity duration-300",
           loaded ? "opacity-100" : "opacity-0"

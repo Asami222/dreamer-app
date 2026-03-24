@@ -7,18 +7,18 @@ import Spinner from "@/components/atoms/Spinner";
 interface UserRewardListContainerProps {
   user: Profile
   rewards: RewardUIModel[]
-  isFetching?: boolean
+  isLoading?: boolean
 }
 
 const UserRewardListContainer = ({
   rewards,
   user,
-  isFetching
+  isLoading
 }: UserRewardListContainerProps) => {
 
+  if (isLoading) return <Spinner />
+
   return (
-    <>
-      {isFetching && <Spinner />}
       <div className={clsx('flex flex-col gap-8 mt-8',rewards?.length === 0 && 'text-center')}>
         { rewards.length === 0 ?
           <p>ご褒美はまだありません</p>
@@ -35,7 +35,6 @@ const UserRewardListContainer = ({
             </Fragment>
         ))}
       </div>
-    </>
   )
 }
 

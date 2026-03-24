@@ -1,6 +1,7 @@
 // components/templates/layout/ServerLayout.tsx
-import Header from "src/components/organisms/Header";
+import HeaderWrapper from "./HeaderWrapper";
 import { Container } from "./Container";
+//import Header from "@/components/organisms/Header";
 
 const ServerLayout = async ({
   children,
@@ -12,7 +13,7 @@ const ServerLayout = async ({
  
   return (
     <div className="w-full min-h-dvh overflow-x-hidden mx-auto">
-      {!top && <Header/>}
+      {!top && <HeaderWrapper />}
       <Container>
         <main>{children}</main>
       </Container>

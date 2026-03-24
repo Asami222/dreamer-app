@@ -3,6 +3,8 @@ import "src/globals.css";
 import { Toaster } from "react-hot-toast";
 import { Providers }from "./providers";
 import { Metadata } from 'next';
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+
 
 export const roboto = Roboto({
   weight: ['300','400','500'],
@@ -34,6 +36,7 @@ export default function RootLayout({
     <html lang="ja">
       <body className={`${m_plus_1p.variable} ${roboto.variable}`}>
         <Providers>
+          <AppRouterCacheProvider>
           {children}
           <Toaster 
           position="top-center" 
@@ -66,6 +69,7 @@ export default function RootLayout({
             },
           }}
           />
+          </AppRouterCacheProvider>
         </Providers>
       </body>
     </html>

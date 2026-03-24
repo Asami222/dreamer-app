@@ -6,19 +6,19 @@ interface UserProfileContainerProps {
   userName: string
   userImage: string
   profile?: Profile
-  isFetching?: boolean
+  isLoading?: boolean
 }
 
 const UserProfileContainer = ({
   userName,
   userImage,
   profile,
-  isFetching
+  isLoading
 }: UserProfileContainerProps) => {
 
+  if (isLoading) return <Spinner />
+
   return (
-    <>
-      {isFetching && <Spinner />}
       <UserProfile
         username={profile?.displayName ? profile?.displayName : userName}
         profileImageUrl={userImage}
@@ -26,7 +26,6 @@ const UserProfileContainer = ({
         dream={profile?.dream ? profile.dream : ''}
         limit={profile?.limit ? profile.limit : ''}
       />
-    </>
   )
 }
 

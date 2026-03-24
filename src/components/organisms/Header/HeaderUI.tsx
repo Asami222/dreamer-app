@@ -9,7 +9,7 @@ import clsx from "clsx"
 
 interface HeaderUIProps {
   profile: Profile | null
-  profileImageUrl: string | null;
+  profileImageUrl: string | null | undefined;
   onLogout: () => void
 }
 

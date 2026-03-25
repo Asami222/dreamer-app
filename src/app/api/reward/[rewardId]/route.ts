@@ -50,7 +50,8 @@ export async function DELETE(req: NextRequest, { params }: {params: Promise<{ re
     return NextResponse.json({ message: "Not Found or Not Owner" }, { status: 404 });
   }
   */
-  revalidateTag("user-data", "auto");
-
+  //revalidateTag("user-data", "auto");
+  revalidateTag(`user-data-${userId}`, "max");
+  revalidateTag(`rewards-${userId}`, "max");
   return NextResponse.json({ message: "Deleted successfully", rewardId });
 }

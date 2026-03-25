@@ -72,9 +72,10 @@ export async function POST(
 
     await deleteRewardImage(reward.image);
 
-    revalidateTag("user-data","auto");
+    revalidateTag(`user-data-${userId}`, "max");
+    revalidateTag(`rewards-${userId}`, "max");
     //revalidateTag("profile","auto");
-    revalidateTag("gotRewards","auto");
+    revalidateTag("gotRewards","max");
 
     return NextResponse.json({ message: "Success!",reward: reward.title });
 

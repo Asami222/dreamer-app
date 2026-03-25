@@ -2,6 +2,7 @@
 import { prisma } from "@/libs/prisma";
 import { createClient } from "@/libs/supabase/server";
 import type { Reward } from "@prisma/client"
+import { unstable_cache } from "next/cache";
 
 export async function getUserRewards(userId: string) {
   const rewards = await prisma.reward.findMany({
@@ -36,27 +37,35 @@ export async function getRewardImageUrl(
   return url;
 }
 
-export async function getUserRewardsWithImageUrl(userId: string) {
-  const rewards = await prisma.reward.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-  });
+export const getUserRewardsWithImageUrl = (userId: string) => 
+  unstable_cache( 
+    async () => {
+    const rewards = await prisma.reward.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
 
-  const supabase = await createClient();
+    const supabase = await createClient();
 
-  return rewards.map((reward) => {
-    if (!reward.image) {
-      return reward;
-    }
+    return rewards.map((reward) => {
+      if (!reward.image) {
+        return reward;
+      }
 
-    const { data } = supabase
-      .storage
-      .from("images")
-      .getPublicUrl(reward.image);
+      const { data } = supabase
+        .storage
+        .from("images")
+        .getPublicUrl(reward.image);
 
-    return {
-      ...reward,
-      imageUrl: `${data.publicUrl}?v=${reward.createdAt.getTime()}`,
-    };
-  });
-}
+      return {
+        ...reward,
+        imageUrl: `${data.publicUrl}?v=${reward.createdAt.getTime()}`,
+      };
+    });
+  },
+  [`rewards-${userId}`],
+  { 
+    tags: [`rewards-${userId}`],
+    revalidate: 60
+  }
+)();

@@ -160,7 +160,7 @@ export async function updateUser(
     // -------------------------------------
     // Revalidate
     // -------------------------------------
-    revalidateTag("user-data", "max");
+    revalidateTag(`user-data-${userId}`, "max");
 
     return handleSuccess(prevState);
 

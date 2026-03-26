@@ -1,7 +1,8 @@
 // src/libs/reward.ts
 import { prisma } from "@/libs/prisma";
-import { createClient } from "@/libs/supabase/server";
+//import { createClient } from "@/libs/supabase/server";
 import type { Todo } from "@prisma/client"
+import { unstable_cache } from "next/cache";
 
 export async function getUserTodos(userId: string) {
   const todos = await prisma.todo.findMany({
@@ -15,13 +16,15 @@ export async function getUserTodos(userId: string) {
 /**
  * Reward.image (storage path) → 表示用 URL
  */
-export async function getTodoImageUrl(
+export function getTodoImageUrl(
   todo: Pick<Todo, "image" | "createdAt">,
 ) {
-  // image が無い場合（保険）
-  if (!todo.image) return "";
 
-  // todo は外部 URL を持たない前提
+  const path = todo.image;
+  // image が無い場合（保険）
+  if (!path) return "";
+
+  /* todo は外部 URL を持たない前提
   const supabase = await createClient();
   const { data } = supabase
     .storage
@@ -29,6 +32,10 @@ export async function getTodoImageUrl(
     .getPublicUrl(todo.image);
 
   let url = data.publicUrl;
+  */
+
+  // Supabase Storage public URL（手動生成）
+  let url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${path}`;
 
   // todo は更新されない想定なので createdAt を使う
   url += `?v=${todo.createdAt.getTime()}`;
@@ -36,27 +43,40 @@ export async function getTodoImageUrl(
   return url;
 }
 
-export async function getUserTodosWithImageUrl(userId: string) {
-  const todos = await prisma.todo.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-  });
+export const getUserTodosWithImageUrl = (userId: string) => 
+  unstable_cache( 
+  async () => {
+    const todos = await prisma.todo.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
 
-  const supabase = await createClient();
+    //const supabase = await createClient();
 
-  return todos.map((todo) => {
-    if (!todo.image) return todo;
+    return todos.map((todo) => {
+      
+      const path = todo.image;
+      if (!path) return todo;
+      /*
+      const { data } = supabase
+        .storage
+        .from("images")  // ← bucket は images
+        .getPublicUrl(todo.image);
 
-    const { data } = supabase
-      .storage
-      .from("images")  // ← bucket は images
-      .getPublicUrl(todo.image);
+        console.log("IMAGE URL:", data.publicUrl);
+      */
+      // Supabase Storage public URL（手動生成）
+    const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${path}`;
 
-      console.log("IMAGE URL:", data.publicUrl);
-
-    return {
-      ...todo,
-      imageUrl: `${data.publicUrl}?v=${todo.createdAt.getTime()}`,
-    };
-  });
-}
+      return {
+        ...todo,
+        imageUrl: `${url}?v=${todo.createdAt.getTime()}`,
+      };
+    });
+  },
+  [`todos-${userId}`],
+  { 
+    tags: [`todos-${userId}`],
+    revalidate: 60
+  }
+)();

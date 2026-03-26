@@ -129,7 +129,7 @@ export async function createTodo(
       },
     });
 
-    revalidateTag("todos", "max");
+    revalidateTag(`todos-${userId}`, "max");
     return handleSuccess(prevState);
 
   } catch (err) {

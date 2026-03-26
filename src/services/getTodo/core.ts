@@ -1,8 +1,11 @@
 //import { unstable_cache } from "next/cache";
 import { getUserTodosWithImageUrl } from "@/libs/todo";
 import { toTodosUI } from "src/utils/transform";
+import { unstable_cache } from "next/cache";
 
-export const getTodosData = async (userId: string) =>{
+export const getTodosData = (userId: string) =>
+  unstable_cache(
+    async() => {
       const todosWithImageUrl = await getUserTodosWithImageUrl(userId)
 
       const todos = toTodosUI(todosWithImageUrl);
@@ -10,4 +13,10 @@ export const getTodosData = async (userId: string) =>{
       return {
        todos
       };
-    }
+    },
+     [`todos-${userId}`],
+    {
+      tags: [`todos-${userId}`],
+      revalidate: 60,
+    }  // 60秒キャッシュ
+  )();

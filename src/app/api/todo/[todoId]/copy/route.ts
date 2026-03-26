@@ -49,7 +49,7 @@ export async function POST(
       star: originalTodo.star, // ★は通常リセットするケース多い
     },
   });
-  revalidateTag("todos","auto");   //***Server Component + fetch cacheの場合は使用。現在はReact Queryを使用しているため不要***
+  revalidateTag(`todos-${userId}`, "max");   //***Server Component + fetch cacheの場合は使用。現在はReact Queryを使用しているため不要***
 
   return Response.json(copied);
 }

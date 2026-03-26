@@ -11,11 +11,11 @@ export type UserData = {
   profile: Profile;
   rewards: RewardUIModel[];
   userName: string;
-  userImage: string | null;
+  userImage: string;
 };
 
 // userIdごとにキャッシュ
-export const getUserDataCore = (userId: string, email?: string, name?: string): Promise<UserData> => 
+export const getUserDataCore = (userId: string, email?: string, name?: string) => 
   unstable_cache(
    async() => {
       const [profile, rewardsWithImageUrl] = await Promise.all([
@@ -28,7 +28,7 @@ export const getUserDataCore = (userId: string, email?: string, name?: string): 
       }
 
       const rewards = toRewardsUI(rewardsWithImageUrl);
-      const userImage = await getProfileImageUrl(profile);
+      //const userImage = await getProfileImageUrl(profile);
 
       const userName =
         email === "guest@gmail.com"
@@ -39,7 +39,7 @@ export const getUserDataCore = (userId: string, email?: string, name?: string): 
         profile,
         rewards,
         userName,
-        userImage,
+        userImagePath: profile.profileImageUrl ?? null,
       };
     },
     [`user-data-${userId}`],

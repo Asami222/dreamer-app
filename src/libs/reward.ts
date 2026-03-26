@@ -1,6 +1,6 @@
 // src/libs/reward.ts
 import { prisma } from "@/libs/prisma";
-import { createClient } from "@/libs/supabase/server";
+//import { createClient } from "@/libs/supabase/server";
 import type { Reward } from "@prisma/client"
 import { unstable_cache } from "next/cache";
 
@@ -16,13 +16,15 @@ export async function getUserRewards(userId: string) {
 /**
  * Reward.image (storage path) → 表示用 URL
  */
-export async function getRewardImageUrl(
+export function getRewardImageUrl(
   reward: Pick<Reward, "image" | "createdAt">,
 ) {
-  // image が無い場合（保険）
-  if (!reward.image) return "";
 
-  // reward は外部 URL を持たない前提
+  const path = reward.image;
+  // image が無い場合（保険）
+  if (!path) return "";
+
+  /* reward は外部 URL を持たない前提
   const supabase = await createClient();
   const { data } = supabase
     .storage
@@ -30,6 +32,9 @@ export async function getRewardImageUrl(
     .getPublicUrl(reward.image);
 
   let url = data.publicUrl;
+  */
+  // Supabase Storage public URL（手動生成）
+  let url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${path}`;
 
   // reward は更新されない想定なので createdAt を使う
   url += `?v=${reward.createdAt.getTime()}`;
@@ -45,21 +50,27 @@ export const getUserRewardsWithImageUrl = (userId: string) =>
       orderBy: { createdAt: "desc" },
     });
 
-    const supabase = await createClient();
+    //const supabase = await createClient();
 
     return rewards.map((reward) => {
-      if (!reward.image) {
+
+      const path = reward.image;
+      if (path) {
         return reward;
       }
-
+      /*
       const { data } = supabase
         .storage
         .from("images")
         .getPublicUrl(reward.image);
+      */
+
+      // Supabase Storage public URL（手動生成）
+      const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${path}`;
 
       return {
         ...reward,
-        imageUrl: `${data.publicUrl}?v=${reward.createdAt.getTime()}`,
+        imageUrl: `${url}?v=${reward.createdAt.getTime()}`,
       };
     });
   },

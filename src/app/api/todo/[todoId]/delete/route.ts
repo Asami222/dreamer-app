@@ -58,8 +58,8 @@ export async function DELETE(req: NextRequest, { params }: {params: { todoId: st
         .remove([todo.image]);
     }
 
-    revalidateTag("todos","auto");
-    revalidateTag("user-data","auto");
+    revalidateTag(`todos-${userId}`, "max");
+    revalidateTag(`user-data-${userId}`, "max");
 
     return NextResponse.json({ message: "Success!",todo: todo.title });
 

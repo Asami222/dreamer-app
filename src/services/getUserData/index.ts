@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/libs/supabase/server";
 import { getUserDataCore, UserData } from "./core";
+import { getProfileImageUrl } from "@/libs/profile";
 
 // E2E用
 const E2E_STARS = Number(process.env.NEXT_PUBLIC_E2E_STARS ?? 5);
@@ -43,9 +44,20 @@ export async function getUserData(): Promise<UserData | null> {
     redirect("/login");
   }
 
-  return getUserDataCore(
+  const data = await getUserDataCore(
     user.id,
     user.email,
     user.user_metadata?.name
   );
+
+  // ここでURL生成（キャッシュ外）
+  const userImage = getProfileImageUrl({
+    profileImageUrl: data.profile.profileImageUrl,
+    updatedAt: data.profile.updatedAt,
+  });
+
+  return {
+    ...data,
+    userImage,
+  };
 }

@@ -51,28 +51,10 @@ export const getUserTodosWithImageUrl = (userId: string) =>
       orderBy: { createdAt: "desc" },
     });
 
-    //const supabase = await createClient();
-
-    return todos.map((todo) => {
-      
-      const path = todo.image;
-      if (!path) return todo;
-      /*
-      const { data } = supabase
-        .storage
-        .from("images")  // ← bucket は images
-        .getPublicUrl(todo.image);
-
-        console.log("IMAGE URL:", data.publicUrl);
-      */
-      // Supabase Storage public URL（手動生成）
-    const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${path}`;
-
-      return {
+    return todos.map((todo) => ({
         ...todo,
-        imageUrl: `${url}?v=${todo.createdAt.getTime()}`,
-      };
-    });
+        imageUrl: getTodoImageUrl(todo),
+    }));
   },
   [`todos-${userId}`],
   { 

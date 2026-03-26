@@ -50,27 +50,10 @@ export const getUserRewardsWithImageUrl = (userId: string) =>
       orderBy: { createdAt: "desc" },
     });
 
-    //const supabase = await createClient();
-
     return rewards.map((reward) => {
-
-      const path = reward.image;
-      if (path) {
-        return reward;
-      }
-      /*
-      const { data } = supabase
-        .storage
-        .from("images")
-        .getPublicUrl(reward.image);
-      */
-
-      // Supabase Storage public URL（手動生成）
-      const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${path}`;
-
       return {
         ...reward,
-        imageUrl: `${url}?v=${reward.createdAt.getTime()}`,
+        imageUrl: getRewardImageUrl(reward),
       };
     });
   },

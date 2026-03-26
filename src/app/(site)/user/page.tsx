@@ -14,22 +14,18 @@ export async function generateMetadata(
   if (isE2E) {
     return buildPageMetadata("E2E", "テスト用", parent);
   }
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) notFound();
-
-  const titleName =
-    user.email === "guest@gmail.com"
-      ? "ゲストユーザー"
-      : user.user_metadata?.name ?? "";
-  return buildPageMetadata(`${titleName}`, "ユーザーページです。ユーザー情報、獲得した星の合計数、作成したご褒美一覧を見ることができます。", parent);
+  return buildPageMetadata("ユーザーページ", "ユーザー情報ページです", parent);
 }
 
 
 export default async function Page() {
 
-  const userdata = await getUserData();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) notFound();
+
+  const userdata = await getUserData(user.id, user.email, user.user_metadata?.name);
 
   return <UserClient initialData={userdata}/>
 }

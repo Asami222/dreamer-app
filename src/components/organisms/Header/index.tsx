@@ -1,21 +1,15 @@
-import { createClient } from "@/libs/supabase/server";
 import HeaderClient from "./HeaderClient";
 import { getHeaderData } from "@/services/getHeaderData";
+import type { User } from "@supabase/supabase-js";
 
-export const dynamic = "force-dynamic";
 
-const Header = async () => {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+const Header = async ({ user }: { user: User | null }) => {
 
   if (!user) {
     return <HeaderClient profile={null} profileImageUrl={null} />;
   }
 
-  const { profile, profileImageUrl } = await getHeaderData();
+  const { profile, profileImageUrl } = await getHeaderData(user.id);
 
   return <HeaderClient profile={profile} profileImageUrl={profileImageUrl} />;
 };

@@ -1,8 +1,7 @@
-export const dynamic = "force-dynamic";
-
+import type { User } from "@supabase/supabase-js";
 import Header from "@/components/organisms/Header";
 
 
-export default async function HeaderWrapper() {
-  return <Header />;
+export default async function HeaderWrapper({ user }: { user: User | null }) {
+  return <Header user={user}/>;
 }

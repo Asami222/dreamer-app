@@ -2,7 +2,7 @@
 
 import { HeaderUI } from "./HeaderUI";
 import type { Profile } from "@/types/data";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 import { logout } from "src/services/auth";
 
 
@@ -13,7 +13,7 @@ type Props = {
 
 const HeaderClient = ({ profile, profileImageUrl }: Props) => {
 
-  const router = useRouter()
+  //const router = useRouter()
 
   const handleLogout = async () => {  
       await logout()

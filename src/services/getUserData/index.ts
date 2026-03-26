@@ -7,7 +7,7 @@ import { getProfileImageUrl } from "@/libs/profile";
 // E2E用
 const E2E_STARS = Number(process.env.NEXT_PUBLIC_E2E_STARS ?? 5);
 
-export async function getUserData(): Promise<UserData | null> {
+export async function getUserData( userId: string, email?: string, name?: string ): Promise<UserData | null> {
 
   const isE2E = process.env.NEXT_PUBLIC_E2E_TEST === "true";
 
@@ -37,18 +37,11 @@ export async function getUserData(): Promise<UserData | null> {
     };
   }
 
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user?.id) {
+  if (!userId) {
     redirect("/login");
   }
 
-  const data = await getUserDataCore(
-    user.id,
-    user.email,
-    user.user_metadata?.name
-  );
+  const data = await getUserDataCore( userId, email, name );
 
   // ここでURL生成（キャッシュ外）
   const userImage = getProfileImageUrl({

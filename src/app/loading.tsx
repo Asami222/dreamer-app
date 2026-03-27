@@ -17,7 +17,7 @@ export default function Loading() {
         />
       </div>
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-(--borderDash) border-t-(--topPrimary) rounded-full animate-spin" />
+        <div className="w-16 h-16 border-4 border-(--borderDash) border-t-transparent rounded-full animate-spin" />
       </div>
     </div>
     /*

@@ -18,22 +18,11 @@ const LoginPage = async() => {
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
-  
-  /*
-  const profile = await prisma.profile.findUnique({
-    where: { userId }
-  });
-  */
-  return (
-    <>
-      { user ? (
-          redirect("/user")
-        ):(
-          <LoggedOutView  />
-        )
-      }
-    </>
-  )
+  if (user) {
+    redirect("/user");
+  }
+
+  return <LoggedOutView />;
 }
 
 export default LoginPage
@@ -75,7 +64,7 @@ const LoggedInView = ({ name }: { name: string }) => (
 
 const LoggedOutView = () => (
   <div className="flex flex-col gap-6 mt-8 mb-16 mx-auto">
-          <div className="w-[112px] sm:w-[126px] h-[159px] sm:h-[178px] mt-0 mr-[10%] mb-0 ml-auto">
+          <div className="w-28 sm:w-[126px] h-[159px] sm:h-[178px] mt-0 mr-[10%] mb-0 ml-auto">
             <Image
               src="/images/signinImg.webp"
               alt=""

@@ -17,7 +17,7 @@ const HeaderClient = ({ profile, profileImageUrl }: Props) => {
 
   const handleLogout = async () => {  
       await logout()
-      window.location.href = "/";
+      window.location.href = "/auth/login";
   };
 
   return (

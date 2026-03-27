@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/libs/supabase/server";
 import type { ResolvingMetadata } from "next";
 import { buildPageMetadata } from "@/libs/metadata";
@@ -23,7 +23,9 @@ export default async function Page() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) notFound();
+  if (!user) {
+    redirect("/auth/login");
+  }
 
   const userdata = await getUserData(user.id, user.email, user.user_metadata?.name);
 

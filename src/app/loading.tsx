@@ -17,13 +17,11 @@ export default function Loading() {
         />
       </div>
       <div className="absolute inset-0 flex items-center justify-center">
-        <Spinner />
+        <div className="w-16 h-16 border-4 border-(--borderDash) border-t-(--topPrimary) rounded-full animate-spin" />
       </div>
     </div>
     /*
-    <div className="flex items-center justify-center min-h-dvh bg-(--topPrimary)">
-      <div className="w-16 h-16 border-4 border-(--borderDash) border-t-(--topPrimary) rounded-full animate-spin" />
-    </div>
+    
     */
   );
 }

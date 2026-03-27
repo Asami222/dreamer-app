@@ -29,7 +29,7 @@ export default LoginPage
 
 // ---------------------------
 // ログイン済みの UI
-// ---------------------------
+/* ---------------------------
 
 const LoggedInView = ({ name }: { name: string }) => (
   
@@ -45,19 +45,20 @@ const LoggedInView = ({ name }: { name: string }) => (
             <p className="text-(--text) text-[20px]">Enjoy Dreamer!</p>
           </div>
         </div>
-        <div className="w-[128px] h-[178px]">
+        <div className="w-32 h-[178px]">
           <Image
             src="/images/signinImg.webp"
             alt=""
             width={251}
             height={355}
             priority
-            className="max-w-[128px] w-full h-auto"
+            className="max-w-32 w-full h-auto"
           />
         </div>
       </div>
 );
 
+*/ 
 // ---------------------------
 // ログアウト状態の UI
 // ---------------------------

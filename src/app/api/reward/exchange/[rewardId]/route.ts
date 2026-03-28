@@ -72,8 +72,8 @@ export async function POST(
 
     await deleteRewardImage(reward.image);
 
-    revalidateTag(`user-data-${userId}`, "max");
-    revalidateTag(`rewards-${userId}`, "max");
+    //revalidateTag(`user-data-${userId}`, "max");
+    //revalidateTag(`rewards-${userId}`, "max");
     //revalidateTag("profile","auto");
     revalidateTag("gotRewards","max");
 

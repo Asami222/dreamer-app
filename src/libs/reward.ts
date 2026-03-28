@@ -2,7 +2,7 @@
 import { prisma } from "@/libs/prisma";
 //import { createClient } from "@/libs/supabase/server";
 import type { Reward } from "@prisma/client"
-import { unstable_cache } from "next/cache";
+//import { unstable_cache } from "next/cache";
 
 export async function getUserRewards(userId: string) {
   const rewards = await prisma.reward.findMany({
@@ -42,9 +42,8 @@ export function getRewardImageUrl(
   return url;
 }
 
-export const getUserRewardsWithImageUrl = (userId: string) => 
-  unstable_cache( 
-    async () => {
+export const getUserRewardsWithImageUrl = async (userId: string) => {
+  
     const rewards = await prisma.reward.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
@@ -56,10 +55,4 @@ export const getUserRewardsWithImageUrl = (userId: string) =>
         imageUrl: getRewardImageUrl(reward),
       };
     });
-  },
-  [`rewards-${userId}`],
-  { 
-    tags: [`rewards-${userId}`],
-    revalidate: 60
-  }
-)();
+}

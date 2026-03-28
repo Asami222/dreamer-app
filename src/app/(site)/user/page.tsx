@@ -27,7 +27,8 @@ export default async function Page() {
     redirect("/auth/login");
   }
 
-  const userdata = await getUserData(user.id, user.email, user.user_metadata?.name);
+  // サーバー取得時の場合
+  //const userdata = await getUserData(user.id, user.email, user.user_metadata?.name);
 
-  return <UserClient initialData={userdata}/>
+  return <UserClient />
 }

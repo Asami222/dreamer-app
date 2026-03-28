@@ -29,7 +29,6 @@ const UserProfile = ({
   }, [numberOfStars, setStar]);
 */
 
-console.log('img:', profileImageUrl)
   return (
     <div className='flex flex-col gap-6 items-center mb-2'>
       <div className='flex items-center gap-4'>

@@ -47,7 +47,7 @@ const ImagePreview = ({
     <>
       <div className='relative' style={{height, width}}>
         <Image
-          quality="85"
+          quality="75"
           src={src}
           alt="イメージ"
           sizes="25.6vw"

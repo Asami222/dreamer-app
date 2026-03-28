@@ -18,7 +18,7 @@ export function toTodoUI(todo: TodoWithImageUrl): TodoUIModel {
     detail: todo.detail ?? undefined,
     description: todo.description ?? undefined,
     image: todo.imageUrl,
-    createdAt: todo.createdAt.toISOString(), // DateのままだとJSON化で崩れやすい
+    createdAt: new Date(todo.createdAt).toISOString(), // DateのままだとJSON化で崩れやすい
   };
 }
 
@@ -38,7 +38,7 @@ export function toRewardUI(reward: RewardWithImageUrl): RewardUIModel {
     title: reward.title,
     star: reward.star ?? 0, // ⭐ null → 0
     image: reward.imageUrl,
-    createdAt: reward.createdAt.toISOString(),
+    createdAt: new Date(reward.createdAt).toISOString(),
   };
 }
 
@@ -54,7 +54,7 @@ export function toGotRewardUI(gotReward: GotReward): GotRewardUIModel {
     id: gotReward.id,
     title: gotReward.title,
     star: gotReward.star ?? 0, // ⭐ nullを0に統一
-    createdAt: gotReward.createdAt.toISOString(), // DateのままだとJSON化で崩れやすい
+    createdAt: new Date(gotReward.createdAt).toISOString(), // DateのままだとJSON化で崩れやすい
   };
 }
 

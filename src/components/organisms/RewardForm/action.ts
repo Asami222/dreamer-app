@@ -4,7 +4,6 @@
 import { createClient } from "@/libs/supabase/server";
 import { prisma } from "src/libs/prisma";
 import { ZodError } from "zod";
-import { revalidateTag } from "next/cache";
 import {
   validateFormData,
   transformFieldErrors,
@@ -117,8 +116,8 @@ export async function createReward(
         userId, // ← 必須
       },
     });
-    revalidateTag(`user-data-${userId}`, "max");
-    revalidateTag(`rewards-${userId}`, "max");
+    //revalidateTag(`user-data-${userId}`, "max");
+    //revalidateTag(`rewards-${userId}`, "max");
     return handleSuccess(prevState);
 
   } catch (err) {

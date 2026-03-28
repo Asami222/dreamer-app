@@ -16,7 +16,11 @@ const UserProfileContainer = ({
   isLoading
 }: UserProfileContainerProps) => {
 
-  if (isLoading) return <Spinner />
+  if (isLoading) return (
+    <div className="flex items-center justify-center">
+      <Spinner />
+    </div>
+  )
 
   return (
       <UserProfile

@@ -1,3 +1,4 @@
+import { UserData } from '@/services/getUserData/core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { RewardUIModel } from 'src/types/data'
 
@@ -13,25 +14,27 @@ export const useDeleteReward = () => {
       if (!res.ok) throw new Error('Failed')
       return res.json()
     },
-    onMutate: async ( id ) => {
-      await queryClient.cancelQueries({ queryKey: ['user-data'] })
+    onMutate: async (id) => {
+  await queryClient.cancelQueries({ queryKey: ['user-data'] })
 
-      const previousRewards =
-        queryClient.getQueryData<RewardUIModel[]>(['user-data'])
+  const previousUserData =
+    queryClient.getQueryData<UserData>(['user-data'])
 
-      if (previousRewards) {
-        queryClient.setQueryData(
-          ['user-data'],
-          previousRewards.filter(r => r.id !== id)
-        )
-      }
+  if (previousUserData) {
+    queryClient.setQueryData(['user-data'], {
+      ...previousUserData,
+      rewards: previousUserData.rewards.filter(
+        (r: RewardUIModel) => r.id !== id
+      ),
+    })
+  }
 
-      return { previousRewards }
-    },
+  return { previousUserData }
+},
 
     onError: (_err, _id, context) => {
-      if (context?.previousRewards) {
-        queryClient.setQueryData(['user-data'], context.previousRewards)
+      if (context?.previousUserData) {
+        queryClient.setQueryData(['user-data'], context.previousUserData)
       }
     },
     onSettled: () => {

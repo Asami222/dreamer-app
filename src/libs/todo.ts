@@ -43,9 +43,8 @@ export function getTodoImageUrl(
   return url;
 }
 
-export const getUserTodosWithImageUrl = (userId: string) => 
-  unstable_cache( 
-  async () => {
+export const getUserTodosWithImageUrl = async (userId: string) => {
+  
     const todos = await prisma.todo.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
@@ -55,10 +54,4 @@ export const getUserTodosWithImageUrl = (userId: string) =>
         ...todo,
         imageUrl: getTodoImageUrl(todo),
     }));
-  },
-  [`todos-${userId}`],
-  { 
-    tags: [`todos-${userId}`],
-    revalidate: 60
-  }
-)();
+}

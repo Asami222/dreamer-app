@@ -99,10 +99,11 @@ const RewardForm = () => {
     useEffect(() => {
       if (state.status === "success") {
         //toast.success(`追加しました！`);
-        queryClient.invalidateQueries({ queryKey: ['user-data'] })
-        router.push('/user')
-         // フォームの値を初期化
-        //reset(initialFormState());
+       (async () => {
+          await queryClient.invalidateQueries({ queryKey: ['user-data'] })
+          await queryClient.refetchQueries({ queryKey: ['user-data'] })
+          router.push('/user')
+        })()
       }
     }, [state.status, queryClient, router]);
 

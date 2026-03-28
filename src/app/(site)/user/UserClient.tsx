@@ -8,15 +8,11 @@ import Separator from "src/components/atoms/Separator";
 //import { useGlobalSpinnerActionsContext } from "src/contexts/GlobalSpinnerContext";
 //import { useEffect } from "react";
 import { useUserData } from '@/hooks/useUserData';
-import type { UserData } from '@/services/getUserData/core';
 
-type Props = {
-  initialData: UserData | null
-}
 
-export default function UserClient({ initialData }: Props) {
+export default function UserClient() {
 
-  const { data, isLoading, isFetching } = useUserData(initialData ?? undefined)
+  const { data, isLoading } = useUserData()
   //const { data: profileData, isLoading: profileLoading } = useProfile()
   //const { data: rewards = [], isLoading: rewardsLoading } = useRewards()
   /* 

@@ -1,4 +1,3 @@
-
 //import { notFound } from "next/navigation";
 import { createClient } from "@/libs/supabase/server";
 import { toRewardsUI } from "src/utils/transform";

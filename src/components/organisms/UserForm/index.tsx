@@ -89,6 +89,8 @@ export default function UserForm({ isGuest }: { isGuest?: boolean }) {
     if (state.status === "success") {
       //toast.success("変更しました！");
       queryClient.invalidateQueries({ queryKey: ['user-data'] }) 
+      queryClient.invalidateQueries({ queryKey: ['profile'] })
+      //queryClient.refetchQueries({ queryKey: ['profile'] })
       router.push('/user')
       //reset(initialFormState());
     }

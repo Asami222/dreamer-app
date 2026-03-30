@@ -10,7 +10,7 @@ export const useRewards = () => {
       const res = await fetch('/api/reward')
       if (!res.ok) {
         if (res.status === 401) {
-        router.replace('/login')
+        router.replace('/auth/login')
       }
         throw new Error('Failed')
       }

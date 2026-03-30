@@ -20,7 +20,7 @@ const HeaderClient = ({ user }: Props) => {
 
   useEffect(() => {
     if (error) {
-      router.replace('/login')
+      router.replace('/auth/login')
     }
   }, [error, router])
 

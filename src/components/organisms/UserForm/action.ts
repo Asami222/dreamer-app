@@ -24,59 +24,20 @@ export async function updateUser(
   prevState: FormState<UserFormInput>,
   formData: FormData,
 ): Promise<FormState<UserFormInput>> {
-  //e2e playwrightテスト用
-  const isE2E = process.env.NEXT_PUBLIC_E2E_TEST === "true";
 
-  if (isE2E) {
-    // フォームの値だけ軽くバリデーションして即成功
-    try {
-      validateFormData(formData, userFormSchema);
-      return handleSuccess(prevState);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        return handleError(prevState, {
-          ...errors[400],
-          fieldErrors: transformFieldErrors(err),
-        });
-      }
-      return handleError(prevState, errors[500]);
-    }
-  }
-
-  // ① NextAuth セッション（ユーザー ID 確認用）
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return handleError(prevState, errors[401]);
 
   const userId = user.id;
 
-  // ② Supabase セッション（Storage 用 JWT 取得）
-  const {
-    data: { session: spsession },
-    error: sessionError,
-  } = await supabase.auth.getSession();
-
-  console.log("Supabase session:", spsession);
-  console.log("Supabase session error:", sessionError);
-
-  const supabaseAccessToken = spsession?.access_token;
-  if (!supabaseAccessToken) {
-    console.error("Supabase JWT が取得できません");
-    return handleError(prevState, errors[500]);
-  }
-
   try {
-    // -------------------------------------
-    // 画像アップロード
-    // -------------------------------------
+    // -----------------------
+    // ① バリデーション
+    // -----------------------
+    const payload = validateFormData(formData, userFormSchema);
+
     const imageFile = formData.get("image.file") as File | null;
-    //let imagePath: string | null = null;
-    // ① 現在の画像取得
-    const currentProfile = await prisma.profile.findUnique({
-      where: { userId },
-      select: { profileImageUrl: true },
-    });
-    const oldImagePath = currentProfile?.profileImageUrl;
 
     const MAX_SIZE = 1 * 1024 * 1024;
     const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -89,88 +50,77 @@ export async function updateUser(
         });
       }
 
-  if (!ALLOWED_TYPES.includes(imageFile.type)) {
-    return handleError(prevState, {
-      ...errors[400],
-      message: "jpg / png / webp のみアップロードできます",
-    });
-  }
-}
+      if (!ALLOWED_TYPES.includes(imageFile.type)) {
+        return handleError(prevState, {
+          ...errors[400],
+          message: "jpg / png / webp のみアップロードできます",
+        });
+      }
+    }
 
-    // ② upload
+    // -----------------------
+    // ② 現在の画像取得
+    // -----------------------
+    const currentProfile = await prisma.profile.findUnique({
+      where: { userId },
+      select: { profileImageUrl: true },
+    });
+
+    const oldImagePath = currentProfile?.profileImageUrl;
+
+    // -----------------------
+    // ③ DB更新（画像以外）
+    // -----------------------
+    const displayName = isGuestUser(user)
+      ? "ゲスト"
+      : payload.displayName;
+
+    await prisma.profile.update({
+      where: { userId },
+      data: {
+        displayName,
+        dream: payload.dream,
+        limit: payload.limit,
+      },
+    });
+
+    // -----------------------
+    // ④ 画像アップロード
+    // -----------------------
     let imagePath: string | null = null;
+
     if (imageFile && imageFile.size > 0) {
       imagePath = await uploadImage(imageFile, userId, "avatar");
     }
 
-    // ③ 古い画像削除
+    // -----------------------
+    // ⑤ DB更新（画像）
+    // -----------------------
+    if (imagePath) {
+      await prisma.profile.update({
+        where: { userId },
+        data: {
+          profileImageUrl: imagePath,
+        },
+      });
+    }
+
+    // -----------------------
+    // ⑥ 古い画像削除
+    // -----------------------
+    /*
     if (
       imagePath &&
       oldImagePath &&
       oldImagePath !== "/images/noImg.webp" &&
       oldImagePath.startsWith(`${userId}/avatar`)
     ) {
-      await supabase.storage.from("images").remove([oldImagePath]);
+        await supabase.storage.from("images").remove([oldImagePath]);
     }
-
-    // -------------------------------------
-    // Zod バリデーション
-    // -------------------------------------
-    const payload = validateFormData(formData, userFormSchema);
-
-    console.log("payload", payload)
-
-    // ゲストなら displayName を強制的に固定
-    const displayName = isGuestUser(user)
-    ? "ゲスト"
-    : payload.displayName;
-
-    const updateData: {
-      displayName?: string;
-      dream?: string | null;
-      limit?: string | null;
-      profileImageUrl?: string;
-    } = {};
-    
-    // displayName
-    if (displayName !== undefined && displayName !== "") {
-      updateData.displayName = displayName;
-    }
-    
-    // dream
-    if (payload.dream !== undefined) {
-      updateData.dream = payload.dream;
-    }
-    
-    // limit
-    if (payload.limit !== undefined) {
-      updateData.limit = payload.limit;
-    }
-    
-    // image
-    if (imagePath) {
-      updateData.profileImageUrl = imagePath;
-    }
-    
-    await prisma.profile.update({
-      where: { userId },
-      data: updateData,
-    });
-
-    // -------------------------------------
-    // Revalidate
-    // -------------------------------------
-    //revalidateTag(`user-data-${userId}`, "max");
-
+    */
     return handleSuccess(prevState);
 
   } catch (err) {
-    if (err instanceof ZodError) {
-      return handleError(prevState, {
-        ...errors[400],
-        fieldErrors: transformFieldErrors(err),
-      });
-    }
     console.error(err);
     return handleError(prevState, errors[500]);
   }

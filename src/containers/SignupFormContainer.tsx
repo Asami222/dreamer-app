@@ -20,9 +20,9 @@ const SignupFormContainer = () => {
       setIsLoading(true)
       //setGlobalSpinner(true)
       await signupAndLogin({ name, password, email });
-      //window.location.href = "/dream";
-      router.push('/dream') //成功時は err なし、result あり
-      router.refresh()
+      window.location.href = "/dream";
+      //router.refresh();
+      //router.push('/dream') //成功時は err なし、result あり
     } catch(err: unknown) {
       if(err instanceof Error) {
           if (err.message.includes("security purposes")) {

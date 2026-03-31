@@ -22,7 +22,7 @@ ToDoアプリにご褒美機能を追加したものを制作しました。ToDo
  
 https://qiita.com/Asami222/items/a8308737917947dfac74
 <br >
-Qiita記事：データ取得をサーバーコンポーネント→TanStack Query使用に変更しました。
+Qiita記事：データ取得をサーバーコンポーネント→TanStack Query使用に変更しました。(その後一部サーバーコンポーネント取得に変更)
 
 https://asami-portfolio.vercel.app/projects/dreamer-app
 <br>
@@ -56,16 +56,16 @@ https://github.com/Asami222/dreamer
 ## 機能一覧
 - ユーザー認証、データ管理、画像アップロード ( Supabase Auth、Supabase Postgres、Supabase Storage )
 - ORM (Prisma)
-- データ取得・更新API ( Server Actions、route handler)
-- APIデータ状態管理（ TanStack Query ）
-
+- データ取得・更新API ( Server Actions、route handler、server component)
+- APIデータクライアント状態管理（ TanStack Query ）
+- キャッシュコントロール (クライアント: invalidateQueries、サーバー: revalidateTag)
 ## ブラッシュアップ前との違い
 (矢印前がブラッシュアップ前、矢印後が後)
 - ルーティング ( Pages Router  →  App Router )
 - CSS ( styled-components  →  Tailwind CSS )
 - DB ( Heroku  →  Supabase )
 - ストレージ ( なし  →  Supabase Storage )
-- データ取得 ( SWR・fetcher  →  route handler・fetcher / Server Actions )
+- データ取得 ( SWR・fetcher  →  route handler・fetcher / Server Actions / server component )
 - サーバー側バリデーション( json-server  →  フロントエンド側と共通のzodスキーマ )
 - 状態管理 ( useReducer&useContext → TanStack Query )
 <!-- 

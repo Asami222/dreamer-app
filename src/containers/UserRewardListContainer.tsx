@@ -16,8 +16,11 @@ const UserRewardListContainer = ({
   isLoading
 }: UserRewardListContainerProps) => {
 
-  if (isLoading) return <Spinner />
-
+  if (isLoading) return (
+    <div className="flex items-center justify-center mt-8">
+      <Spinner />
+    </div>
+  )
   return (
       <div className={clsx('flex flex-col gap-8 mt-8',rewards?.length === 0 && 'text-center')}>
         { rewards.length === 0 ?
